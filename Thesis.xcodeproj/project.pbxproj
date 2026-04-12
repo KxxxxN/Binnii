@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		486D0DF22F69517100D65319 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF12F69517100D65319 /* Auth */; };
+		486D0DF42F69517100D65319 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF32F69517100D65319 /* Functions */; };
+		486D0DF62F69517100D65319 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF52F69517100D65319 /* PostgREST */; };
+		486D0DF82F69517100D65319 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF72F69517100D65319 /* Realtime */; };
+		486D0DFA2F69517100D65319 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF92F69517100D65319 /* Storage */; };
+		486D0DFC2F69530400D65319 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DFB2F69530400D65319 /* Supabase */; };
 		BB50BD592EB8966E00A20141 /* NotoSansThai-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD582EB8966E00A20141 /* NotoSansThai-Thin.ttf */; };
 		BB50BD5E2EB8968400A20141 /* NotoSansThai-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5A2EB8968400A20141 /* NotoSansThai-Light.ttf */; };
 		BB50BD5F2EB8968400A20141 /* NotoSansThai-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5B2EB8968400A20141 /* NotoSansThai-Medium.ttf */; };
@@ -328,6 +334,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -335,7 +342,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CODE.Binnii;
+				PRODUCT_BUNDLE_IDENTIFIER = CODE.Theis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -357,6 +364,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -364,7 +372,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CODE.Binnii;
+				PRODUCT_BUNDLE_IDENTIFIER = CODE.Theis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

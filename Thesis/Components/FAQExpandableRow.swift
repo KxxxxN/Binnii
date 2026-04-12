@@ -5,14 +5,13 @@
 //  Created by Kansinee Klinkhachon on 11/12/2568 BE.
 //
 
-
 import SwiftUI
 
 struct FAQExpandableRow: View {
     let item: FAQItem
-    let cornerRadiusValue: CGFloat = 20
+    let config: ResponsiveConfig
     
-    // สถานะการขยาย/ยุบของตัวเอง
+    let cornerRadiusValue: CGFloat = 20
     @State private var isExpanded: Bool = false
     
     var body: some View {
@@ -26,43 +25,40 @@ struct FAQExpandableRow: View {
                 print("FAQ Toggled: \(item.question)")
             }) {
                 HStack(spacing: 0) {
-                    // ใช้ String Interpolation เพื่อความกระชับ
                     Text("\(item.question)?")
-                        .font(.noto(20, weight: .bold))
+                        .font(.noto(config.accountRowFontSize, weight: .bold))
                         .foregroundColor(Color.black)
-                        .padding(.leading, 21)
+                        .padding(.leading, config.accountRowIconLeading)
                         .multilineTextAlignment(.leading)
                     
                     Spacer()
                         
-                    // ICON: เปลี่ยนไอคอนตามสถานะ isExpanded
                     Image(systemName: isExpanded ? "minus" : "plus")
                         .foregroundColor(.black)
-                        .font(.system(size: 20))
+                        .font(.system(size: config.accountRowChevronSize))
                 }
-                .padding(.trailing)
-                .frame(width: 410, height: 75)
+                .padding(.trailing, config.paddingMedium)
+                .frame(maxWidth: .infinity, minHeight: config.accountRowHeight)
                 .background(Color.accountSecColor)
-                // กำหนดมุมโค้งตามสถานะ
                 .cornerRadius(cornerRadiusValue, corners: isExpanded ? [.topLeft, .topRight] : .allCorners)
             }
             
-            // เนื้อหาที่ขยายลงมา (คำตอบ)
             if isExpanded {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(item.answer)
-                        .font(.noto(16, weight: .regular))
+                        .font(.noto(max(config.accountRowFontSize - 4, 14), weight: .regular))
                         .foregroundColor(.black)
                         .lineLimit(nil)
                 }
-                .padding(.horizontal)
-                .padding(.vertical)
-                .frame(width: 410, alignment: .leading)
+                .padding(.horizontal, config.accountRowIconLeading)
+                // 💡 ปรับ Padding ตรงนี้เพิ่มเล็กน้อย เพื่อไม่ให้ข้อความชิดขอบบนของคำตอบมากเกินไป
+                .padding(.vertical, 15)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.accountSecColor)
                 .cornerRadius(cornerRadiusValue, corners: [.bottomLeft, .bottomRight])
-                .offset(y: -cornerRadiusValue)
+                // ❌ ลบ .offset(y: -cornerRadiusValue) ออกไปเลย กล่องมันต่อกันสนิทอยู่แล้วครับ
             }
         }
-        .padding(.bottom, isExpanded ? -cornerRadiusValue : 0)
+        // ❌ ลบ .padding(.bottom, ...) ออกไปด้วยครับ ไม่ต้องชดเชยระยะแล้ว
     }
 }

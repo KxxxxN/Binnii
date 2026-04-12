@@ -9,52 +9,60 @@ import SwiftUI
 
 struct AiScanBottomNavigationBar: View {
     @Binding var selectedTab: Int
+    @Environment(\.horizontalSizeClass) private var sizeClass
     var onSelect: (Int) -> Void
 
     var body: some View {
-        ZStack {
-            Capsule()
-                .fill(Color.secondColor)
-                .frame(width: 344, height: 50)
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
+            
+            ZStack {
+                // Background Capsule
+                Capsule()
+                    .fill(Color.secondColor)
+                    .frame(width: config.aiBarWidth, height: config.aiBarHeight)
 
-            Capsule()
-                .fill(Color.mainColor)
-                .frame(width: 110, height: 42)
-                .offset(x: CGFloat(selectedTab - 1) * 110)
+                // Selection Indicator (ตัวที่เลื่อนไปมา)
+                Capsule()
+                    .fill(Color.mainColor)
+                    .frame(width: config.aiBarTabWidth, height: config.aiBarTabHeight)
+                    .offset(x: CGFloat(selectedTab - 1) * config.aiBarTabWidth)
 
-            HStack(spacing: 7) {
-                tabButton(icon: "Barcode", label: "บาร์โค้ด", index: 0)
-                tabButton(icon: "Tabler_ai", label: "สแกน", index: 1)
-                tabButton(icon: "Search", label: "ค้นหา", index: 2)
+                HStack(spacing: 0) {
+                    tabButton(config: config, icon: "Barcode", label: "บาร์โค้ด", index: 0)
+                    tabButton(config: config, icon: "Tabler_ai", label: "สแกน", index: 1)
+                    tabButton(config: config, icon: "Search", label: "ค้นหา", index: 2)
+                }
+                .frame(width: config.aiBarWidth)
             }
+            .frame(maxWidth: .infinity)
         }
-        .frame(width: 344, height: 50)
+        .frame(height: 50)
     }
 
-    private func tabButton(icon: String, label: String, index: Int) -> some View {
+    private func tabButton(config: ResponsiveConfig, icon: String, label: String, index: Int) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
-                            selectedTab = index
+                selectedTab = index
             }
             onSelect(index)
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: config.isIPad ? 10 : 6) {
                 Image(icon)
                     .resizable()
                     .scaledToFit()
                     .frame(
-                        width: icon == "Tabler_ai" ? 37 : 27,
-                        height: icon == "Tabler_ai" ? 37 : 27
+                        width: icon == "Tabler_ai" ? config.aiBarAIIconSize : config.aiBarIconSize,
+                        height: icon == "Tabler_ai" ? config.aiBarAIIconSize : config.aiBarIconSize
                     )
 
                 Text(label)
-                    .font(.noto(15, weight: .regular))
+                    .font(.noto(config.fontSubBody, weight: .regular))
+                    .minimumScaleFactor(0.8) 
             }
             .foregroundColor(.white)
-            .frame(width: 110, height: 42)
+            .frame(width: config.aiBarTabWidth, height: config.aiBarTabHeight)
         }
     }
 }
-
-
 

@@ -1,44 +1,40 @@
-//
-//  AccountMenuRow.swift
-//  Thesis
-//
-//  Created by Kansinee Klinkhachon on 10/12/2568 BE.
-//
-
-
 import SwiftUI
 
+// MARK: - 1. Component: แถวเมนูทั่วไป
 struct AccountMenuRow<Destination: View>: View {
     let title: String
     let imageName: String
     let destination: Destination?
     let action: (() -> Void)?
+    let config: ResponsiveConfig // เพิ่ม Config เข้ามา
     
     // Initializer สำหรับ NavigationLink (มีปลายทาง)
-    init(title: String, imageName: String, destination: Destination) {
+    init(title: String, imageName: String, config: ResponsiveConfig, destination: Destination) {
         self.title = title
         self.imageName = imageName
+        self.config = config
         self.destination = destination
         self.action = nil
     }
     
     // Initializer สำหรับ Button (ไม่มีปลายทาง)
-    init(title: String, imageName: String, action: @escaping () -> Void) where Destination == EmptyView {
+    init(title: String, imageName: String, config: ResponsiveConfig, action: @escaping () -> Void) where Destination == EmptyView {
         self.title = title
         self.imageName = imageName
+        self.config = config
         self.action = action
         self.destination = nil
     }
     
     var rowContent: some View {
-        HStack(spacing: 15) {
+        HStack(spacing: config.accountRowSpacing) {
             Image(imageName)
                 .resizable()
-                .frame(width: 40, height: 40)
-                .padding(.leading, 35) // จัดระยะห่างตามโค้ดเดิม
+                .frame(width: config.accountRowIconSize, height: config.accountRowIconSize)
+                .padding(.leading, config.accountRowIconLeading)
             
             Text(title)
-                .font(.noto(20, weight: .medium))
+                .font(.noto(config.accountRowFontSize, weight: .medium))
                 .foregroundColor(Color.black)
             
             Spacer()
@@ -47,11 +43,11 @@ struct AccountMenuRow<Destination: View>: View {
             if destination != nil || title == "แก้ไขโปรไฟล์" || title == "เปลี่ยนภาษา" || title == "ช่วยเหลือ" || title == "ติดต่อเรา" {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.black)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: config.accountRowChevronSize, weight: .bold)) // ใช้ขนาด Chevron จาก config
             }
         }
         .padding(.trailing)
-        .frame(height: 70) // ความสูงแถวตามโค้ดเดิม
+        .frame(height: config.accountRowHeight) // ความสูงแถวจาก config
         .background(Color.accountSecColor)
     }
     
@@ -75,21 +71,21 @@ struct AccountToggleRow: View {
     let title: String
     let imageName: String
     @Binding var isOn: Bool
+    let config: ResponsiveConfig
     
     var body: some View {
         Button(action: {
-            // สลับสถานะเมื่อกดที่ส่วนอื่นที่ไม่ใช่ Toggle
             isOn.toggle()
             print("\(title) toggled to \(isOn)")
         }) {
-            HStack(spacing: 15) {
+            HStack(spacing: config.accountRowSpacing) {
                 Image(imageName)
                     .resizable()
-                    .frame(width: 40, height: 40)
-                    .padding(.leading, 35)
+                    .frame(width: config.accountRowIconSize, height: config.accountRowIconSize)
+                    .padding(.leading, config.accountRowIconLeading)
                 
                 Text(title)
-                    .font(.noto(20, weight: .medium))
+                    .font(.noto(config.accountRowFontSize, weight: .medium))
                     .foregroundColor(Color.black)
                 
                 Spacer()
@@ -98,9 +94,12 @@ struct AccountToggleRow: View {
                     .labelsHidden()
                     .tint(.mainColor)
                     .fixedSize()
+                    // หมายเหตุ: Toggle ของระบบ iOS ไม่สามารถใช้ .frame เพื่อขยายขนาดตรงๆ ได้
+                    // หากต้องการให้ Toggle ใหญ่ขึ้นบน iPad อาจต้องใช้ .scaleEffect(config.isIPad ? 1.3 : 1.0) ช่วยครับ
+                    .scaleEffect(config.isIPad ? 1.2 : 1.0)
             }
             .padding(.trailing)
-            .frame(height: 70)
+            .frame(height: config.accountRowHeight) // ความสูงแถวจาก config
             .background(Color.accountSecColor)
         }
     }

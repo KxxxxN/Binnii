@@ -12,6 +12,8 @@ struct ThesisApp: App {
     @AppStorage("isLoggedIn") var isLoggedIn = false
     @StateObject var authViewModel = AuthViewModel()
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             RootView()

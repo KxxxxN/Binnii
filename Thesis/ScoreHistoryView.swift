@@ -17,108 +17,115 @@ struct ScoreItem: Identifiable {
 struct ScoreHistoryView: View {
     @State private var currentPage = 0
     @Binding var hideTabBar: Bool
-    //    @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var historyVM = ScoreHistoryViewModel()
     @StateObject private var profileVM = UserProfileViewModel()
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 0) {
-                ZStack {
-                    Text("ประวัติคะแนน")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.white)
-                    
-                    HStack {
-                        BackButtonWhite()
-                        
-                        Spacer()
-                    }
-                }
-                .padding(.top, 65)
-                
-                HStack(alignment: .center, spacing: 13) {
-                    Group {
-                        if let image = profileVM.profileImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } else {
-                            Image("Profile")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        }
-                    }
-                    .frame(width: 55, height: 55)
-                    .clipShape(Circle())
-                    .shadow(radius: 4)
-                    
-                    HStack {
-                        Text(profileVM.fullName)
-                            .font(.noto(20, weight: .bold))
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        VStack(alignment: .trailing) {
-                            Text("\(profileVM.totalPoints)")
-                                .font(.system(size: 40, weight: .bold))
-                                .foregroundColor(.white)
-                            Text("คะแนน")
-                                .font(.noto(15, weight: .regular))
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .padding(.trailing, 28)
-                }
-                .padding(.top, 16)
-                .padding(.leading, 28)
-                .padding(.bottom, 30)
-            }
-            .frame(height: 205)
-            .frame(maxWidth: .infinity)
-            .background(
-                Color.mainColor
-                    .clipShape(
-                        RoundedCorner(
-                            radius: 20,
-                            corners: [.bottomLeft, .bottomRight]
-                        )
-                    )
-            )
-            
-            if historyVM.isLoading {
-                Spacer()
-                ProgressView()
-                Spacer()
-            } else {
-                TabView {
-                    PageView(items: historyVM.items)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .background(Color.white)
-            }
-//            .tabViewStyle(.page(indexDisplayMode: .never))
-//            .background(Color.white)
 
-        }
-        .navigationBarHidden(true)
-        .edgesIgnoringSafeArea(.top)
-        .background(Color.white)
-        .onAppear { hideTabBar = true }
-        .onDisappear { hideTabBar = false }
-        .task {
-            do {
-                let session = try await supabase.auth.session
-                await profileVM.fetchProfile(userId: session.user.id)
-            } catch {
-                print("❌ No session: \(error)")
+    var body: some View {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
+
+            VStack(spacing: 0) {
+
+                // MARK: - Header
+                VStack(alignment: .leading, spacing: 0) {
+                    ZStack {
+                        Text("ประวัติคะแนน")
+                            .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.white)
+
+                        HStack {
+                            BackButtonWhite()
+                            Spacer()
+                        }
+                    }
+                    .padding(.top, config.headerTopPadding)
+
+                    HStack(alignment: .center, spacing: 13) {
+                        Group {
+                            if let image = profileVM.profileImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } else {
+                                Image("Profile")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            }
+                        }
+                        .frame(width: config.mainProfileSize,
+                               height: config.mainProfileSize)
+                        .clipShape(Circle())
+                        .shadow(radius: 4)
+
+                        HStack {
+                            Text(profileVM.fullName)
+                                .font(.noto(config.fontHeader, weight: .bold))
+                                .foregroundColor(.white)
+
+                            Spacer()
+
+                            VStack(alignment: .trailing) {
+                                Text("\(profileVM.totalPoints)")
+                                    .font(.system(size: config.mainPointsFontSize, weight: .bold))
+                                    .foregroundColor(.white)
+                                Text("คะแนน")
+                                    .font(.noto(config.fontSubBody, weight: .regular))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding(.trailing, config.paddingStandard)
+                    }
+                    .padding(.top, config.paddingMedium)
+                    .padding(.leading, config.paddingStandard)
+                    .padding(.bottom, config.paddingStandard)
+                }
+                .frame(height: config.mainHeaderHeight)
+                .frame(maxWidth: .infinity)
+                .background(
+                    Color.mainColor
+                        .clipShape(RoundedCorner(
+                            radius: config.bannerCornerRadius,
+                            corners: [.bottomLeft, .bottomRight]
+                        ))
+                )
+
+                // MARK: - Content
+                if historyVM.isLoading {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else {
+                    TabView {
+                        PageView(
+                            items: historyVM.items,
+                            config: config,
+                            availableHeight: geo.size.height - config.mainHeaderHeight
+                        )
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .background(Color.white)
+                }
             }
-            await historyVM.fetchHistory()
+            .navigationBarHidden(true)
+            .edgesIgnoringSafeArea(.top)
+            .background(Color.white)
+            .onAppear { hideTabBar = true }
+            .onDisappear { hideTabBar = false }
+            .task {
+                do {
+                    let session = try await supabase.auth.session
+                    await profileVM.fetchProfile(userId: session.user.id)
+                } catch {
+                    print("❌ No session: \(error)")
+                }
+                await historyVM.fetchHistory()
+            }
         }
     }
 }
 
+// MARK: - PageIndicator
 struct PageIndicator: View {
     let count: Int
     let current: Int
@@ -134,16 +141,13 @@ struct PageIndicator: View {
     }
 }
 
+// MARK: - ScoreSortMenu
 struct ScoreSortMenu: View {
     @Binding var items: [ScoreItem]
     @Binding var selectedSort: String
     @Binding var isDropdownOpen: Bool
     @Binding var currentPage: Int
-
-    let menuItems = [
-        "ใหม่ที่สุด", "เก่าที่สุด",
-        "คะแนนมาก → น้อย", "คะแนนน้อย → มาก"
-    ]
+    let config: ResponsiveConfig
 
     var body: some View {
         HStack(spacing: 0) {
@@ -154,97 +158,122 @@ struct ScoreSortMenu: View {
             } label: {
                 HStack(spacing: 2) {
                     Text("เรียงจาก")
-                        .font(.noto(14, weight: .medium))
+                        .font(.noto(config.fontCaption, weight: .medium))
                         .foregroundColor(.mainColor)
                     Image(isDropdownOpen ? "IconSort2" : "IconSort")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 14, height: 14)
+                        .frame(width: config.fontCaption, height: config.fontCaption)
                 }
             }
             .buttonStyle(.plain)
         }
-        .padding(.top, 24)
+        .padding(.top, config.sortMenuTopPadding)
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }
 
+// MARK: - PageView
 struct PageView: View {
     @State private var currentPage = 0
-    @State private var items: [ScoreItem]        // ✅ รับจากภายนอก
+    @State private var items: [ScoreItem]
     @State private var isDropdownOpen = false
     @State private var selectedSort = "ใหม่ที่สุด"
+    let config: ResponsiveConfig
+    let availableHeight: CGFloat  // ✅ รับความสูงที่เหลือใต้ header
 
     let itemsPerPage = 7
 
-    init(items: [ScoreItem]) {
+    init(items: [ScoreItem], config: ResponsiveConfig, availableHeight: CGFloat) {
         _items = State(initialValue: items)
         _currentPage = State(initialValue: 0)
+        self.config = config
+        self.availableHeight = availableHeight
     }
 
     var body: some View {
         let totalPages = max(0, (items.count - 1) / itemsPerPage)
 
         VStack(spacing: 11) {
-            ZStack(alignment: .topTrailing) {
+            if items.isEmpty {
+
+                // MARK: - Empty State
+                // ✅ ครอบ ScrollView + minHeight เพื่อให้ scroll ได้ใน landscape
                 ScrollView {
-                    VStack(spacing: 9) {
-                        ScoreSortMenu(
-                            items: $items,
-                            selectedSort: $selectedSort,
-                            isDropdownOpen: $isDropdownOpen,
-                            currentPage: $currentPage
-                        )
-                        .padding(.horizontal, 15)
+                    VStack(spacing: config.spacingMedium) {
+                        Image("ListEmpty")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: config.emptyStateImageSize,
+                                   height: config.emptyStateImageSize)
 
-                        ForEach(currentItems, id: \.id) { item in
-                            ScoreCard(
-                                title: item.title,
-                                date: item.date,
-                                points: item.points,
-                                backgroundColor: item.color
+                        Text("ยังไม่มีคะแนน?")
+                            .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.textFieldColor)
+
+                        Text("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!")
+                            .font(.noto(config.fontSubHeader, weight: .bold))
+                            .foregroundColor(.textFieldColor)
+                    }
+                    // ✅ portrait → จัดกลาง, landscape → scroll ได้
+                    .frame(maxWidth: .infinity, minHeight: availableHeight)
+                }
+
+            } else {
+
+                // MARK: - มีข้อมูล
+                ZStack(alignment: .topTrailing) {
+                    ScrollView {
+                        VStack(spacing: 9) {
+                            ScoreSortMenu(
+                                items: $items,
+                                selectedSort: $selectedSort,
+                                isDropdownOpen: $isDropdownOpen,
+                                currentPage: $currentPage,
+                                config: config
                             )
+                            .padding(.horizontal, config.paddingMedium)
+
+                            ForEach(currentItems, id: \.id) { item in
+                                ScoreCard(
+                                    title: item.title,
+                                    date: item.date,
+                                    points: item.points,
+                                    backgroundColor: item.color
+                                )
+                            }
                         }
-
+                        .padding(.bottom, config.paddingMedium)
                     }
-                    .padding(.bottom, 16)
-                    
-                }
-//                .padding(.horizontal, 16)
-                .contentShape(Rectangle())
-                
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if isDropdownOpen {
+                            withAnimation { isDropdownOpen = false }
+                        }
+                    }
 
-                .onTapGesture {
                     if isDropdownOpen {
-                        withAnimation { isDropdownOpen = false }
+                        DropdownOverlay(
+                            items: $items,
+                            currentPage: $currentPage,
+                            isOpen: $isDropdownOpen,
+                            selectedSort: $selectedSort
+                        )
+                        .padding(.top, 0)
+                        .padding(.trailing, config.paddingMedium)
+                        .zIndex(999)
                     }
                 }
-
-                if isDropdownOpen {
-                    DropdownOverlay(
-                        items: $items,
-                        currentPage: $currentPage,
-                        isOpen: $isDropdownOpen,
-                        selectedSort: $selectedSort
-                    )
-                    .padding(.top, 0)
-                    .padding(.trailing, 15)
-                    .zIndex(999)
-                }
-            }
-            .background(Color.white)
-            .cornerRadius(20)
-            .padding(.horizontal, 16)
-
-
-
-            CustomPaginationView(currentPage: $currentPage, maxPage: totalPages)
-                .padding(.vertical, 16)
                 .background(Color.white)
-                .cornerRadius(10)
-        }
+                .cornerRadius(config.bannerCornerRadius)
+                .padding(.horizontal, config.paddingMedium)
 
-        
+                CustomPaginationView(currentPage: $currentPage, maxPage: totalPages)
+                    .padding(.vertical, config.paddingMedium)
+                    .background(Color.white)
+                    .cornerRadius(10)
+            }
+        }
     }
 
     var currentItems: [ScoreItem] {
@@ -253,13 +282,8 @@ struct PageView: View {
         guard start < end else { return [] }
         return Array(items[start..<end])
     }
-
 }
 
 #Preview {
     ScoreHistoryView(hideTabBar: .constant(true))
 }
-
-
-
-

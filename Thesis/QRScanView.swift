@@ -10,6 +10,7 @@ import PhotosUI
 struct QRScanView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     @State private var showDetailView = false
     @Binding var index: Int
@@ -27,33 +28,33 @@ struct QRScanView: View {
 
     @State private var qrResult: String = ""
 
-    private var resultTitle: AttributedString {
+    private func resultTitle(config: ResponsiveConfig) -> AttributedString {
         var text = AttributedString(qrResult)
-        text.font = .noto(18, weight: .medium)
+        text.font = .noto(config.fontSubHeader, weight: .medium)
         if let range = text.range(of: "COSCI") {
-            text[range].font = .inter(18, weight: .medium)
+            text[range].font = .inter(config.fontSubHeader, weight: .medium)
         }
         return text
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
 
-            GeometryReader { geo in
+            ZStack(alignment: .top) {
+
+                // MARK: - Background
                 Image("QRBackground")
                     .resizable()
                     .scaledToFill()
                     .frame(width: geo.size.width, height: geo.size.height)
                     .clipped()
-            }
-            .ignoresSafeArea()
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-
-                headerView
-
+                // MARK: - Foreground
                 VStack(spacing: 0) {
 
+                    headerView(config: config)
 //                    Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
 //                        .font(.noto(20, weight: .medium))
 //                        .foregroundColor(.black)
@@ -114,102 +115,162 @@ struct QRScanView: View {
                         .ignoresSafeArea()
 
                     VStack(spacing: 0) {
-                        Image("Passmark")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 111, height: 111)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
 
-                        Text("ยืนยันถังขยะ")
-                            .font(.noto(25, weight: .bold))
+                        Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
+                            .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
-                            .padding(.top, 10)
+                            .frame(maxWidth: config.qrContentMaxWidth,
+                                   minHeight: config.qrBannerHeight)
+                            .background(Color.textFieldColor)
+                            .cornerRadius(config.bannerCornerRadius)
+                            .padding(.top, config.qrBannerTopPadding)
 
-                        Text(resultTitle)
-                            .foregroundColor(.black)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 4)
-
-                        HStack(spacing: 21) {
-                            Button {
-                                showResultAlert = false
-                                showResultAlert = false
-                                cameraID = UUID()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    isScanning = true
-                                    isCameraActive = true
+                        ZStack {
+                            CameraPreview(
+                                isScanning: $isScanning,
+                                isActive: $isCameraActive,
+                                capturedImage: .constant(nil),
+                                isFlashOn: $isFlashOn,
+                                scanMode: true,
+                                onScan: { result in
+                                    qrResult = result
+                                    isCameraActive = false
+                                    isScanning = false
+                                    if result.contains("COSCI") {
+                                        showResultAlert = true
+                                    } else {
+                                        showErrorAlert = true
+                                    }
                                 }
-                            } label: {
-                                Text("ยกเลิก")
-                                    .font(.noto(16, weight: .bold))
-                                    .foregroundColor(.mainColor)
-                                    .frame(width: 120, height: 40)
-                                    .background(Color.white)
-                                    .cornerRadius(20)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color.mainColor, lineWidth: 2)
-                                    )
-                            }
+                            )
+                            .id(cameraID)
+                            .frame(width: config.cameraSize,
+                                   height: config.cameraSize)
+                            .cornerRadius(config.bannerCornerRadius)
 
-                            Button {
-                                hideTabBar = true
-                                showResultAlert = false
-                                showAiScanView = true
-                            } label: {
-                                Text("ยืนยัน")
-                                    .font(.noto(16, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 120, height: 40)
-                                    .background(Color.mainColor)
-                                    .cornerRadius(20)
-                            }
+                            QRCornerLines(config: config)
                         }
-                        .padding(25)
-                    }
-                    .padding(20)
-                    .frame(width: 343, height: 320)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                }
-            }
+                        .frame(width: config.cameraSize, height: config.cameraSize)
+                        .padding(.top, config.qrCameraTopPadding)
 
-            // Error Alert
-            if showErrorAlert {
-                ErrorPopupView(title: "สแกนไม่สำเร็จ") {
-                    showErrorAlert = false
-                    cameraID = UUID()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        isScanning = true
-                        isCameraActive = true
+                        Spacer()
+                        Color.clear.frame(height: 50)
+                    }
+                }
+
+                // MARK: - Result Alert
+                if showResultAlert {
+                    ZStack {
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .opacity(0.8)
+                            .ignoresSafeArea()
+
+                        VStack(spacing: 0) {
+                            Image("Passmark")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: config.alertIconSize,
+                                       height: config.alertIconSize)
+                                .padding(.top, config.paddingStandard)
+
+                            Text("ยืนยันถังขยะ")
+                                .font(.noto(config.titleFontSize, weight: .bold))
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, config.spacingSmall)
+
+                            Text(resultTitle(config: config))
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, config.paddingSmall)
+
+                            HStack(spacing: config.alertButtonSpacing) {
+                                Button {
+                                    showResultAlert = false
+                                    cameraID = UUID()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        isScanning = true
+                                        isCameraActive = true
+                                    }
+                                } label: {
+                                    Text("ยกเลิก")
+                                        .font(.noto(config.fontBody, weight: .bold))
+                                        .foregroundColor(.mainColor)
+                                        .frame(width: config.qrAlertButtonWidth,
+                                               height: config.qrAlertButtonHeight)
+                                        .background(Color.white)
+                                        .cornerRadius(config.qrAlertButtonHeight / 2)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: config.qrAlertButtonHeight / 2)
+                                                .stroke(Color.mainColor, lineWidth: 2)
+                                        )
+                                }
+
+                                Button {
+                                    hideTabBar = true
+                                    showResultAlert = false
+                                    showAiScanView = true
+                                } label: {
+                                    Text("ยืนยัน")
+                                        .font(.noto(config.fontBody, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .frame(width: config.qrAlertButtonWidth,
+                                               height: config.qrAlertButtonHeight)
+                                        .background(Color.mainColor)
+                                        .cornerRadius(config.qrAlertButtonHeight / 2)
+                                }
+                            }
+                            .padding(config.paddingStandard)
+                        }
+                        .padding(config.paddingMedium)
+                        .frame(width: config.qrContentMaxWidth,
+                               height: config.qrAlertHeight)
+                        .background(Color.white)
+                        .cornerRadius(config.bannerCornerRadius)
+                    }
+                }
+
+                // MARK: - Error Alert
+                if showErrorAlert {
+                    ErrorPopupView(title: "สแกนไม่สำเร็จ") {
+                        showErrorAlert = false
+                        cameraID = UUID()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            isScanning = true
+                            isCameraActive = true
+                        }
                     }
                 }
             }
-        }
-        .onAppear {
-            hideTabBar = true
-            isCameraActive = true
-        }
-        .onDisappear {
-            hideTabBar = false
-            isCameraActive = false
-        }
-        .navigationDestination(isPresented: $showAiScanView) {
-            AiScanView(hideTabBar: $hideTabBar)
+            .onAppear {
+                hideTabBar = true
+                isCameraActive = true
+                OrientationHelper.setOrientation(.portrait)
+            }
+            .onDisappear {
+                hideTabBar = false
+                isCameraActive = false
+                OrientationHelper.setOrientation(.all)
+            }
+            .navigationDestination(isPresented: $showAiScanView) {
+                AiScanView(hideTabBar: $hideTabBar)
+            }
         }
     }
 
-    private var headerView: some View {
+    // MARK: - Header
+    private func headerView(config: ResponsiveConfig) -> some View {
         HStack {
             XBackButtonBlack(index: $index)
-            Color.clear.frame(width: 10, height: 10)
+            Color.clear.frame(width: config.spacingSmall,               
+                              height: config.spacingSmall)
 
             Spacer()
 
             Text("สแกนคิวอาร์โค้ดถังขยะ")
-                .font(.noto(25, weight: .bold))
+                .font(.noto(config.titleFontSize, weight: .bold))
                 .foregroundColor(.black)
 
             Spacer()
@@ -218,18 +279,33 @@ struct QRScanView: View {
                 Image(isFlashOn ? "FlashOn" : "FlashOff")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 35, height: 35)
-                    .padding(.trailing, 25)
+                    .frame(width: config.headerIconSize,
+                           height: config.headerIconSize)
+                    .padding(.trailing, config.paddingStandard)
             }
         }
-        .padding(.top, 65)
-        .padding(.bottom, 20)
+        .padding(.top, config.headerTopPadding)
+        .padding(.bottom, config.paddingMedium)
         .frame(maxWidth: .infinity)
         .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
+
+    // MARK: - Orientation Helper
+    func setOrientation(_ orientation: UIInterfaceOrientationMask) {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            AppDelegate.orientationLock = orientation
+            let rootViewController = windowScene.windows.first?.rootViewController
+            rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+            if #available(iOS 16.0, *) {
+                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
+            } else {
+                UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            }
+        }
+    }
 }
 
-// MARK: - QR Frame View
+// MARK: - QR Scan Frame View
 struct QRScanFrameView: View {
     var body: some View {
         ZStack {
@@ -247,8 +323,10 @@ struct QRScanFrameView: View {
 
 // MARK: - QR Corner Lines
 struct QRCornerLines: View {
-    let lineLength: CGFloat = 30
-    let lineWidth: CGFloat = 4
+    var config: ResponsiveConfig? = nil
+
+    private var lineLength: CGFloat { config?.qrCornerLineLength ?? 30 }
+    private let lineWidth: CGFloat = 4
 
     var body: some View {
         GeometryReader { geo in

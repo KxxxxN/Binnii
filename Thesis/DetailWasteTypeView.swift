@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailWasteTypeView: View {
 
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Binding var hideTabBar: Bool
     let category: String
     
@@ -38,70 +39,81 @@ struct DetailWasteTypeView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            VStack(spacing: 0) {
-
-                ZStack {
-                    Text("ประเภทขยะ")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.black)
-                    
-                    HStack {
-                        BackButton()
-                        Spacer()
-                    }
-                }
-                .padding(.bottom,27)
+            ZStack {
+                Color.backgroundColor
+                    .ignoresSafeArea()
                 
-                ScrollView {
-                    
-                    Image(imageForCategory(category))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    
-                    Spacer().frame(height: 23)
-                    
-                    // ✅ แสดง component ตาม category
-                    switch category {
-                    case "ขวดพลาสติก":  RecycleWasteDetailPlasticBottle()
-                    case "แก้วพลาสติก":  RecycleWasteDetailPlasticCup()
-                    case "กระป๋อง":      RecycleWasteDetailCan()
-                    case "กล่องกระดาษ":  RecycleWasteDetailCardboardBox()
-                    case "กระดาษทั่วไป": RecycleWasteDetailPaper()
-                    case "ถุงพลาสติก":   RecycleWasteDetailPlasticBag()
-                    case "เศษอาหาร":  WetWasteDetailFoodscraps()
-                    case "เปลือกผลไม้":  WetWasteDetailFruitPeel()
-                    case "เศษขนม":      WetWasteDetailCrumbs()
-                    case "เปลือกไข่":  WetWasteDetailEggshell()
-                    case "เครื่องดื่มเหลือ": WetWasteDetailLeftoverDrinks()
-                    case "น้ำแข็งเหลือ":   WetWasteDetailLeftoverIce()
-                    case "ซองขนม": GeneralWasteDetailSnackBag()
-                    case "ภาชนะใส่อาหาร": GeneralWasteDetailFoodContainer()
-                    case "หลอด": GeneralWasteDetailStraw()
-                    case "กระดาษทิชชู่": GeneralWasteDetailTissue()
-                    case "ตะเกียบไม้": GeneralWasteDetailChopsticks()
-                    case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon()
+                VStack(spacing: 0) {
+
+                    // ส่วน Header (ชื่อหน้า + ปุ่ม Back)
+                    ZStack {
+                        Text("ประเภทขยะ")
+                            .font(.noto(config.fontTitle, weight: .bold))
+                            .foregroundColor(.black)
                         
-                    default:
-                        Text("ไม่พบข้อมูลประเภทขยะนี้")
-                            .font(.noto(18, weight: .medium))
-                            .foregroundColor(.gray)
-                            .padding()
+                        HStack {
+                            BackButton()
+                            Spacer()
+                        }
                     }
+                    .padding(.horizontal, config.isIPad ? 60 : 20)
+                    .padding(.bottom, config.isIPad ? 40 : 27)
+                    .padding(.top, config.headerTopPadding)
+
+                    
+                    ScrollView(showsIndicators: false) {
+                        
+                        VStack(spacing: 0) {
+                            Image(imageForCategory(category))
+                                .resizable()
+                                .frame(maxWidth: .infinity)
+                                .aspectRatio(1.25, contentMode: .fill)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .padding(.horizontal, config.isIPad ? 60 : 20)
+                            
+                            Spacer().frame(height: config.isIPad ? 40 : 23)
+                            
+                            // ✅ แสดง component ตาม category และส่ง config เข้าไป
+                            switch category {
+                            case "ขวดพลาสติก":  RecycleWasteDetailPlasticBottle(config: config)
+                            case "แก้วพลาสติก":  RecycleWasteDetailPlasticCup(config: config)
+                            case "กระป๋อง":      RecycleWasteDetailCan(config: config)
+                            case "กล่องกระดาษ":  RecycleWasteDetailCardboardBox(config: config)
+                            case "กระดาษทั่วไป": RecycleWasteDetailPaper(config: config)
+                            case "ถุงพลาสติก":   RecycleWasteDetailPlasticBag(config: config)
+                            case "เศษอาหาร":     WetWasteDetailFoodscraps(config: config)
+                            case "เปลือกผลไม้":  WetWasteDetailFruitPeel(config: config)
+                            case "เศษขนม":       WetWasteDetailCrumbs(config: config)
+                            case "เปลือกไข่":    WetWasteDetailEggshell(config: config)
+                            case "เครื่องดื่มเหลือ": WetWasteDetailLeftoverDrinks(config: config)
+                            case "น้ำแข็งเหลือ":   WetWasteDetailLeftoverIce(config: config)
+                            case "ซองขนม":       GeneralWasteDetailSnackBag(config: config)
+                            case "ภาชนะใส่อาหาร": GeneralWasteDetailFoodContainer(config: config)
+                            case "หลอด":         GeneralWasteDetailStraw(config: config)
+                            case "กระดาษทิชชู่":   GeneralWasteDetailTissue(config: config)
+                            case "ตะเกียบไม้":     GeneralWasteDetailChopsticks(config: config)
+                            case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon(config: config)
+                                
+                            default:
+                                Text("ไม่พบข้อมูลประเภทขยะนี้")
+                                    .font(.noto(config.fontSubHeader, weight: .medium))
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
+                        }
+                    }
+                    .edgesIgnoringSafeArea(.bottom)  // ⭐ ให้ยาวจนสุดขอบล่าง
                 }
-                .edgesIgnoringSafeArea(.bottom)  // ⭐ ให้ยาวจนสุดขอบล่าง
+                .ignoresSafeArea(.container, edges: .top)
+
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear {
-            hideTabBar = true
+            .navigationBarHidden(true)
+            .onAppear {
+                hideTabBar = true
+            }
         }
     }
 }
-
-

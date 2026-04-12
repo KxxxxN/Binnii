@@ -9,12 +9,13 @@ import SwiftUI
 
 struct DetailView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Binding var hideTabBar: Bool
 
     let separationSteps = [
-        SeparationStep(imageName: "DetailRecycle1", text: "เทน้ำให้หมด", imageSize: CGSize(width: 100, height: 100)),
-        SeparationStep(imageName: "DetailRecycle2", text: "เอาฝาและฉลากออก", imageSize: CGSize(width: 120, height: 120)),
-        SeparationStep(imageName: "DetailRecycle3", text: "บีบขวดให้แบน", imageSize: CGSize(width: 100, height: 100))
+        SeparationStep(imageName: "DetailRecycle1", text: "เทน้ำให้หมด"),
+        SeparationStep(imageName: "DetailRecycle2", text: "เอาฝาและฉลากออก"),
+        SeparationStep(imageName: "DetailRecycle3", text: "บีบขวดให้แบน")
     ]
 
     let recyclingMethods = [
@@ -24,186 +25,192 @@ struct DetailView: View {
     ]
     
     let plasticbottleStep = [
-        PlasticbottleStep(imageName: "bin-icon1", text: "ถังขยะเปียก", imageSize: CGSize(width: 40, height: 40)),
-        PlasticbottleStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล", imageSize: CGSize(width: 40, height: 40)),
-        PlasticbottleStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป", imageSize: CGSize(width: 40, height: 40)),
-        PlasticbottleStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล", imageSize: CGSize(width: 40, height: 40))
+        PlasticbottleStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
+        PlasticbottleStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
+        PlasticbottleStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
+        PlasticbottleStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล")
     ]
     
     var body: some View {
-        ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            VStack(spacing: 0) {
-                // MARK: - Header Section
-                ZStack {
-                    Text("รายละเอียด")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.black)
-                    
-                    HStack {
-                        BackButton()
-                        Spacer()
-                    }
-                }
-                .padding(.bottom, 20)
-
-                // MARK: - Content Section
-                ScrollView {
-                    VStack(spacing: 0) {
-                        Image("TypeBottle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .padding(.bottom, 30) // ระยะห่างก่อนถึงขอบโค้ง
+            ZStack {
+                Color.backgroundColor
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // MARK: - Header Section
+                    ZStack {
+                        Text("รายละเอียด")
+                            .font(.noto(config.fontTitle, weight: .bold))
+                            .foregroundColor(.black)
                         
-                        VStack(alignment: .leading, spacing: 0) {
-                            
-                            // ชื่อขยะและวันที่
-                            HStack(spacing: 12) {
-                                Text("ขวดพลาสติก")
-                                    .font(.noto(25, weight: .bold))
-                                    .foregroundColor(.black)
-                                
-                                Text("13/9/2568 - 13:00")
-                                    .font(.noto(15, weight: .medium))
-                                    .foregroundColor(.black)
-                                    .padding(.top, 8)
-                            }
-                            .padding(.top, 30)
-                            .padding(.horizontal, 37)
+                        HStack {
+                            BackButton()
+                            Spacer()
+                        }
+                    }
+                    .padding(.horizontal, config.isIPad ? 60 : 20)
+                    .padding(.bottom, config.isIPad ? 40 : 27)
+                    .padding(.top, config.headerTopPadding)
 
+                    // MARK: - Content Section
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 0) {
                             
-                            // ประเภทถังขยะ
-                            HStack(spacing: 32) {
-                                Image("Bin3")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 180, height: 180)
+                            Image("TypeBottle")
+                                .resizable()
+                                .frame(maxWidth: .infinity)
+                                .aspectRatio(1.25, contentMode: .fill)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .padding(.horizontal, config.isIPad ? 60 : 20)
+                            
+                            Spacer().frame(height: config.isIPad ? 40 : 23)
+                            
+                            // MARK: - ส่วนเนื้อหารายละเอียด
+                            VStack(alignment: .leading, spacing: 0) {
                                 
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("ประเภทถังขยะ")
-                                        .font(.noto(20, weight: .bold))
+                                // ชื่อขยะและวันที่
+                                HStack(spacing: 12) {
+                                    Text("ขวดพลาสติก")
+                                        .font(.noto(config.titleFontSize, weight: .bold))
+                                        .foregroundColor(.black)
                                     
-                                    HStack(spacing: 0) {
-                                        Text("ถังขยะรีไซเคิล ")
-                                            .font(.noto(18, weight: .medium))
-                                        Text("(สีเหลือง)")
-                                            .font(.noto(18, weight: .bold))
-                                            .foregroundColor(.recycleWasteColor)
-                                    }
+                                    Text("13/9/2568 - 13:00")
+                                        .font(.noto(config.detailStepTextFontSize, weight: .medium))
+                                        .foregroundColor(.black)
+                                        .padding(.top, config.isIPad ? 12 : 8)
                                 }
-                            }
-                            .padding(.top, 10)
-                            
-                            // วิธีการแยกขยะ
-                            VStack(alignment: .leading, spacing: -10) {
-                                Text("วิธีการแยกขยะ")
-                                    .font(.noto(20, weight: .bold))
-                                    .foregroundColor(.black)
+                                .padding(.top, 24)
+                                .padding(.horizontal, config.detailContentPaddingH)
 
-                                
-                                HStack(spacing: 0) {
-                                    ForEach(separationSteps.indices, id: \.self) { index in
+                                // ประเภทถังขยะ
+                                HStack(spacing: 13) {
+                                    Image("Bin3")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: config.detailMainBinHeight) // ใช้ Config แทนการฟิกซ์เลข
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("ประเภทถังขยะ")
+                                            .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                                         
-                                        if index > 0 {
-                                            Image(systemName: "arrow.right")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 20))
-                                                .padding(.horizontal, 2)
-                                        }
-                                        
-                                        VStack(spacing: 0) {
-                                            ZStack {
-                                                Color.clear
-                                                    .frame(width: 90, height: 90)
-                                                    .background(Color.clear)
-                                                
-                                                Image(separationSteps[index].imageName)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(
-                                                        width: separationSteps[index].imageSize.width,
-                                                        height: separationSteps[index].imageSize.height
-                                                    )
-                                            }
-                                            
-                                            Text(separationSteps[index].text)
-                                                .font(.noto(15, weight: .medium))
-                                                .foregroundColor(.black)
-                                                .multilineTextAlignment(.center)
-                                                .lineLimit(nil)
-                                                .fixedSize(horizontal: false, vertical: true)
-                                                .frame(width: 100)
-                                        }
-                                    }
-                                }
-                                
-                                HStack (spacing: 35){
-                                    ForEach(plasticbottleStep.indices, id: \.self) { index in
-                                        VStack(spacing: 4) {
-                                            Image(plasticbottleStep[index].imageName)
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(
-                                                    width: plasticbottleStep[index].imageSize.width,
-                                                    height: plasticbottleStep[index].imageSize.height
-                                                )
-
-                                            Text(plasticbottleStep[index].text)
-                                                .font(.noto(12, weight: .medium))
-                                                .foregroundColor(.black)
+                                        HStack(spacing: 0) {
+                                            Text("ถังขยะรีไซเคิล ")
+                                                .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                                            Text("(สีเหลือง)")
+                                                .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
+                                                .foregroundColor(.recycleWasteColor)
                                         }
                                     }
                                 }
                                 .padding(.top, 25)
-                                .padding(.horizontal, 10)
-
-                            }
-                            .padding(.horizontal, 37)
-                            .padding(.top, 25)
-                            
-                            // การรีไซเคิล
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("การรีไซเคิล")
-                                    .font(.noto(20, weight: .bold))
+                                .padding(.horizontal, config.detailContentPaddingH)
                                 
-                                VStack(alignment: .leading, spacing: 8) {
-                                    ForEach(recyclingMethods, id: \.self) { method in
-                                        Text("•   \(method)")
-                                            .font(.noto(17, weight: .medium))
+                                // วิธีการแยกขยะ
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("วิธีการแยกขยะ")
+                                        .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, config.detailContentPaddingH)
+
+                                    HStack(alignment: .top, spacing: 0) {
+                                        ForEach(separationSteps.indices, id: \.self) { index in
+                                            
+                                            // ลูกศรคั่นกลาง
+                                            if index > 0 {
+                                                Image(systemName: "arrow.right")
+                                                    .foregroundColor(.black)
+                                                    .font(.system(size: config.detailArrowSize))
+                                                    .padding(.horizontal, 2)
+                                                    .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
+                                            }
+                                            
+                                            // รูปภาพและข้อความขั้นตอน
+                                            VStack(spacing: 0) {
+                                                Image(separationSteps[index].imageName)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
+                                                    .padding(.bottom, 10)
+                                                
+                                                Text(separationSteps[index].text)
+                                                    .font(.noto(config.detailStepTextFontSize, weight: .medium))
+                                                    .foregroundColor(.black)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineLimit(2)
+                                                    .fixedSize(horizontal: false, vertical: true)
+                                                    .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
+                                                
+                                                Spacer().frame(height: 10)
+                                                
+                                                // ถังขยะใบเล็กด้านล่าง (เช็ค index ป้องกัน error)
+                                                if index < plasticbottleStep.count {
+                                                    VStack(spacing: 2) {
+                                                        Image(plasticbottleStep[index].imageName)
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
+                                                        
+                                                        Text(plasticbottleStep[index].text)
+                                                            .font(.noto(config.detailBinTextFontSize, weight: .medium))
+                                                            .foregroundColor(.black)
+                                                            .multilineTextAlignment(.center)
+                                                    }
+                                                }
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                        }
+                                    }
+                                    .padding(.horizontal, config.isIPad ? 20 : 10)
+                                }
+                                .padding(.top, 30)
+                                
+                                // การรีไซเคิล
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("การรีไซเคิล")
+                                        .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                                    
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        ForEach(recyclingMethods, id: \.self) { method in
+                                            Text("•   \(method)")
+                                                .font(.noto(config.detailBodyFontSize, weight: .medium))
+                                        }
                                     }
                                 }
+                                .padding(.horizontal, config.detailContentPaddingH)
+                                .padding(.top, 30)
+                                .padding(.bottom, 50)
+                                
                             }
-                            .padding(.horizontal, 37)
-                            .padding(.top, 30)
-                            .padding(.bottom, 50)
-                            
-                            Spacer(minLength: 0)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                            .background(
+                                Color.knowledgeBackground
+                                    .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
+                                    .ignoresSafeArea(.container, edges: .horizontal)
+                            )
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(
-                            Color.knowledgeBackground
-                                .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
-                        )                    }
-                    // กำหนดความสูงเริ่มต้นให้เนื้อหาส่วนล่างเพื่อให้ ScrollView คำนวณพื้นที่ได้
-                    .frame(minHeight: 750)
+                    }
+                    .edgesIgnoringSafeArea(.bottom)
                 }
-                .edgesIgnoringSafeArea(.bottom)
+                .ignoresSafeArea(.container, edges: .top)
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear {
-            hideTabBar = true
+            .navigationBarHidden(true)
+            .onAppear {
+                hideTabBar = true
+            }
         }
     }
 }
 
-
+// MARK: - Models
 struct SeparationStep {
     let imageName: String
     let text: String
-    let imageSize: CGSize
+}
+
+struct PlasticbottleStep {
+    let imageName: String
+    let text: String
 }

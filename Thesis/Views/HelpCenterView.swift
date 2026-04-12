@@ -9,45 +9,56 @@ import SwiftUI
 
 struct HelpCenterView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
     
     var body: some View {
-        //        NavigationStack {
-        VStack(spacing: 0) {
+        GeometryReader { geo in
+            // เรียกใช้ ResponsiveConfig
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            ZStack {
-                Text("ช่วยเหลือ")
-                    .font(.noto(25, weight: .bold))
-                
-                HStack {
-                    BackButton()
-                    Spacer()
-                }
-            }
-            
-            // Menu List
             VStack(spacing: 0) {
                 
-                // วิธีการใช้งาน
-                HelpMenuRow(
-                    title: "วิธีการใช้งาน",
-                    imageName: "BookGuide",
-                    destination: Text("หน้าวิธีการใช้งาน")
-                )
+                ZStack {
+                    Text("ช่วยเหลือ")
+                        .font(.noto(config.titleFontSize, weight: .bold))
+                    
+                    HStack {
+                        BackButton()
+                        Spacer()
+                    }
+                }
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
                 
-                // คำถามที่พบบ่อย
-                HelpMenuRow(
-                    title: "คำถามที่พบบ่อย",
-                    imageName: "Question",
-                    destination: FAQView()
-                )
+                // Menu List
+                VStack(spacing: 0) {
+                    
+                    // วิธีการใช้งาน
+                    HelpMenuRow(
+                        title: "วิธีการใช้งาน",
+                        imageName: "BookGuide",
+                        destination: Text("หน้าวิธีการใช้งาน"),
+                        config: config
+                    )
+                    
+                    // คำถามที่พบบ่อย
+                    HelpMenuRow(
+                        title: "คำถามที่พบบ่อย",
+                        imageName: "Question",
+                        destination: FAQView(),
+                        config: config
+                    )
+                }
+                .padding(.top, 40)
+                
+                Spacer()
             }
-            .padding(.top, 40)
-            
-            Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
+                .navigationBarBackButtonHidden(true)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.backgroundColor)
-        .navigationBarBackButtonHidden(true)
     }
 }
 //}

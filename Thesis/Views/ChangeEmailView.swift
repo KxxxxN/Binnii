@@ -10,26 +10,25 @@ import SwiftUI
 struct ChangeEmailView: View {
     @StateObject private var viewModel = ChangeEmailViewModel()
     @Environment(\.dismiss) private var dismiss
-//    @State private var navigateToProfile: Bool = false
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-//        NavigationStack {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            
             VStack(spacing: 0) {
                 ZStack {
                     Text("ยืนยันแก้ไขอีเมล")
-                        .font(.noto(25, weight: .bold))
+                        .font(.noto(config.titleFontSize, weight: .bold))
                         .foregroundColor(.black)
+                    
                     HStack {
-                        BackButton(
-//                            action: {
-//                                navigateToProfile = true
-//                            }
-                        )
-                        
+                        BackButton()
                         Spacer()
                     }
                 }
-                .padding(.bottom, 30)
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
                 
                 // MARK: - Input Field
                 LoginInputField(
@@ -37,7 +36,8 @@ struct ChangeEmailView: View {
                     placeholder: "กรอกอีเมลที่ต้องการแก้ไข",
                     text: $viewModel.newEmail,
                     isValid: .constant(!viewModel.isSubmitted || viewModel.emailError == nil),
-                    errorMessage: viewModel.isSubmitted ? (viewModel.emailError ?? "") : ""
+                    errorMessage: viewModel.isSubmitted ? (viewModel.emailError ?? "") : "",
+                    config: config 
                 )
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
@@ -53,25 +53,23 @@ struct ChangeEmailView: View {
                             await viewModel.validateEmail()
                         }
                     },
-                    width: 155,
-                    height: 49
+                    width: config.isIPad ? 220 : 155,
+                    height: config.isIPad ? 60 : 49
                 )
-                .padding(.top, 40)
+                .padding(.top, config.isIPad ? 55 : 40)
                 
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundColor)
+            .background(Color.backgroundColor.ignoresSafeArea())
             .navigationDestination(isPresented: $viewModel.navigateToOTP) {
                 OTPConfirmView(
                     source: .changeEmail,
                     email: viewModel.newEmail
                 )
             }
-//            .navigationDestination(isPresented: $navigateToProfile) {
-//                ProfileView()
-//            }
-        .navigationBarBackButtonHidden(true)
+            .navigationBarBackButtonHidden(true)
+        }
     }
 }
 

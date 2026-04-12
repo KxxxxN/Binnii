@@ -18,6 +18,8 @@ struct MainTabView: View {
             Color.mainColor
                 .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
                 .ignoresSafeArea(edges: .bottom)
+                .ignoresSafeArea(.container, edges: .horizontal)
+
 
             HStack {
                 tabButton(image: "Home2", selectedImage: "Home1", label: "หน้าหลัก", indexValue: 0)
