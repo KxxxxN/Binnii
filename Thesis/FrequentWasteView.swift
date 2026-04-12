@@ -17,14 +17,14 @@ struct WasteItem: Identifiable, Hashable {
 struct FrequentWasteView: View {
 
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
-    @State private var selectedWaste: WasteItem? = nil    
-
+    @State private var selectedWaste: WasteItem? = nil
     @State private var currentPage = 1
-    @StateObject private var vm = FrequentWasteViewModel() // ✅ เพิ่ม
+    @StateObject private var vm = FrequentWasteViewModel()
 
     let itemsPerPage = 6
-    
+
     var sortedWasteItems: [WasteItem] { vm.wasteItems }
 
     func extractNumber(_ text: String) -> Int {
@@ -40,14 +40,61 @@ struct FrequentWasteView: View {
     var totalPages: Int {
         max(1, Int(ceil(Double(sortedWasteItems.count) / Double(itemsPerPage))))
     }
-    
-    var headerView: some View {
+
+    var body: some View {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
+
+            ZStack {
+                Color.backgroundColor.ignoresSafeArea()
+
+                VStack(spacing: 0) {
+
+                    headerView(config: config)
+
+                    if vm.isLoading {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVGrid(
+                                columns: [
+                                    GridItem(.flexible(), spacing: config.paddingMedium),
+                                    GridItem(.flexible(), spacing: config.paddingMedium)
+                                ],
+                                spacing: config.paddingMedium
+                            ) {
+                                ForEach(paginatedItems, id: \.self) { item in
+                                    WasteCardView(item: item, config: config)
+                                        .onTapGesture { selectedWaste = item }
+                                }
+                            }
+                            .padding(.horizontal, config.paddingMedium)
+                            .padding(.top, config.wasteGridTopPadding)                    
+                        }
+
+                        paginationSection(config: config)
+                    }
+                }
+                .edgesIgnoringSafeArea(.top)
+            }
+            .navigationDestination(item: $selectedWaste) { waste in
+                WasteTypeView(hideTabBar: .constant(true), category: waste.title)
+                    .navigationBarBackButtonHidden(true)
+            }
+            .task { await vm.fetchWasteCounts() }
+        }
+    }
+
+    // MARK: - Header
+    private func headerView(config: ResponsiveConfig) -> some View {
         ZStack {
             Color.mainColor
 
             ZStack {
                 Text("ขยะที่แยกทั้งหมด")
-                    .font(.noto(25, weight: .bold))
+                    .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.white)
 
                 HStack {
@@ -55,30 +102,31 @@ struct FrequentWasteView: View {
                     Spacer()
                 }
             }
-            .padding(.top, 69)
-            .padding(.bottom, 28)
+            .padding(.top, config.headerTopPadding)
+            .padding(.bottom, config.paddingStandard)
         }
-        .frame(height: 123)
-        .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+        .frame(height: config.searchHeaderHeight)
+        .cornerRadius(config.bannerCornerRadius,
+                      corners: [.bottomLeft, .bottomRight])
     }
 
-
-    var paginationSection: some View {
-        HStack(spacing: 19) {
-
+    // MARK: - Pagination
+    private func paginationSection(config: ResponsiveConfig) -> some View {
+        HStack(spacing: config.paginationSpacing) {
             Button(action: { if currentPage > 1 { currentPage -= 1 } }) {
                 Image(systemName: "chevron.left")
                     .foregroundColor(currentPage == 1 ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
+                    .font(.system(size: config.fontHeader))
             }
             .disabled(currentPage == 1)
 
             ForEach(1...totalPages, id: \.self) { page in
                 Button(action: { currentPage = page }) {
                     Text("\(page)")
-                        .font(.noto(16, weight: .medium))
+                        .font(.noto(config.fontBody, weight: .medium))
                         .foregroundColor(currentPage == page ? .white : Color.mainColor)
-                        .frame(width: 30, height: 30)
+                        .frame(width: config.paginationButtonSize,
+                               height: config.paginationButtonSize)
                         .background(currentPage == page ? Color.mainColor : Color.clear)
                         .clipShape(Circle())
                 }
@@ -87,63 +135,18 @@ struct FrequentWasteView: View {
             Button(action: { if currentPage < totalPages { currentPage += 1 } }) {
                 Image(systemName: "chevron.right")
                     .foregroundColor(currentPage == totalPages ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
+                    .font(.system(size: config.fontHeader))
             }
             .disabled(currentPage == totalPages)
         }
-    }
-
-    var body: some View {
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
-
-            VStack(spacing: 0) {
-
-                headerView
-
-                if vm.isLoading {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVGrid(
-                            columns: [
-                                GridItem(.flexible(), spacing: 16),
-                                GridItem(.flexible(), spacing: 16)
-                            ],
-                            spacing: 16
-                        ) {
-                            ForEach(paginatedItems, id: \.self) { item in
-                                WasteCardView(item: item)
-                                    .onTapGesture {
-                                        selectedWaste = item
-                                    }
-                            }
-                        }
-                        .padding(.horizontal, 18)
-                        .padding(.top, 43)
-                    }
-                    
-                    paginationSection
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-        }
-        .navigationDestination(item: $selectedWaste) { waste in
-            WasteTypeView(hideTabBar: .constant(true), category: waste.title)
-                .navigationBarBackButtonHidden(true)
-        }
-        .task {
-            await vm.fetchWasteCounts() // ✅ โหลดข้อมูล
-        }
+        .padding(.vertical, config.paddingMedium)
     }
 }
 
-
-// MARK: - CARD
+// MARK: - WasteCardView
 struct WasteCardView: View {
     let item: WasteItem
+    let config: ResponsiveConfig
 
     var body: some View {
         VStack(spacing: 0) {
@@ -151,25 +154,25 @@ struct WasteCardView: View {
                 Image(item.imageName)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 100)
+                    .frame(height: config.itemCardImageHeight)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 140)
+            .frame(height: config.wasteCardImageZStackHeight)
 
             VStack(spacing: 4) {
                 Text(item.title)
-                    .font(.noto(14, weight: .semibold))
+                    .font(.noto(config.fontCaption, weight: .semibold))
                     .foregroundColor(.black)
 
                 Text(item.count)
-                    .font(.noto(12, weight: .medium))
+                    .font(.noto(config.fontSmall, weight: .medium))
                     .foregroundColor(.black)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, config.paddingMedium)
         }
-        .frame(height: 215)
+        .frame(height: config.wasteCardTotalHeight)
         .background(Color.thirdColor)
-        .cornerRadius(20)
+        .cornerRadius(config.bannerCornerRadius)
     }
 }
 

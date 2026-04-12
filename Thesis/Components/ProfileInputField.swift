@@ -5,7 +5,6 @@
 //  Created by Kansinee Klinkhachon on 7/1/2569 BE.
 //
 
-
 import SwiftUI
 
 struct ProfileInputField: View {
@@ -18,9 +17,12 @@ struct ProfileInputField: View {
     var errorMessage: String
     var keyboardType: UIKeyboardType = .default
     var onEditingChanged: () -> Void = {}
+    
+    // 1. รับ config เข้ามาใช้งาน
+    let config: ResponsiveConfig
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) { // ใช้ spacing 5 เหมือน LoginInputField
+        VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             // 1. หัวข้อ
             Title(title: title)
             
@@ -28,51 +30,47 @@ struct ProfileInputField: View {
             HStack {
                 ZStack(alignment: .leading) {
                     if isEditing {
-                        // เพิ่ม PlaceholderView เพื่อให้เหมือน Login/Register
                         PlaceholderView(text: text, placeholder: placeholder)
                         
                         TextField("", text: $text)
-                            .font(.noto(20, weight: .medium))
+                            .font(.noto(config.accountRowFontSize, weight: .medium)) // 26 สำหรับ iPad, 20 สำหรับ iPhone
                             .foregroundColor(.black)
                             .keyboardType(keyboardType)
                             .onChange(of: text) { oldValue, newValue in
                                 onEditingChanged()
                             }
                     } else {
-                        // โหมดดูอย่างเดียว
                         Text(text.isEmpty ? "ไม่ได้ระบุ" : text)
-                            .font(.noto(20, weight: .medium))
+                            .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
                     }
                 }
-                .padding(.leading, 15)
+                .padding(.leading, config.paddingMedium) // 24 สำหรับ iPad, 16 สำหรับ iPhone
                 
                 Spacer()
                 
-                // ปุ่ม Pencil แสดงเฉพาะโหมดแก้ไข
                 if isEditing {
                     Image(systemName: "pencil")
+                        .font(.system(size: config.isIPad ? 24 : 18)) // ขยายไอคอนใน iPad
                         .foregroundColor(.black)
-                        .frame(height: 20)
-                        .padding(.trailing, 15)
+                        .padding(.trailing, config.paddingMedium)
                 }
             }
-            .frame(width: 345, height: 49)
+            // เปลี่ยนจาก Fixed Width เป็น maxWidth และปรับความสูงตามจอ
+            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
             .background(Color.textFieldColor)
-            .cornerRadius(20)
-            // ใช้ความสามารถของ ValidationBorder
+            .cornerRadius(config.bannerCornerRadius) // 25 สำหรับ iPad, 20 สำหรับ iPhone
             .modifier(ValidationBorder(isValid: isEditing ? !(isSubmitted && isInvalid) : true))
             
-            // 3. ส่วนแสดงข้อความ Error (โครงสร้างเดียวกับ Login/Register)
+            // 3. ส่วนแสดงข้อความ Error
             Group {
-                // จองพื้นที่ 20 ไว้เสมอไม่ว่าจะโหมดไหน Layout จะได้ไม่ขยับ
                 Text(isEditing && isSubmitted && isInvalid ? errorMessage : "")
-                    .font(.noto(15, weight: .medium))
+                    .font(.noto(config.fontSubBody, weight: .medium)) // 20 สำหรับ iPad, 15 สำหรับ iPhone
                     .foregroundColor(Color.errorColor)
                     .padding(.top, -1)
                     .opacity(isEditing && isSubmitted && isInvalid ? 1 : 0)
             }
-            .frame(height: 20, alignment: .top)
+            .frame(height: config.isIPad ? 26 : 20, alignment: .top) // ขยายพื้นที่ Error เล็กน้อยบน iPad
             .clipped()
             .padding(.leading, 7)
         }
@@ -85,49 +83,49 @@ struct ProfileEmailField: View {
     let email: String
     @Binding var isEditing: Bool
     
+    // รับ config
+    let config: ResponsiveConfig
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title)
             
             Group {
                 if isEditing {
-                    // โหมดแก้ไข: เป็น NavigationLink ไปหน้ายืนยันรหัสผ่าน
                     NavigationLink(destination: ConfirmPasswordView()) {
                         HStack {
                             Text(email)
-                                .font(.noto(20, weight: .medium))
+                                .font(.noto(config.accountRowFontSize, weight: .medium))
                                 .foregroundColor(.black)
                             Spacer()
                             Image(systemName: "chevron.right")
+                                .font(.system(size: config.isIPad ? 24 : 18))
                                 .foregroundColor(.black)
-                                .frame(height: 20)
                         }
-                        .padding(.horizontal)
-                        .frame(width: 345, height: 49)
+                        .padding(.horizontal, config.paddingMedium)
+                        .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.placeholderColor, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: config.bannerCornerRadius)
+                                .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
                         )
                         .background(Color.backgroundColor)
                     }
                 } else {
-                    // โหมดดู: เป็น Text ธรรมดา
                     HStack {
                         Text(email)
-                            .font(.noto(20, weight: .medium))
+                            .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
                         Spacer()
                     }
-                    .padding(.horizontal)
-                    .frame(width: 345, height: 49)
+                    .padding(.horizontal, config.paddingMedium)
+                    .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
                     .background(Color.textFieldColor)
-                    .cornerRadius(20)
+                    .cornerRadius(config.bannerCornerRadius)
                 }
-                    
             }
             
             Color.clear
-                .frame(width: 345, height: 20)
+                .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
         .frame(maxWidth: .infinity)
     }
@@ -138,51 +136,52 @@ struct ProfilePasswordField: View {
     let password: String
     @Binding var isEditing: Bool
     let currentEmail: String
-//    @Binding var isPasswordVisible: Bool
+    
+    // รับ config
+    let config: ResponsiveConfig
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title)
             
             Group {
                 if isEditing {
-                    // โหมดแก้ไข: กดแล้วไปหน้ายืนยันอีเมล/รหัสผ่านใหม่
                     NavigationLink(destination: ConfirmEmailView(currentEmail: currentEmail)) {
                         HStack {
                             Text(String(repeating: "•", count: 8))
-                                .font(.noto(20, weight: .medium))
+                                .font(.noto(config.accountRowFontSize, weight: .medium))
                                 .foregroundColor(.black)
+                                .padding(.top, 5) // ช่วยให้จุดไข่ปลาอยู่กึ่งกลางขึ้น
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.mainColor)
-                                .frame(width: 20, height: 20)
+                                .font(.system(size: config.isIPad ? 24 : 18))
+                                .foregroundColor(Color.mainColor)
                         }
-                        .padding(.horizontal)
-                        .frame(width: 345, height: 49)
+                        .padding(.horizontal, config.paddingMedium)
+                        .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.placeholderColor, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: config.bannerCornerRadius)
+                                .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
                         )
                         .background(Color.backgroundColor)
                     }
                 } else {
-                    // โหมดดู: มีปุ่มเปิด/ปิดตา
                     HStack {
-                        Text( String(repeating: "•", count: 8))
-                            .font(.noto(20, weight: .medium))
+                        Text(String(repeating: "•", count: 8))
+                            .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
+                            .padding(.top, 5)
                         Spacer()
                     }
-                    .padding(.horizontal)
-                    .frame(width: 345, height: 49)
+                    .padding(.horizontal, config.paddingMedium)
+                    .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
                     .background(Color.textFieldColor)
-                    .cornerRadius(20)
-
+                    .cornerRadius(config.bannerCornerRadius)
                 }
             }
             
             Color.clear
-                .frame(width: 345, height: 20)
+                .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
         .frame(maxWidth: .infinity)
     }

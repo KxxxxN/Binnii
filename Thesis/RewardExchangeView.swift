@@ -5,14 +5,14 @@
 //  Created by Penpitcha Sureepitak on 8/12/2568 BE.
 //
 
-
 import SwiftUI
 
 struct RewardExchangeView: View {
-    
+
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
-    
+
     let pointsData: [(label: String, value: String, isBold: Bool)] = [
         ("คะแนนทั้งหมด :", "333", false),
         ("ต้องการแลกคะแนน :", "300", true),
@@ -20,153 +20,166 @@ struct RewardExchangeView: View {
     ]
 
     let conditionsList = [
-        "ผู้ใช้จะได้รับ คะแนนจากการแยกขยะถูกประเภท \nผ่านระบบสแกนขยะ",
-        "คะแนนสามารถใช้ แลกเป็นชั่วโมงจิตอาสา \nของมหาวิทยาลัย",
-        "ระบบจะตรวจสอบข้อมูลการแยกขยะจากบัญชีผู้ใช้\nก่อนยืนยันชั่วโมง",
-        "ชั่วโมงจิตอาสาที่แลกแล้ว \nไม่สามารถยกเลิกหรือโอนให้ผู้อื่นได้",
-        "เฉพาะนักศึกษาของมหาวิทยาลัยเท่านั้น \nที่สามารถแลกได้",
+        "ผู้ใช้จะได้รับ คะแนนจากการแยกขยะถูกประเภทผ่านระบบสแกนขยะ",
+        "คะแนนสามารถใช้ แลกเป็นชั่วโมงจิตอาสาของมหาวิทยาลัย",
+        "ระบบจะตรวจสอบข้อมูลการแยกขยะจากบัญชีผู้ใช้ก่อนยืนยันชั่วโมง",
+        "ชั่วโมงจิตอาสาที่แลกแล้ว ไม่สามารถยกเลิกหรือโอนให้ผู้อื่นได้",
+        "เฉพาะนักศึกษาของมหาวิทยาลัยเท่านั้นที่สามารถแลกได้",
         "การโกงระบบหรือส่งข้อมูลเท็จ จะถูกตัดสิทธิ์ทันที",
-        "มหาวิทยาลัยขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไข\nโดยไม่ต้องแจ้งล่วงหน้า"
+        "มหาวิทยาลัยขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไขโดยไม่ต้องแจ้งล่วงหน้า"
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            
-            // MARK: Top Bar
-            ZStack {
-                Color.mainColor
-                
-                HStack {
-                    XBackButtonWhite()
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
 
-                    Spacer()
+            VStack(spacing: 0) {
 
-                    Text("แลกคะแนน")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.white)
+                // MARK: - Top Bar
+                ZStack {
+                    Color.mainColor
 
-                    Spacer()
+                    HStack {
+                        XBackButtonWhite()
 
-                    Color.clear
-                        .frame(width: 24, height: 24)
+                        Spacer()
+
+                        Text("แลกคะแนน")
+                            .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.white)
+
+                        Spacer()
+
+                        Color.clear.frame(width: config.headerIconSize,
+                                          height: config.headerIconSize)
+                    }
+                    .padding(.top, config.headerTopPadding)
+                    .padding(.trailing, config.paddingMedium)
+                    .padding(.bottom, config.paddingMedium)
                 }
-                .padding(.top, 69)
-                .padding(.trailing, 18)
-                .padding(.bottom, 20)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 123)
-            .clipShape(RoundedCorner(radius: 20, corners: [.bottomLeft, .bottomRight]))
-            
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    
-                    PointsSummaryCard(pointsData: pointsData)
-                        .padding(.top, 41)
+                .frame(maxWidth: .infinity)
+                .frame(height: config.searchHeaderHeight)
+                .clipShape(RoundedCorner(radius: config.bannerCornerRadius,
+                                         corners: [.bottomLeft, .bottomRight]))
 
-                    ConditionsAndExchangeSection(conditionsList: conditionsList)
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+
+                        PointsSummaryCard(pointsData: pointsData, config: config)
+                            .padding(.top, config.rewardScrollTopPadding)
+
+                        ConditionsAndExchangeSection(conditionsList: conditionsList, config: config)
+                    }
+                    .padding(.horizontal, config.paddingMedium)
                 }
-                .padding(.horizontal, 15)
             }
+            .edgesIgnoringSafeArea(.top)
+            .onAppear { hideTabBar = true }
+            .onDisappear { hideTabBar = false }
         }
-        .edgesIgnoringSafeArea(.top)
-        .onAppear { hideTabBar = true }
-        .onDisappear { hideTabBar = false }
     }
 }
 
+// MARK: - PointsSummaryCard
 struct PointsSummaryCard: View {
     let pointsData: [(label: String, value: String, isBold: Bool)]
-    
+    let config: ResponsiveConfig
+
     var body: some View {
         VStack(spacing: -10) {
             ForEach(pointsData.indices, id: \.self) { index in
                 HStack {
                     Text(pointsData[index].label)
-                        .font(.noto(16, weight: .medium))
+                        .font(.noto(config.fontBody, weight: .medium))
                         .foregroundColor(.black)
-                        .padding(.bottom, 17)
+                        .padding(.bottom, config.paddingMedium)
 
                     Spacer()
 
                     Text(pointsData[index].value)
-                        .font(.noto(pointsData[index].isBold ? 20 : 18,
-                                    weight: pointsData[index].isBold ? .bold : .medium))
+                        .font(.noto(
+                            pointsData[index].isBold ? config.fontHeader : config.fontSubHeader,
+                            weight: pointsData[index].isBold ? .bold : .medium
+                        ))
                         .foregroundColor(.black)
-                        .padding(.bottom, 14)
+                        .padding(.bottom, config.paddingMedium)
                 }
             }
         }
-        .padding(.horizontal, 27)
-        .padding(.top, 20)
+        .padding(.top, config.paddingMedium)
+        .padding(.horizontal, config.paddingStandard)
         .frame(maxWidth: .infinity)
-        .frame(height: 150)
+        .frame(height: config.pointsCardHeight)
         .background(Color.wasteCard)
-        .cornerRadius(20)
+        .cornerRadius(config.bannerCornerRadius)
+        .frame(maxWidth: config.mainContentMaxWidth)
     }
 }
 
+// MARK: - ConditionsAndExchangeSection
 struct ConditionsAndExchangeSection: View {
     let conditionsList: [String]
-    
+    let config: ResponsiveConfig
+
     var body: some View {
-        VStack(spacing: 0){
-            
+        VStack(spacing: 0) {
+
             Text("แลกรับชั่วโมงจิตอาสา 1 ชั่วโมง")
-                .font(.noto(20, weight: .bold))
+                .font(.noto(config.fontHeader, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 42)
-                .padding(.top, 34)
-                .padding(.bottom, 34)
+                .padding(.horizontal, config.conditionsTitlePaddingH)
+                .padding(.vertical, config.conditionsTitlePaddingV)
 
+            // ส่วนของกรอบเงื่อนไข
             VStack(alignment: .leading, spacing: 0) {
-                
-                VStack {
-                    HStack(spacing: 5) {
-                        Text("รายละเอียด และเงื่อนไข")
-                            .font(.noto(16, weight: .bold))
-                            .foregroundColor(.black)
-                        Text("(จำลอง)")
-                            .font(.noto(16, weight: .bold))
-                            .foregroundColor(.placeholderColor)
-                    }
+                HStack(spacing: 5) {
+                    Text("รายละเอียด และเงื่อนไข")
+                        .font(.noto(config.fontBody, weight: .bold))
+                        .foregroundColor(.black)
+                    Text("(จำลอง)")
+                        .font(.noto(config.fontBody, weight: .bold))
+                        .foregroundColor(.placeholderColor)
                 }
-                
-                VStack(alignment: .leading, spacing: 3) {
+                .padding(.bottom, config.spacingMedium)
+
+                VStack(alignment: .leading, spacing: config.rewardVStackSpacing) {
                     ForEach(conditionsList.indices, id: \.self) { index in
-                        HStack(alignment: .top, spacing: 5) {
+                        HStack(alignment: .top, spacing: config.isIPad ? 15 : 10) {
                             Text("\(index + 1).")
-                                .font(.noto(16, weight: .medium))
+                                .font(.noto(config.fontBody, weight: .medium))
                                 .foregroundColor(.black)
+                                .frame(width: config.isIPad ? 40 : 25, alignment: .leading)
+                            
                             Text(conditionsList[index])
-                                .font(.noto(16, weight: .medium))
+                                .font(.noto(config.fontBody, weight: .medium))
                                 .foregroundColor(.black)
+                                .lineSpacing(config.isIPad ? 8 : 4) // ระยะบรรทัดกว้างขึ้นใน iPad
                                 .fixedSize(horizontal: false, vertical: true)
-                                .lineSpacing(0)
                         }
                     }
                 }
-                .padding(.top, 23)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(32)
-            .padding(.vertical, 30)
+            .padding(config.paddingStandard)
             .background(Color.wasteCard)
-            .frame(maxWidth: .infinity)
-            .frame(height: 438)
-            .cornerRadius(20)
-            
+            .cornerRadius(config.bannerCornerRadius)
+            .frame(maxWidth: config.mainContentMaxWidth)
+
+            // ปุ่มยืนยัน
             Button(action: { /* Action */ }) {
                 Text("ยืนยันแลกคะแนน")
-                    .font(.noto(18, weight: .bold))
+                    .font(.noto(config.fontSubHeader, weight: .bold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(width: 345, height: 49)
+                    .frame(height: config.searchButtonHeight)
                     .background(Color.mainColor)
-                    .cornerRadius(20)
+                    .cornerRadius(config.bannerCornerRadius)
             }
-            .padding(.top, 16)
-            .padding(.horizontal, 32)
+            .frame(maxWidth: config.mainContentMaxWidth)
+            .padding(.top, config.paddingStandard)
+            .padding(.bottom, config.paddingStandard * 2)
         }
+        .frame(maxWidth: .infinity)
     }
 }

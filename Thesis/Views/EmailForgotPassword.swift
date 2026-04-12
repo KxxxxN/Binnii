@@ -10,9 +10,14 @@ import SwiftUI
 struct EmailForgotPassword: View {
     
     @StateObject private var viewModel = ForgotPasswordViewModel()
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     
     var body: some View {
-//        NavigationStack {
+        //        NavigationStack {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            
             VStack(spacing: 0){ //เปิด Vstack1
                 ZStack { //เปิด Zstack1
                     Text("ลืมรหัสผ่าน")
@@ -23,14 +28,15 @@ struct EmailForgotPassword: View {
                         Spacer()
                     }//ปิด Hstack1
                 }//ปิด Zstack1
-                .padding(.bottom, 30)
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
                 
                 LoginInputField(
                     title: "ที่อยู่อีเมล",
                     placeholder: "กรอกอีเมล",
                     text: $viewModel.emailForgotPassword,
                     isValid: .constant(!viewModel.isForgotSubmitted || viewModel.emailErrorForgot == nil),
-                    errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : ""
+                    errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : "", config: config
                 )
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
@@ -55,12 +61,14 @@ struct EmailForgotPassword: View {
             }//ปิด Vstack1
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .navigationDestination(isPresented: $viewModel.navigateToOTP) {
                 // ส่ง email ไปยังหน้า OTP ด้วยเพื่อให้ User รู้ว่าส่งไปที่ไหน หรือใช้ในการ verify ต่อ
                 OTPConfirmView(source: .forgotPassword, email: viewModel.emailForgotPassword)
             }
-//        }
-        .navigationBarBackButtonHidden(true)
+            //        }
+            .navigationBarBackButtonHidden(true)
+        }
     }
 }
 

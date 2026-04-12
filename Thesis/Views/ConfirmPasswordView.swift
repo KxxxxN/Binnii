@@ -9,22 +9,27 @@ import SwiftUI
 
 struct ConfirmPasswordView: View {
     @StateObject private var viewModel = ConfirmPasswordViewModel()
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
                     Text("ยืนยันรหัสผ่าน")
-                        .font(.noto(25, weight: .bold))
-                        
+                        .font(.noto(config.titleFontSize, weight: .bold))
+
                     HStack {
                         BackButton()
                         Spacer()
                     }
                 }
-                .padding(.bottom, 30)
-
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
+                
                 // MARK: - Input Field
                 LoginInputField(
                     title: "รหัสผ่าน",
@@ -33,7 +38,7 @@ struct ConfirmPasswordView: View {
                     isValid: .constant(!viewModel.isSubmitted || viewModel.passwordError == nil),
                     errorMessage: viewModel.isSubmitted ? (viewModel.passwordError ?? "") : "",
                     isSecure: true,
-                    isPasswordToggle: $viewModel.isPasswordVisible
+                    isPasswordToggle: $viewModel.isPasswordVisible, config: config
                 )
                 .onChange(of: viewModel.password) { _, _ in
                     viewModel.clearError()
@@ -53,11 +58,12 @@ struct ConfirmPasswordView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundColor)
+            .background(Color.backgroundColor.ignoresSafeArea())
             .navigationDestination(isPresented: $viewModel.navigateToNextStep) {
                 ChangeEmailView()
             }
-        .navigationBarBackButtonHidden(true)
+            .navigationBarBackButtonHidden(true)
+        }
     }
 }
 

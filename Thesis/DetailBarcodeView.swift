@@ -11,6 +11,7 @@ import Auth
 
 struct DetailBarcodeView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass // ✅ เพิ่มสำหรับเช็ค iPad/iPhone
     @Binding var hideTabBar: Bool
     var category: String
     var capturedImage: UIImage? = nil
@@ -64,110 +65,112 @@ struct DetailBarcodeView: View {
             // ✅ อัปเดตคะแนนใน user metadata
             let currentPoints = (user.userMetadata["points"]?.intValue ?? 0) + 1
             try await supabase.auth.update(
-                user: UserAttributes(data: ["points": .integer(currentPoints)])  // ✅ .integer แทน .int
+                user: UserAttributes(data: ["points": .integer(currentPoints)])  
             )
             
             showSaveSuccess = true
         } catch {
             print("Save error: \(error)")
-            showSaveError = true  // ✅
+            showSaveError = true
         }
     }
 
     var body: some View {
-        ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            VStack(spacing: 0) {
-                // MARK: - Header
-                ZStack {
-                    Text("สแกนบาร์โค้ด")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.black)
-                    
-                    HStack {
-                        BackButton()
-                        Spacer()
-                        Button {
-                            Task { await saveScan() }
-                        } label: {
-                            Text("บันทึก")
-                                .font(.noto(16, weight: .medium))
-                                .foregroundColor(.mainColor)
-                                .padding(.trailing, 25)
+            ZStack {
+                Color.backgroundColor
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // MARK: - Header Section
+                    ZStack {
+                        Text("สแกนบาร์โค้ด")
+                            .font(.noto(config.fontTitle, weight: .bold))
+                            .foregroundColor(.black)
+                        
+                        HStack {
+                            BackButton()
+                            Spacer()
+                            Button {
+                                Task { await saveScan() }
+                            } label: {
+                                Text("บันทึก")
+                                    .font(.noto(config.isIPad ? 20 : 16, weight: .medium))
+                                    .foregroundColor(.mainColor)
+                            }
                         }
                     }
-                }
-                .padding(.bottom, 20)
+                    .padding(.horizontal, config.isIPad ? 60 : 20)
+                    .padding(.bottom, config.isIPad ? 40 : 27)
+                    .padding(.top, config.headerTopPadding)
 
-                // MARK: - Content
-                ScrollView {
-                    VStack(spacing: 0) {
-                        
-                        if let uiImage = capturedImage {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                                .padding(.bottom, 30)
-                        } else {
-                            Image("BarcodeEx")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                                .padding(.bottom, 30)
-                        }
-                        
-//                        Image("BarcodeEx")
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                            .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-//                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    // MARK: - Content Section
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 0) {
                             
-                        
-                        // ✅ แสดง component ตาม category
-                        switch category {
-                        case "ขวดพลาสติก":
-                            RecycleWasteDetailPlasticBottle(showDate: true)
-                        case "แก้วพลาสติก":
-                            RecycleWasteDetailPlasticCup(showDate: true)
-                        case "กระป๋อง":
-                            RecycleWasteDetailCan(showDate: true)
-                        case "กล่องกระดาษ":
-                            RecycleWasteDetailCardboardBox(showDate: true)
-                        case "กระดาษทั่วไป":
-                            RecycleWasteDetailPaper(showDate: true)
-                        case "ถุงพลาสติก":
-                            RecycleWasteDetailPlasticBag(showDate: true)
-                        default:
-                            Text("ไม่พบข้อมูลประเภทขยะนี้")
-                                .font(.noto(18, weight: .medium))
-                                .foregroundColor(.gray)
-                                .padding()
+                            // Image Section
+                            if let uiImage = capturedImage {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: config.isIPad ? 450 : 290)
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                    .padding(.horizontal, config.isIPad ? 60 : 20)
+                                    .padding(.bottom, config.isIPad ? 40 : 30)
+                            } else {
+                                Image("BarcodeEx")
+                                    .resizable()
+                                    .frame(maxWidth: .infinity)
+                                    .aspectRatio(1.25, contentMode: .fill)
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                    .padding(.horizontal, config.isIPad ? 60 : 20)
+                            }
+                            
+                            // ✅ ส่ง config เข้าไปในทุก Component
+                            switch category {
+                            case "ขวดพลาสติก":
+                                RecycleWasteDetailPlasticBottle(config: config, showDate: true)
+                            case "แก้วพลาสติก":
+                                RecycleWasteDetailPlasticCup(config: config, showDate: true)
+                            case "กระป๋อง":
+                                RecycleWasteDetailCan(config: config, showDate: true)
+                            case "กล่องกระดาษ":
+                                RecycleWasteDetailCardboardBox(config: config, showDate: true)
+                            case "กระดาษทั่วไป":
+                                RecycleWasteDetailPaper(config: config, showDate: true)
+                            case "ถุงพลาสติก":
+                                RecycleWasteDetailPlasticBag(config: config, showDate: true)
+                            default:
+                                Text("ไม่พบข้อมูลประเภทขยะนี้")
+                                    .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
                         }
+                        .frame(minHeight: 750)
                     }
-                    .frame(minHeight: 750)
+                    .edgesIgnoringSafeArea(.bottom)
                 }
-                .edgesIgnoringSafeArea(.bottom)
+                .ignoresSafeArea(.container, edges: .top)
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear {
-            hideTabBar = true
-        }
-        .overlay {
-            if showSaveSuccess {
-                SuccessPopupView(message: "บันทึกสำเร็จ!\n+10 คะแนน") {
-                    showSaveSuccess = false
-                    dismiss()
+            .navigationBarHidden(true)
+            .onAppear {
+                hideTabBar = true
+            }
+            .overlay {
+                if showSaveSuccess {
+                    SuccessPopupView(message: "บันทึกสำเร็จ!\n+10 คะแนน") {
+                        showSaveSuccess = false
+                        dismiss()
+                    }
                 }
-            }
-            if showSaveError {
-                ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
-                    showSaveError = false
+                if showSaveError {
+                    ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
+                        showSaveError = false
+                    }
                 }
             }
         }

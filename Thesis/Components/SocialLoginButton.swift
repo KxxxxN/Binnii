@@ -7,29 +7,33 @@
 
 
 import SwiftUI
+
 // MARK: SocialLoginButton
 struct SocialLoginButton: View {
     let iconName: String
     let title: String
+    let config: ResponsiveConfig
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 15) {
+            HStack(spacing: config.isIPad ? 20 : 15) {
                 Image(iconName)
                     .resizable()
-                    .frame(width: 30, height: 30)
+                    .frame(width: config.isIPad ? 40 : 30, height: config.isIPad ? 40 : 30)
                 
                 Text(title)
-                    .font(.noto(18, weight: .medium)) // ใช้ Font ที่คุณกำหนด
+                    .font(.noto(config.isIPad ? 22 : 18, weight: .medium))
                     .foregroundColor(.mainColor)
             }
-            .padding(.leading, 54) // จัดตำแหน่งให้เป็นไปตาม Layout เดิม
-            .frame(width: 345, height: 49, alignment: .leading)
+//            .padding(.leading, config.isIPad ? 80 : 54)
+            .frame(width: config.isIPad ? 445 : 345, height: config.isIPad ? 60 : 49)
+            .frame(alignment: .leading)
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: config.isIPad ? 25 : 20)
                     .stroke(Color.mainColor, lineWidth: 2)
             )
         }
+        .padding(.horizontal, config.paddingStandard)
     }
 }

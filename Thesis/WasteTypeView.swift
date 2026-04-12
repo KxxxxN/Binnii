@@ -5,7 +5,6 @@
 //  Created by Penpitcha Sureepitak on 8/12/2568 BE.
 //
 
-
 import SwiftUI
 
 struct WasteTypeItem: Identifiable {
@@ -18,6 +17,7 @@ struct WasteTypeItem: Identifiable {
 struct WasteTypeView: View {
 
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     @State private var currentPage = 1
     let category: String
@@ -37,28 +37,45 @@ struct WasteTypeView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                
-                headerView
-                    if vm.items.isEmpty {
-                        // ✅ Empty State เหมือน ScoreHistoryView
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
+
+            ZStack {
+                Color.backgroundColor.ignoresSafeArea()
+
+                VStack(spacing: 0) {
+
+                    headerView(config: config)
+
+                    if vm.isLoading {
                         Spacer()
-                        VStack(spacing: 0) {
-                            Image("ListEmpty")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 300, height: 300)
+                        ProgressView()
+                        Spacer()
 
-                            Text("ไม่มีประวัติการแยกขยะ")
-                                .font(.noto(25, weight: .bold))
-                                .foregroundColor(.textFieldColor)
+                    } else if vm.items.isEmpty {
 
+                        // MARK: - Empty State
+                        // ✅ ครอบ ScrollView เพื่อให้ scroll ได้ใน landscape
+                        ScrollView {
+                            VStack(spacing: config.spacingMedium) {
+                                Image("ListEmpty")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: config.emptyStateImageSize,
+                                           height: config.emptyStateImageSize)
+
+                                Text("ไม่มีประวัติการแยกขยะ")
+                                    .font(.noto(config.titleFontSize, weight: .bold))
+                                    .foregroundColor(.textFieldColor)
+                            }
+                            // ✅ MinHeight ทำให้เนื้อหากลางจอบน portrait, scroll ได้บน landscape
+                            .frame(maxWidth: .infinity,
+                                   minHeight: geo.size.height - config.searchHeaderHeight)
                         }
-                        Spacer()
+
                     } else {
+
+                        // MARK: - Content
                         ScrollView {
                             VStack(spacing: 11) {
                                 ForEach(pagedItems) { item in
@@ -66,70 +83,68 @@ struct WasteTypeView: View {
                                         WasteItemCard(
                                             title: item.title,
                                             date: item.date,
-                                            imageUrl: item.imageUrl
+                                            imageUrl: item.imageUrl,
+                                            config: config
                                         )
                                     }
                                     .buttonStyle(.plain)
                                 }
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.top, 42)
-                            .padding(.bottom, 125)
-                        }
 
-                        paginationSection
+                                paginationSection(config: config)
+                            }
+                            .padding(.horizontal, config.paddingMedium)
+                            .padding(.top, config.wasteGridTopPadding)
+                            .padding(.bottom, config.paddingMedium)
+                        }
                     }
                 }
-            .edgesIgnoringSafeArea(.top)
-        }
-        .onAppear { hideTabBar = true }
-        .onDisappear { hideTabBar = false }
-        .navigationBarHidden(true)
-        .task {
-            await vm.fetchItems(category: category) // ✅ โหลดตาม category
+                .edgesIgnoringSafeArea(.top)
+            }
+            .onAppear { hideTabBar = true }
+            .onDisappear { hideTabBar = false }
+            .navigationBarHidden(true)
+            .task { await vm.fetchItems(category: category) }
         }
     }
-    
-    var headerView: some View {
+
+    // MARK: - Header
+    private func headerView(config: ResponsiveConfig) -> some View {
         ZStack {
             Color.mainColor
-
             ZStack {
-//                Text(category)
                 Text("ขยะแต่ละประเภท")
-                    .font(.noto(25, weight: .bold))
+                    .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.white)
-
                 HStack {
                     BackButtonWhite()
-
                     Spacer()
                 }
             }
-            .padding(.top, 69)
-            .padding(.bottom, 28)
-            .padding(.horizontal, 18)
+            .padding(.top, config.headerTopPadding)
+            .padding(.bottom, config.paddingStandard)
+            .padding(.horizontal, config.paddingMedium)
         }
-        .frame(height: 123)
-        .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
+        .frame(height: config.searchHeaderHeight)
+        .cornerRadius(config.bannerCornerRadius, corners: [.bottomLeft, .bottomRight])
     }
 
-
-    var paginationSection: some View {
-        HStack(spacing: 19) {
+    // MARK: - Pagination
+    private func paginationSection(config: ResponsiveConfig) -> some View {
+        HStack(spacing: config.paginationSpacing) {
             Button(action: { if currentPage > 1 { currentPage -= 1 } }) {
                 Image(systemName: "chevron.left")
                     .foregroundColor(currentPage == 1 ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
+                    .font(.system(size: config.fontHeader))
             }
             .disabled(currentPage == 1)
 
             ForEach(1...totalPages, id: \.self) { page in
                 Button(action: { currentPage = page }) {
                     Text("\(page)")
-                        .font(.noto(16, weight: .medium))
+                        .font(.noto(config.fontBody, weight: .medium))
                         .foregroundColor(currentPage == page ? .white : Color.mainColor)
-                        .frame(width: 30, height: 30)
+                        .frame(width: config.paginationButtonSize,
+                               height: config.paginationButtonSize)
                         .background(currentPage == page ? Color.mainColor : Color.clear)
                         .clipShape(Circle())
                 }
@@ -138,51 +153,55 @@ struct WasteTypeView: View {
             Button(action: { if currentPage < totalPages { currentPage += 1 } }) {
                 Image(systemName: "chevron.right")
                     .foregroundColor(currentPage == totalPages ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
+                    .font(.system(size: config.fontHeader))
             }
             .disabled(currentPage == totalPages)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, config.paddingMedium)
     }
 }
 
+// MARK: - WasteItemCard
 struct WasteItemCard: View {
     let title: String
     let date: String
     let imageUrl: String?
-//    let cardColor: Color
+    let config: ResponsiveConfig
 
     var body: some View {
-        HStack(spacing: 49) {
+        HStack(spacing: config.wasteItemCardSpacing) {
             if let urlString = imageUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
                     Color.thirdColor
                 }
-                .frame(width: 140, height: 92)
+                .frame(width: config.wasteItemImageWidth,
+                       height: config.wasteItemImageHeight)
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .clipShape(RoundedRectangle(cornerRadius: config.wasteItemImageRadius))
             } else {
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: config.wasteItemImageRadius)
                     .fill(Color.thirdColor)
-                    .frame(width: 140, height: 92)
+                    .frame(width: config.wasteItemImageWidth,
+                           height: config.wasteItemImageHeight)
             }
-            
+
             VStack(alignment: .leading, spacing: 7) {
                 Text(title)
-                    .font(.noto(20, weight: .bold))
+                    .font(.noto(config.fontHeader, weight: .bold))
                     .foregroundColor(.black)
-                
                 Text(date)
-                    .font(.noto(14, weight: .medium))
+                    .font(.noto(config.fontCaption, weight: .medium))
                     .foregroundColor(.black)
             }
-            
+
             Spacer()
         }
-        .padding(.horizontal, 16)
-        .frame(height: 110)
+        .padding(.horizontal, config.paddingMedium)
+        .frame(height: config.wasteItemCardHeight)
         .background(Color.thirdColor)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: config.bannerCornerRadius))
     }
 }

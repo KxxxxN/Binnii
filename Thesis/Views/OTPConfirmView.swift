@@ -21,91 +21,103 @@ struct OTPConfirmView: View {
     @StateObject private var viewModel = OTPConfirmViewModel()
     @FocusState private var focusedField: Int?
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
-        ZStack{
-//            NavigationStack {
-                VStack {
-                    // Header
-                    ZStack {
-                        Text("ยืนยันรหัส OTP")
-                            .font(.noto(25, weight: .bold))
-                        
-                        HStack {
-                            BackButton()                            
-                            Spacer()
-                        }
-                    }
-                    .padding(.bottom, 65)
-                    
-                    Text("ใส่รหัสที่ส่งไปยังอีเมลของคุณ")
-                        .font(.noto(20, weight: .semibold))
-                        .padding(.bottom, 18)
-                    
-                    // Component ช่อง OTP
-                    OTPInputView(viewModel: viewModel, focusedField: $focusedField)
-                        .padding(.bottom, 15)
-                    
-                    // ส่วนแสดงผล Error
-                    Text(viewModel.errorMessage)
-                        .font(.noto(15, weight: .medium))
-                        .foregroundColor(Color.errorColor)
-                        .frame(height: 15)
-                        .padding(.bottom,0)
-                        .opacity(viewModel.shouldShowError ? 1 : 0)
-                    
-//                    HStack(spacing: 5){
-//                        Text("รหัสอ้างอิง :")
-//                            .font(.noto(15, weight: .medium))
-//                            .foregroundColor(Color.placeholderColor)
-//                        
-////                        let refCode = "A9F4K2"
-//                        Text(refCode)
-//                            .font(.noto(15, weight: .medium))
-//                            .foregroundColor(Color.placeholderColor)
-//                        
-//                    }
-                    .padding(.bottom,18)
-                    
-                    PrimaryButton(
-                        title: "ยืนยัน",
-                        action: {
-                            focusedField = nil
-                            Task {
-                                await viewModel.verifyOTP(source: source, email: email)
+        ZStack {
+            Color.backgroundColor.ignoresSafeArea()
+            
+            GeometryReader { geo in
+                let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+                
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        // MARK: - Header
+                        ZStack {
+                            Text("ยืนยันรหัส OTP")
+                                .font(.noto(config.titleFontSize, weight: .bold)) 
+                            
+                            HStack {
+                                BackButton()
+                                Spacer()
                             }
-                        },
-                        width: 155, // ความกว้างของปุ่ม
-                        height: 49 // ความสูงของปุ่ม
-                    )
-                    
-                    HStack(spacing: 8){
-                        Text("ยังไม่ได้รับรหัส?")
-                            .font(.noto(15,weight: .medium))
-                            .foregroundColor(.black)
+                        }
+                        .padding(.top, config.topPadding)
+                        .padding(.bottom, config.bottomTitlePadding)
+                        .padding(.bottom, config.isIPad ? 80 : 65)
                         
-                        if viewModel.resendCooldown > 0 {
-                            Text("ส่งรหัสใหม่ (\(viewModel.resendCooldown))")
-                                .font(.noto(15, weight: .bold))
-                                .foregroundColor(.placeholderColor)  // สีจางลงตอน cooldown
-                        } else {
-                            Button(action: {
+                        Text("ใส่รหัสที่ส่งไปยังอีเมลของคุณ")
+                            .font(.noto(config.isIPad ? 24 : 20, weight: .semibold)) // ปรับขนาดฟอนต์บน iPad
+                            .padding(.bottom, config.isIPad ? 24 : 18)
+                        
+                        // MARK: - OTP Input
+                        OTPInputView(viewModel: viewModel, focusedField: $focusedField, config: config)
+                            .padding(.bottom, 15)
+                        
+                        // MARK: - Error Message
+                        Text(viewModel.errorMessage)
+                            .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
+                            .foregroundColor(Color.errorColor)
+                            .frame(height: config.isIPad ? 20 : 15)
+                            .padding(.bottom, 0)
+                            .opacity(viewModel.shouldShowError ? 1 : 0)
+                        
+                        // MARK: - Reference Code (Commented)
+                        // HStack(spacing: 5){
+                        //     Text("รหัสอ้างอิง :")
+                        //         .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
+                        //         .foregroundColor(Color.placeholderColor)
+                        //
+                        //     let refCode = "A9F4K2"
+                        //     Text(refCode)
+                        //         .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
+                        //         .foregroundColor(Color.placeholderColor)
+                        // }
+                        .padding(.bottom, config.isIPad ? 25 : 18)
+                        
+                        // MARK: - Action Button
+                        PrimaryButton(
+                            title: "ยืนยัน",
+                            action: {
+                                focusedField = nil
                                 Task {
-                                    await viewModel.resendOTP(source: source, email: email)
+                                    await viewModel.verifyOTP(source: source, email: email)
                                 }
-                            }) {
-                                Text("ส่งรหัสใหม่")
-                                    .font(.noto(15, weight: .bold))
-                                    .foregroundColor(.mainColor)
-                                    .underline(color: .mainColor)
+                            },
+                            width: config.isIPad ? 220 : 155, // ปรับขนาดปุ่มบน iPad
+                            height: config.isIPad ? 60 : 49
+                        )
+                        
+                        // MARK: - Resend Code
+                        HStack(spacing: 8) {
+                            Text("ยังไม่ได้รับรหัส?")
+                                .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
+                                .foregroundColor(.black)
+                            
+                            if viewModel.resendCooldown > 0 {
+                                Text("ส่งรหัสใหม่ (\(viewModel.resendCooldown))")
+                                    .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
+                                    .foregroundColor(.placeholderColor)  // สีจางลงตอน cooldown
+                            } else {
+                                Button(action: {
+                                    Task {
+                                        await viewModel.resendOTP(source: source, email: email)
+                                    }
+                                }) {
+                                    Text("ส่งรหัสใหม่")
+                                        .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
+                                        .foregroundColor(.mainColor)
+                                        .underline(color: .mainColor)
+                                }
                             }
                         }
+                        .padding(.top, config.isIPad ? 20 : 15)
+                        
+                        Spacer()
                     }
-                    .padding(.top,15)
-                    
-                    Spacer()
+                    .frame(minHeight: geo.size.height) 
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.backgroundColor)
                 .blur(radius: (viewModel.showSuccessPopup || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessPopup || viewModel.showErrorPopup)
                 .onAppear {
@@ -113,8 +125,7 @@ struct OTPConfirmView: View {
                     viewModel.startCooldown()
                 }
                 
-                // ผูกสถานะการนำทางจาก ViewModel กับ AppStorage/Navigation
-                // MARK: - 3 เส้นทาง Navigation
+                // MARK: - Navigation
                 .navigationDestination(isPresented: $viewModel.navigateToChangePW) {
                     ChangePasswordView()
                 }
@@ -124,11 +135,10 @@ struct OTPConfirmView: View {
                 .navigationDestination(isPresented: $viewModel.navigateToProfile) {
                     ProfileView()
                 }
-                
-//            }
+            }
             .navigationBarBackButtonHidden(true)
             
-            // MARK: Success Popup
+            // MARK: - Popups (วางไว้ที่ ZStack นอกสุด)
             if viewModel.showSuccessPopup {
                 SuccessPopupView(message: "แก้ไขอีเมลสำเร็จ") {
                     viewModel.showSuccessPopup = false
@@ -137,7 +147,6 @@ struct OTPConfirmView: View {
                 }
             }
             
-             // MARK: Error Popup
             if viewModel.showErrorPopup && source == .changeEmail {
                 ErrorPopupView(title: "แก้ไขอีเมลไม่สำเร็จ"){
                     withAnimation {

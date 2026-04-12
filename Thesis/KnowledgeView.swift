@@ -13,27 +13,6 @@ struct KnowledgeView: View {
     @State private var currentIndex = 0
     @Binding var hideTabBar: Bool
     
-    // MARK: - Responsive Dimensions
-    private var isIPad: Bool { horizontalSizeClass == .regular }
-    
-    // ปรับ Padding ด้านบนให้เหมาะสมขึ้น
-    private var titleTopPadding: CGFloat { isIPad ? 80 : 65 }
-    private var titleFont: CGFloat { isIPad ? 36 : 25 }
-    
-    private var binImageSize: CGFloat { isIPad ? 350 : 235 }
-    private var binPaddingBottom: CGFloat { isIPad ? 40 : 20 }
-    
-    private var arrowButtonSize: CGFloat { isIPad ? 70 : 50 }
-    private var arrowIconSize: CGFloat { isIPad ? 40 : 30 }
-    private var arrowSidePadding: CGFloat { isIPad ? 60 : 29 }
-    
-    private var contentPaddingH: CGFloat { isIPad ? 60 : 35 }
-    private var contentPaddingTop: CGFloat { isIPad ? 40 : 28 }
-    
-    private var headerFont: CGFloat { isIPad ? 36 : 25 }
-    private var descFont: CGFloat { isIPad ? 26 : 20 }
-    private var descHeight: CGFloat { isIPad ? 80 : 55 }
-    
     let wasteCategories: [WasteCategory] = [
         WasteCategory(
             name: "ถังขยะเปียก",
@@ -89,16 +68,17 @@ struct KnowledgeView: View {
                 Color.backgroundColor
                     .ignoresSafeArea()
                 
-                // ใช้ GeometryReader เพื่ออ่านค่าความสูงและความกว้างของหน้าจอ
                 GeometryReader { geo in
+                    let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+                    
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 0) {
                             
                             Text("ความรู้ทั่วไป")
-                                .font(.noto(titleFont, weight: .bold))
+                                .font(.noto(config.titleFontSize, weight: .bold))
                                 .minimumScaleFactor(0.7)
                                 .foregroundColor(.black)
-                                .padding(.top, titleTopPadding)
+                                .padding(.top, config.headerTopPadding)
                                 .padding(.bottom, 10)
                             
                             let current = wasteCategories[currentIndex]
@@ -108,8 +88,8 @@ struct KnowledgeView: View {
                                 Image(current.binImage)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: binImageSize, height: binImageSize)
-                                    .padding(.bottom, binPaddingBottom)
+                                    .frame(width: config.knowledgeBinImageSize, height: config.knowledgeBinImageSize)
+                                    .padding(.bottom, config.knowledgeBinPaddingBottom)
                                 
                                 // ปุ่มลูกศร
                                 HStack {
@@ -121,17 +101,17 @@ struct KnowledgeView: View {
                                             }
                                         }) {
                                             Image(systemName: "chevron.left")
-                                                .font(.system(size: arrowIconSize))
+                                                .font(.system(size: config.knowledgeArrowIconSize))
                                                 .foregroundColor(.white)
                                         }
-                                        .frame(width: arrowButtonSize, height: arrowButtonSize)
+                                        .frame(width: config.knowledgeArrowButtonSize, height: config.knowledgeArrowButtonSize)
                                         .background(Color.mainColor)
                                         .clipShape(Circle())
-                                        .padding(.leading, arrowSidePadding)
+                                        .padding(.leading, config.knowledgeArrowSidePadding)
                                     } else {
                                         Color.clear
-                                            .frame(width: arrowButtonSize, height: arrowButtonSize)
-                                            .padding(.leading, arrowSidePadding)
+                                            .frame(width: config.knowledgeArrowButtonSize, height: config.knowledgeArrowButtonSize)
+                                            .padding(.leading, config.knowledgeArrowSidePadding)
                                     }
                                     
                                     Spacer()
@@ -144,18 +124,18 @@ struct KnowledgeView: View {
                                             }
                                         }) {
                                             Image(systemName: "chevron.right")
-                                                .font(.system(size: arrowIconSize))
+                                                .font(.system(size: config.knowledgeArrowIconSize))
                                                 .foregroundColor(.white)
                                         }
-                                        .frame(width: arrowButtonSize, height: arrowButtonSize)
+                                        .frame(width: config.knowledgeArrowButtonSize, height: config.knowledgeArrowButtonSize)
                                         .background(Color.mainColor)
                                         .clipShape(Circle())
-                                        .padding(.trailing, arrowSidePadding)
+                                        .padding(.trailing, config.knowledgeArrowSidePadding)
                                         
                                     } else {
                                         Color.clear
-                                            .frame(width: arrowButtonSize, height: arrowButtonSize)
-                                            .padding(.trailing, arrowSidePadding)
+                                            .frame(width: config.knowledgeArrowButtonSize, height: config.knowledgeArrowButtonSize)
+                                            .padding(.trailing, config.knowledgeArrowSidePadding)
                                     }
                                 }
                             }
@@ -165,43 +145,43 @@ struct KnowledgeView: View {
                             VStack(alignment: .leading, spacing: 0) {
                                 HStack(spacing: 0) {
                                     Text(current.name + " ")
-                                        .font(.noto(headerFont, weight: .bold))
+                                        .font(.noto(config.titleFontSize, weight: .bold)) // ใช้ titleFontSize (36:25)
                                         .minimumScaleFactor(0.8)
                                         .foregroundColor(.black)
                                     Text(current.colorName)
-                                        .font(.noto(headerFont, weight: .bold))
+                                        .font(.noto(config.titleFontSize, weight: .bold))
                                         .minimumScaleFactor(0.8)
                                         .foregroundColor(current.color)
                                 }
                                 .padding(.bottom, 5)
                                 
                                 Text(current.description)
-                                    .font(.noto(descFont, weight: .medium))
+                                    .font(.noto(config.knowledgeDescFont, weight: .medium))
                                     .foregroundColor(.black)
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
-                                    .frame(minHeight: descHeight, maxHeight: descHeight, alignment: .top)
+                                    .frame(minHeight: config.knowledgeDescHeight, maxHeight: config.knowledgeDescHeight, alignment: .top)
                                     .padding(.bottom, 10)
                                 
                                 Text("ตัวอย่างขยะ:")
-                                    .font(.noto(descFont, weight: .bold))
+                                    .font(.noto(config.knowledgeDescFont, weight: .bold))
                                     .foregroundColor(.black)
                                     .padding(.bottom, 10)
                                 
-                                WasteExamplesGrid(hideTabBar: $hideTabBar, wasteExamples: current.examples)
+                                // ส่ง config ให้ WasteExamplesGrid
+                                WasteExamplesGrid(config: config, hideTabBar: $hideTabBar, wasteExamples: current.examples)
                                 
                                 Spacer(minLength: 50)
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                            .padding(.horizontal, contentPaddingH)
-                            .padding(.top, contentPaddingTop)
+                            .padding(.horizontal, config.knowledgeContentPaddingH)
+                            .padding(.top, config.knowledgeContentPaddingTop)
                             .background(
                                 Color.knowledgeBackground
                                     .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
                                     .ignoresSafeArea(.container, edges: .horizontal)
                             )
                         }
-                        // บังคับความกว้าง (width) ให้เท่ากับหน้าจอเสมอ เพื่อไม่ให้กล่องหดตัวในแนวนอน
                         .frame(width: geo.size.width)
                         .frame(minHeight: geo.size.height, alignment: .top)
                     }
@@ -216,15 +196,15 @@ struct KnowledgeView: View {
     }
 }
 
+// MARK: - Subviews
+
 struct WasteExamplesGrid: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
     let wasteExamples: [WasteExample]
     
-    private var isIPad: Bool { horizontalSizeClass == .regular }
-    
     private var columns: [GridItem] {
-        if isIPad {
+        if config.isIPad {
             return [
                 GridItem(.flexible(), spacing: 20),
                 GridItem(.flexible(), spacing: 20),
@@ -237,15 +217,13 @@ struct WasteExamplesGrid: View {
         }
     }
     
-    private var gridSpacing: CGFloat { isIPad ? 20 : 10 }
-    
     var body: some View {
-        LazyVGrid(columns: columns, spacing: gridSpacing) {
+        LazyVGrid(columns: columns, spacing: config.knowledgeGridSpacing) {
             ForEach(wasteExamples) { example in
                 NavigationLink {
                     DetailWasteTypeView(hideTabBar: $hideTabBar, category: example.label)
                 } label: {
-                    WasteCard(example: example)
+                    WasteCard(config: config, example: example) 
                 }
             }
         }
@@ -253,36 +231,30 @@ struct WasteExamplesGrid: View {
 }
 
 struct WasteCard: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    let config: ResponsiveConfig
     let example: WasteExample
-    
-    private var isIPad: Bool { horizontalSizeClass == .regular }
-    
-    private var imageSize: CGFloat { isIPad ? 80 : 60 }
-    private var textFont: CGFloat { isIPad ? 22 : 16 }
-    private var cardHeight: CGFloat { isIPad ? 110 : 85 }
     
     var body: some View {
         HStack(spacing: 0) {
             Image(example.image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: imageSize, height: imageSize)
-                .frame(width: imageSize) // ล็อกขอบเขตภาพ
+                .frame(width: config.wasteCardImageSize, height: config.wasteCardImageSize)
+                .frame(width: config.wasteCardImageSize) // ล็อกขอบเขตภาพ
                 .padding(10)
                 
             Text(example.label)
-                .font(.noto(textFont, weight: .medium))
+                .font(.noto(config.wasteCardTextFont, weight: .medium))
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.trailing, 10)
         }
-        .frame(height: cardHeight)
+        .frame(height: config.wasteCardHeight)
         .background(Color.wasteCard)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
-#Preview{
+#Preview {
     KnowledgeView(hideTabBar: .constant(false))
 }

@@ -1,6 +1,6 @@
 //
 //  MainAppView.swift
-//  Theis
+//  Thesis
 //
 //  Created by Kansinee Klinkhachon on 22/10/2568 BE.
 //
@@ -14,23 +14,11 @@ struct MainAppView: View {
     @StateObject private var profileVM = UserProfileViewModel()
     @StateObject private var wasteVM = FrequentWasteViewModel()
 
-    // 1. ตรวจสอบ Size Class
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
 
     var body: some View {
         GeometryReader { geo in
-            // 2. คำนวณค่าตัวแปรตามขนาดหน้าจอ
-            let isIPad = horizontalSizeClass == .regular
-            let screenWidth = geo.size.width
-            
-            let horizontalPadding: CGFloat = isIPad ? 40 : 28
-            let nameFontSize: CGFloat = isIPad ? 30 : 20
-            let pointsFontSize: CGFloat = isIPad ? 60 : 40
-            let logoWidth: CGFloat = isIPad ? 150 : 110
-            let logoHeight: CGFloat = isIPad ? 60 : 44
-            let profileSize: CGFloat = isIPad ? 80 : 55
-            let headerHeight: CGFloat = isIPad ? 260 : 205
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
 
             VStack(spacing: 0) {
                 // --- Header Section ---
@@ -38,8 +26,8 @@ struct MainAppView: View {
                     Image("logo_white")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: logoWidth, height: logoHeight)
-                        .padding(.top, isIPad ? 60 : 80)
+                        .frame(width: config.mainLogoWidth, height: config.mainLogoHeight)
+                        .padding(.top, config.mainLogoTopPadding)
                     
                     HStack(alignment: .center, spacing: 13) {
                         Group {
@@ -53,7 +41,7 @@ struct MainAppView: View {
                                     .aspectRatio(contentMode: .fill)
                             }
                         }
-                        .frame(width: profileSize, height: profileSize)
+                        .frame(width: config.mainProfileSize, height: config.mainProfileSize)
                         .clipShape(Circle())
                         .shadow(radius: 4)
                         
@@ -63,7 +51,7 @@ struct MainAppView: View {
                                     .tint(.white)
                             } else {
                                 Text(profileVM.fullName)
-                                    .font(.noto(nameFontSize, weight: .bold))
+                                    .font(.noto(config.mainNameFontSize, weight: .bold))
                                     .foregroundColor(.white)
                             }
                             
@@ -71,42 +59,45 @@ struct MainAppView: View {
                             
                             VStack(alignment: .trailing) {
                                 Text("\(profileVM.totalPoints)")
-                                    .font(.system(size: pointsFontSize, weight: .bold))
+                                    .font(.system(size: config.mainPointsFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 Text("คะแนน")
-                                    .font(.noto(isIPad ? 20 : 15, weight: .regular))
+                                    .font(.noto(config.mainPointsLabelFontSize, weight: .regular))
                                     .foregroundColor(.white)
                                     .fontWeight(.bold)
                             }
                         }
-                        .padding(.trailing, horizontalPadding)
+                        .padding(.trailing, config.mainHorizontalPadding)
                     }
-                    .padding(.bottom, isIPad ? 40 : 36)
+                    .padding(.bottom, config.mainProfileBottomPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(height: headerHeight)
+                .frame(height: config.mainHeaderHeight)
                 .frame(maxWidth: .infinity)
-                .padding(.leading, horizontalPadding)
+                .padding(.leading, config.mainHorizontalPadding)
                 .background(Color.mainColor)
                 .clipShape(RoundedCorner(radius: 20, corners: [.bottomLeft, .bottomRight]))
+
                 
                 // --- Scrollable Content ---
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: isIPad ? 30 : 20) {
+                    VStack(alignment: .leading, spacing: config.mainContentSpacing) {
                         HistorySection(
+                            config: config,
                             hideTabBar: $hideTabBar,
                             items: profileVM.latestHistory.map { [$0] } ?? []
                         )
                         
-                        RewardExchangeSection(hideTabBar: $hideTabBar)
+                        RewardExchangeSection(config: config,hideTabBar: $hideTabBar)
                         
                         FrequentWasteSection(
+                            config: config,
                             hideTabBar: $hideTabBar,
                             items: wasteVM.wasteItems.isEmpty
                                 ? [
                                     RecyclableItem(imageName: "Bottle",     title: "ขวดพลาสติก", countNumber: 0),
-                                    RecyclableItem(imageName: "Plasticcup",        title: "แก้วพลาสติก",    countNumber: 0),
+                                    RecyclableItem(imageName: "Plasticcup", title: "แก้วพลาสติก",  countNumber: 0),
                                     RecyclableItem(imageName: "Can",        title: "กระป๋อง",    countNumber: 0)
                                   ]
                                 : wasteVM.wasteItems.prefix(3).map {
@@ -118,13 +109,18 @@ struct MainAppView: View {
                                   }
                         )
                         
-                        WasteSeparationGuideSection(currentIndex: $currentCarouselIndex, hideTabBar: $hideTabBar, tabIndex: $tabIndex)
+                        WasteSeparationGuideSection(
+                            config: config,
+                            currentIndex: $currentCarouselIndex,
+                            hideTabBar: $hideTabBar,
+                            tabIndex: $tabIndex
+                        )
                     }
                     .padding()
-                    .padding(.horizontal, isIPad ? 20 : 0)
-                    .frame(maxWidth: isIPad ? 1100 : .infinity, alignment: .center) // จำกัดความกว้างบน iPad
+                    .padding(.horizontal, config.isIPad ? 20 : 0)
+                    .frame(maxWidth: config.mainContentMaxWidth, alignment: .center)
                 }
-                .frame(width: screenWidth) // ให้ ScrollView กว้างเต็มจอเพื่อจัดกึ่งกลางเนื้อหาด้านใน
+                .frame(width: config.screenWidth)
                 
                 Spacer()
             }
@@ -147,18 +143,15 @@ struct MainAppView: View {
 // --- Helper Views ---
 
 struct SectionHeader<Destination: View>: View {
+    let config: ResponsiveConfig // รับ Config เข้ามา
     let title: String
     let destinationView: Destination
     var onTapSeeAll: (() -> Void)? = nil
     
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
     var body: some View {
-        let isIPad = horizontalSizeClass == .regular
-        
         HStack {
             Text(title)
-                .font(.noto(isIPad ? 24 : 18, weight: .bold))
+                .font(.noto(config.sectionHeaderTitleFont, weight: .bold))
                 .foregroundColor(.black)
 
             Spacer()
@@ -167,10 +160,10 @@ struct SectionHeader<Destination: View>: View {
                 Button(action: action) {
                     HStack(spacing: 4) {
                         Text("ดูทั้งหมด")
-                            .font(.noto(isIPad ? 18 : 14, weight: .medium))
+                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
                             .foregroundColor(Color.mainColor)
                         Image(systemName: "chevron.right")
-                            .font(.system(size: isIPad ? 18 : 14))
+                            .font(.system(size: config.sectionHeaderButtonFont))
                             .foregroundColor(Color.mainColor)
                     }
                 }
@@ -178,10 +171,10 @@ struct SectionHeader<Destination: View>: View {
                 NavigationLink(destination: destinationView.navigationBarBackButtonHidden(true)) {
                     HStack(spacing: 4) {
                         Text("ดูทั้งหมด")
-                            .font(.noto(isIPad ? 18 : 14, weight: .medium))
+                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
                             .foregroundColor(Color.mainColor)
                         Image(systemName: "chevron.right")
-                            .font(.system(size: isIPad ? 18 : 14))
+                            .font(.system(size: config.sectionHeaderButtonFont))
                             .foregroundColor(Color.mainColor)
                     }
                 }
@@ -191,17 +184,18 @@ struct SectionHeader<Destination: View>: View {
 }
 
 struct FrequentWasteSection: View {
+    let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
     let items: [RecyclableItem]
     
     var body: some View {
         VStack(spacing: 7) {
-            SectionHeader(title: "ขยะที่แยกบ่อย", destinationView: FrequentWasteView())
+            SectionHeader(config: config, title: "ขยะที่แยกบ่อย", destinationView: FrequentWasteView())
             
             HStack(spacing: 8) {
                 ForEach(items) { item in
                     NavigationLink(destination: WasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
-                        RecyclableItemCard(item: item)
+                        RecyclableItemCard(config: config, item: item)
                             .foregroundColor(.primary)
                     }
                 }
@@ -211,28 +205,26 @@ struct FrequentWasteSection: View {
 }
 
 struct RecyclableItemCard: View {
+    let config: ResponsiveConfig
     let item: RecyclableItem
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        let isIPad = horizontalSizeClass == .regular
-        
         VStack(spacing: 0) {
             Spacer()
             
             Image(item.imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(height: isIPad ? 120 : 92) // ขยายรูปบน iPad
+                .frame(height: config.itemCardImageHeight)
             
             VStack(spacing: 2) {
                 Text(item.title)
-                    .font(.noto(isIPad ? 18 : 14, weight: .semibold))
+                    .font(.noto(config.itemCardTitleFont, weight: .semibold))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                 
                 Text("\(item.countNumber) ครั้ง")
-                    .font(.noto(isIPad ? 14 : 10, weight: .medium))
+                    .font(.noto(config.itemCardCountFont, weight: .medium))
                     .foregroundColor(.black)
             }
             .padding(.top, 4)
@@ -240,28 +232,26 @@ struct RecyclableItemCard: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
-        .frame(height: isIPad ? 200 : 150) // ขยายการ์ดบน iPad
+        .frame(height: config.itemCardHeight)
         .background(Color.thirdColor)
         .cornerRadius(20)
     }
 }
 
 struct WasteSeparationGuideSection: View {
+    let config: ResponsiveConfig
     @Binding var currentIndex: Int
     @Binding var hideTabBar: Bool
     @Binding var tabIndex: Int
     
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
     let totalPages = 3
     let virtualPages = 300  // infinite scroll
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        let isIPad = horizontalSizeClass == .regular
-        
         VStack(spacing: 7) {
             SectionHeader(
+                config: config,
                 title: "วิธีการแยกขยะ",
                 destinationView: KnowledgeView(hideTabBar: $hideTabBar),
                 onTapSeeAll: {
@@ -277,9 +267,9 @@ struct WasteSeparationGuideSection: View {
                         ZStack {
                             Image("info-banner\(index % totalPages + 1)")
                                 .resizable()
-                                .scaledToFill() // ดันให้เต็มกรอบ
+                                .scaledToFill()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .cornerRadius(isIPad ? 25 : 20)
+                                .cornerRadius(config.bannerCornerRadius)
                                 .clipped()
                         }
                         .padding(.horizontal, 2)
@@ -287,9 +277,7 @@ struct WasteSeparationGuideSection: View {
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                
-                // ยิ่งตัวเลขด้านหน้าเยอะ รูปจะยิ่งดูแบน (เช่น 21/9), ถ้าเลขด้านหน้าน้อย รูปจะดูสูง (เช่น 4/3)
-                .aspectRatio(isIPad ? 2.75/1 : 5.5/2, contentMode: .fit)
+                .aspectRatio(config.bannerAspectRatio, contentMode: .fit)
 
                 HStack(spacing: 6) {
                     ForEach(0..<totalPages, id: \.self) { index in
@@ -307,6 +295,7 @@ struct WasteSeparationGuideSection: View {
         }
     }
 }
+
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))

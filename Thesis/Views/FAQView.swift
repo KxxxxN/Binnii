@@ -16,6 +16,9 @@ struct FAQItem: Identifiable {
 struct FAQView: View {
 //    @Environment(\.dismiss) private var dismiss
     
+    // 1. ดึง Size Class มาจาก Environment
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     let cornerRadiusValue: CGFloat = 20
     
     // 💡 Data Source: ข้อมูลคำถามและคำตอบ
@@ -34,36 +37,44 @@ struct FAQView: View {
     
     var body: some View {
 //        NavigationStack {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            
             VStack(spacing: 0) {
+                // Header 
                 ZStack {
                     Text("คำถามที่พบบ่อย")
-                        .font(.noto(25, weight: .bold))
+                        .font(.noto(config.titleFontSize, weight: .bold))
                     
                     HStack {
                         BackButton()
-
                         Spacer()
                     }
                 }
-                ScrollView {
-                    VStack(spacing: 9) {
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: config.isIPad ? 15 : 9) {
                         ForEach(faqItems) { item in
-                            FAQExpandableRow(item: item)
+                            FAQExpandableRow(item: item, config: config)
                         }
                     }
                     .padding(.top, 40)
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, config.paddingStandard)
+                    .padding(.bottom, config.paddingMedium)
                     
                     Spacer()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .navigationBarBackButtonHidden(true)
         }
+//        }
     }
-//}
+}
 
 #Preview {
     FAQView()

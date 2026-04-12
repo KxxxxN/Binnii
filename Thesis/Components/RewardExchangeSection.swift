@@ -7,35 +7,15 @@
 import SwiftUI
 
 struct RewardExchangeSection: View {
-    
+    let config: ResponsiveConfig // 1. รับ config เข้ามาจากหน้าหลัก
     @Binding var hideTabBar: Bool
     
-    // 1. ตรวจสอบ Size Class
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
     var body: some View {
-        let isIPad = horizontalSizeClass == .regular
-        
-        // 2. กำหนดตัวแปรสำหรับขนาดต่างๆ เพื่อลดความซ้ำซ้อนในโค้ด
-        let vStackSpacing: CGFloat = isIPad ? 12 : 7
-        let headerFontSize: CGFloat = isIPad ? 24 : 18
-        let textSpacing: CGFloat = isIPad ? 6 : 3
-        let pointsFontSize: CGFloat = isIPad ? 36 : 25
-        let pointsLabelFontSize: CGFloat = isIPad ? 20 : 15
-        let subtitleFontSize: CGFloat = isIPad ? 18 : 14
-        let buttonFontSize: CGFloat = isIPad ? 20 : 16
-        let buttonHPadding: CGFloat = isIPad ? 24 : 16
-        let buttonVPadding: CGFloat = isIPad ? 14 : 10
-        let buttonCornerRad: CGFloat = isIPad ? 25 : 20
-        let cardPadding: CGFloat = isIPad ? 24 : 16
-        let cardHeight: CGFloat = isIPad ? 110 : 75
-        let cardCornerRad: CGFloat = 20
-        
-        VStack(spacing: vStackSpacing) {
+        VStack(spacing: config.rewardVStackSpacing) {
 
             HStack {
                 Text("แลกคะแนน")
-                    .font(.noto(headerFontSize, weight: .bold))
+                    .font(.noto(config.sectionHeaderTitleFont, weight: .bold))
                     .foregroundColor(.black)
 
                 Spacer()
@@ -46,37 +26,37 @@ struct RewardExchangeSection: View {
                     .navigationBarBackButtonHidden(true)
             } label: {
                 HStack {
-                    VStack(alignment: .leading, spacing: textSpacing) {
+                    VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text("300")
-                                .font(.system(size: pointsFontSize, weight: .bold))
+                                .font(.system(size: config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
 
                             Text("คะแนน")
-                                .font(.noto(pointsLabelFontSize, weight: .bold))
+                                .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                 .foregroundColor(.white)
                         }
 
                         Text("แลกชั่วโมงจิตอาสาได้ 1 ชั่วโมง")
-                            .font(.noto(subtitleFontSize, weight: .medium))
+                            .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
                             .foregroundColor(.white)
                     }
 
                     Spacer()
 
                     Text("แลกคะแนน")
-                        .font(.noto(buttonFontSize, weight: .bold))
+                        .font(.noto(config.buttonFont, weight: .bold))
                         .foregroundColor(.white)
-                        .padding(.horizontal, buttonHPadding)
-                        .padding(.vertical, buttonVPadding)
+                        .padding(.horizontal, config.rewardCardPadding) // ใช้ค่าเดิม 24:16
+                        .padding(.vertical, config.rewardButtonVPadding)
                         .background(Color.mainColor)
-                        .cornerRadius(buttonCornerRad)
+                        .cornerRadius(config.bannerCornerRadius) // ใช้ค่าเดิม 25:20
                 }
-                .padding(cardPadding)
+                .padding(config.rewardCardPadding)
                 .frame(maxWidth: .infinity) // ยืดให้เต็มกรอบที่ Parent View กำหนดไว้
-                .frame(height: cardHeight)
+                .frame(height: config.rewardCardHeight)
                 .background(Color.secondColor)
-                .cornerRadius(cardCornerRad)
+                .cornerRadius(20) // มุมของการ์ดเป็น 20 คงที่ตามเดิม
             }
             .buttonStyle(.plain)
         }

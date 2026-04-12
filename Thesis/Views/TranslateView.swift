@@ -9,7 +9,8 @@ import SwiftUI
 
 struct TranslateView: View {
     //    @Environment(\.dismiss) private var dismiss
-    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
     @State private var selectedLanguageCode: String = "TH"
     
     let languages = [
@@ -18,41 +19,48 @@ struct TranslateView: View {
     ]
     
     var body: some View {
-        //        NavigationStack {
-        VStack(spacing: 0) {
-            
-            // Header
-            ZStack {
-                Text("เปลี่ยนภาษา")
-                    .font(.noto(25, weight: .bold))
-                
-                HStack {
-                    BackButton()
-                    
-                    Spacer()
-                }
-            }
-            
-            // Language Selection List
+        GeometryReader { geo in
+            // เรียกใช้ ResponsiveConfig
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             VStack(spacing: 0) {
-                ForEach(languages, id: \.code) { lang in
-                    LanguageSelectionRow(
-                        code: lang.code,
-                        name: lang.name,
-                        imageName: lang.image,
-                        selectedCode: selectedLanguageCode //
-                    ) { newCode in
-                        selectedLanguageCode = newCode
+                
+                // Header
+                ZStack {
+                    Text("เปลี่ยนภาษา")
+                        .font(.noto(config.titleFontSize, weight: .bold))
+                        .foregroundColor(Color.black)
+                    
+                    HStack {
+                        BackButton()
+                        
+                        Spacer()
                     }
                 }
+                .padding(.top, config.topPadding)
+                .padding(.bottom, config.bottomTitlePadding)
+                
+                // Language Selection List
+                VStack(spacing: 0) {
+                    ForEach(languages, id: \.code) { lang in
+                        LanguageSelectionRow(
+                            code: lang.code,
+                            name: lang.name,
+                            imageName: lang.image,
+                            selectedCode: selectedLanguageCode //
+                        ) { newCode in
+                            selectedLanguageCode = newCode
+                        }
+                    }
+                }
+                .padding(.top, 40)
+                
+                Spacer()
             }
-            .padding(.top, 40)
-            
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(Color.backgroundColor)
+            .ignoresSafeArea()
+            .navigationBarBackButtonHidden(true)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.backgroundColor)
-        .navigationBarBackButtonHidden(true)
     }
 }
 //}

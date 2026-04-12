@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - Shared Component
 struct WetWasteDetailContent: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    let config: ResponsiveConfig
     
     let category: String
     var wasteDetail: String? = nil
@@ -18,138 +18,131 @@ struct WetWasteDetailContent: View {
     let recyclingMethods: [String]
     var showDate: Bool = false
 
-    // MARK: - Responsive Dimensions (เหมือน GeneralWasteDetailContent)
-    private var isIPad: Bool { horizontalSizeClass == .regular }
-    private var contentPaddingH: CGFloat { isIPad ? 60 : 37 }
-    
-    private var titleFontSize: CGFloat { isIPad ? 36 : 25 }
-    private var sectionTitleFontSize: CGFloat { isIPad ? 28 : 20 }
-    private var bodyFontSize: CGFloat { isIPad ? 22 : 17 }
-    private var stepTextFontSize: CGFloat { isIPad ? 20 : 15 }
-    private var binTextFontSize: CGFloat { isIPad ? 16 : 12 }
-    
-    private var mainBinHeight: CGFloat { isIPad ? 150 : 108 }
-    private var stepImageSize: CGFloat { isIPad ? 120 : 80 }
-    private var binIconSize: CGFloat { isIPad ? 60 : 40 }
-    private var arrowSize: CGFloat { isIPad ? 30 : 20 }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
             // ชื่อขยะและวันที่
             HStack(spacing: 12) {
                 Text(category)
-                    .font(.noto(titleFontSize, weight: .bold))
+                    .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.black)
                 
                 if showDate {
                     Text(Date().formatted(date: .numeric, time: .shortened))
-                        .font(.noto(stepTextFontSize, weight: .medium))
+                        .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
-                        .padding(.top, isIPad ? 12 : 8)
+                        .padding(.top, config.isIPad ? 12 : 8)
                 }
             }
             .padding(.top, 24)
-            .padding(.horizontal, contentPaddingH)
+            .padding(.horizontal, config.detailContentPaddingH)
             
             // รายละเอียดตัวอย่างขยะ
             if let wasteDetail = wasteDetail {
                 Text(wasteDetail)
-                    .font(.noto(isIPad ? 24 : 18, weight: .medium))
+                    .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
                     .foregroundColor(.gray)
-                    .padding(.horizontal, contentPaddingH)
+                    .fixedSize(horizontal: false, vertical: true) // ✅ ป้องกันข้อความโดนตัด
+                    .frame(maxWidth: .infinity, alignment: .leading) // ✅ บังคับไม่ให้ดันขอบจอ
+                    .padding(.horizontal, config.detailContentPaddingH)
             }
             
             // ประเภทถังขยะ
             HStack(spacing: 13) {
-                Image("Bin1") // ถังขยะเปียกสีเขียว
+                Image("Bin1")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: mainBinHeight)
+                    // ✅ แก้อาการรูปกว้างเกินด้วยการคุมทั้งความกว้างและความสูง
+                    .frame(width: config.detailMainBinHeight, height: config.detailMainBinHeight)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("ประเภทถังขยะ")
-                        .font(.noto(sectionTitleFontSize, weight: .bold))
+                        .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     HStack(spacing: 0) {
                         Text("ถังขยะเปียก ")
-                            .font(.noto(isIPad ? 24 : 18, weight: .medium))
+                            .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
                         Text("(สีเขียว)")
-                            .font(.noto(isIPad ? 24 : 18, weight: .bold))
+                            .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.wetWasteColor)
                     }
                 }
             }
             .padding(.top, 25)
-            .padding(.horizontal, contentPaddingH)
+            .padding(.horizontal, config.detailContentPaddingH)
             
             // วิธีการแยกขยะ
             VStack(alignment: .leading, spacing: 10) {
                 Text("วิธีการแยกขยะ")
-                    .font(.noto(sectionTitleFontSize, weight: .bold))
+                    .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     .foregroundColor(.black)
-                    .padding(.horizontal, contentPaddingH)
+                    .padding(.horizontal, config.detailContentPaddingH)
                 
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(separationSteps.indices, id: \.self) { index in
                         if index > 0 {
                             Image(systemName: "arrow.right")
                                 .foregroundColor(.black)
-                                .font(.system(size: arrowSize))
+                                .font(.system(size: config.detailArrowSize))
                                 .padding(.horizontal, 2)
-                                .padding(.top, stepImageSize / 2 - (arrowSize / 2)) // จัดให้อยู่กึ่งกลางรูปภาพ
+                                .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
                         }
                         
                         VStack(spacing: 0) {
                             Image(separationSteps[index].imageName)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: stepImageSize, height: stepImageSize)
+                                .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
                                 .padding(.bottom, 10)
                             
                             Text(separationSteps[index].text)
-                                .font(.noto(stepTextFontSize, weight: .medium))
+                                .font(.noto(config.detailStepTextFontSize, weight: .medium))
                                 .foregroundColor(.black)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
-                                // กำหนด minHeight เพื่อให้ถังขยะด้านล่างบรรทัดเท่ากัน
-                                .frame(maxWidth: .infinity, minHeight: isIPad ? 60 : 45, alignment: .top)
+                                .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                             
                             Spacer().frame(height: 10)
                             
-                            // ถังขยะขนาดเล็กด้านล่างขั้นตอน
                             if index < binSteps.count {
                                 VStack(spacing: 2) {
                                     Image(binSteps[index].imageName)
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(width: binIconSize, height: binIconSize)
+                                        .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
                                     Text(binSteps[index].text)
-                                        .font(.noto(binTextFontSize, weight: .medium))
+                                        .font(.noto(config.detailBinTextFontSize, weight: .medium))
                                         .foregroundColor(.black)
                                         .multilineTextAlignment(.center)
+                                        // ✅ ป้องกันข้อความถังขยะดันขอบ
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
-                        .frame(maxWidth: .infinity)
+                        // ✅ เพิ่ม minWidth: 0 เพื่อให้การ์ดยอมบีบตัวลงตามขนาดจอไอโฟน ไม่ดันไปทางขวา
+                        .frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }
-                .padding(.horizontal, isIPad ? 20 : 10)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, config.isIPad ? 20 : 10)
             }
+            .frame(maxWidth: .infinity)
             .padding(.top, 30)
             
             // การรีไซเคิล
             VStack(alignment: .leading, spacing: 10) {
                 Text("การรีไซเคิล")
-                    .font(.noto(sectionTitleFontSize, weight: .bold))
+                    .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
-                        Text("•   \(method)")
-                            .font(.noto(bodyFontSize, weight: .medium))
+                        Text("•   \(method)")
+                            .font(.noto(config.detailBodyFontSize, weight: .medium))
+                            .fixedSize(horizontal: false, vertical: true) // ✅ ให้คำยาวๆ ยอมขึ้นบรรทัดใหม่
+                            .frame(maxWidth: .infinity, alignment: .leading) // ✅ บังคับไม่ให้กว้างเกินจอ
                     }
                 }
             }
-            .padding(.horizontal, contentPaddingH)
+            .padding(.horizontal, config.detailContentPaddingH)
             .padding(.top, 30)
             .padding(.bottom, 50)
         }
@@ -157,6 +150,7 @@ struct WetWasteDetailContent: View {
         .background(
             Color.knowledgeBackground
                 .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
+                .ignoresSafeArea(.container, edges: .horizontal)
         )
     }
 }
@@ -164,9 +158,11 @@ struct WetWasteDetailContent: View {
 
 // MARK: - เศษอาหาร
 struct WetWasteDetailFoodscraps: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "เศษอาหาร",
             wasteDetail: "เช่น ข้าว เศษผัก เศษเนื้อ ก้างปลา กระดูกไก่",
             separationSteps: [
@@ -189,9 +185,11 @@ struct WetWasteDetailFoodscraps: View {
 
 // MARK: - เปลือกผลไม้
 struct WetWasteDetailFruitPeel: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "เปลือกผลไม้",
             separationSteps: [
                 WasteSeparationStep(imageName: "step_fruit_1", text: "แยกออกจากภาชนะ"),
@@ -213,9 +211,11 @@ struct WetWasteDetailFruitPeel: View {
 
 // MARK: - เศษขนม
 struct WetWasteDetailCrumbs: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "เศษขนม",
             wasteDetail: "เช่น ขนมขบเคี้ยว คุกกี้ ขนมปัง เค้ก",
             separationSteps: [
@@ -238,9 +238,11 @@ struct WetWasteDetailCrumbs: View {
 
 // MARK: - เปลือกไข่
 struct WetWasteDetailEggshell: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "เปลือกไข่",
             separationSteps: [
                 WasteSeparationStep(imageName: "step_eggshell_1", text: "แยกออกจากภาชนะ"),
@@ -262,9 +264,11 @@ struct WetWasteDetailEggshell: View {
 
 // MARK: - เครื่องดื่มเหลือ
 struct WetWasteDetailLeftoverDrinks: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "เครื่องดื่มเหลือ",
             separationSteps: [
                 WasteSeparationStep(imageName: "step_drink_1", text: "เทเครื่องดื่มออกจากภาชนะ"),
@@ -285,9 +289,11 @@ struct WetWasteDetailLeftoverDrinks: View {
 
 // MARK: - น้ำแข็งเหลือ
 struct WetWasteDetailLeftoverIce: View {
+    let config: ResponsiveConfig
     var showDate: Bool = false
     var body: some View {
         WetWasteDetailContent(
+            config: config,
             category: "น้ำแข็งเหลือ",
             separationSteps: [
                 WasteSeparationStep(imageName: "step_ice_1", text: "เทน้ำแข็งออกจากภาชนะ"),
@@ -307,13 +313,16 @@ struct WetWasteDetailLeftoverIce: View {
 }
 
 #Preview {
-    ScrollView {
-        WetWasteDetailFoodscraps()
-        WetWasteDetailFruitPeel()
-        WetWasteDetailEggshell()
-        WetWasteDetailCrumbs()
-        WetWasteDetailLeftoverDrinks()
-        WetWasteDetailLeftoverIce()
+    GeometryReader { geo in
+        let config = ResponsiveConfig(horizontalSizeClass: .compact, geo: geo)
+        
+        ScrollView {
+            WetWasteDetailFoodscraps(config: config)
+            WetWasteDetailFruitPeel(config: config)
+            WetWasteDetailEggshell(config: config)
+            WetWasteDetailCrumbs(config: config)
+            WetWasteDetailLeftoverDrinks(config: config)
+            WetWasteDetailLeftoverIce(config: config)
+        }
     }
 }
-

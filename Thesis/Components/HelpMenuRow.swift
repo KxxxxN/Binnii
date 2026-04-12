@@ -12,27 +12,29 @@ struct HelpMenuRow<Destination: View>: View {
     let title: String
     let imageName: String
     let destination: Destination
+    let config: ResponsiveConfig // 1. เพิ่ม Config เข้ามา
 
     var body: some View {
         NavigationLink(destination: destination) {
-            HStack(spacing: 15) {
+            HStack(spacing: config.accountRowSpacing) {
                 Image(imageName)
                     .resizable()
-                    .frame(width: 40, height: 40)
-                    .padding(.leading, 32)
-                
+                    .frame(width: config.accountRowIconSize, height: config.accountRowIconSize)
+                    .padding(.leading, config.accountRowIconLeading)
+
                 Text(title)
-                    .font(.noto(20, weight: .medium))
+                    .font(.noto(config.accountRowFontSize, weight: .medium))
                     .foregroundColor(Color.black)
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
                     .foregroundColor(.black)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: config.accountRowChevronSize, weight: .bold))
+
             }
-            .padding(.trailing)
-            .frame(height: 93)
+            .padding(.trailing, config.paddingStandard)
+            .frame(height: config.accountRowHeight)
             .background(Color.accountSecColor)
         }
     }

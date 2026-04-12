@@ -18,10 +18,13 @@ struct RegisterInputField: View {
     var isSecure: Bool = false
     var isPasswordToggle: Binding<Bool>?
     
+    // 1. เพิ่มตัวแปรรับค่า ResponsiveConfig
+    let config: ResponsiveConfig
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             RequiredTitle(title: title)
-                 
+                  
             HStack {
                 ZStack(alignment: .leading) {
                     PlaceholderView(text: text, placeholder: placeholder)
@@ -37,30 +40,31 @@ struct RegisterInputField: View {
                     }
                 }
                 
-                
                 if isSecure, let isVisible = isPasswordToggle {
                     Button { isVisible.wrappedValue.toggle() } label: {
                         Image(systemName: isVisible.wrappedValue ? "eye.fill" : "eye.slash.fill")
                             .foregroundColor(.black)
+                            .font(.system(size: config.isIPad ? 22 : 18))
                     }
                 }
             }
             .padding()
-            .frame(width: 345, height: 49)
+            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
-            .cornerRadius(20)
+            .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
-                 
+                  
             // ข้อความแสดงข้อผิดพลาด
             Group {
                 Text(errorMessage)
-                    .font(.noto(15, weight: .medium))
+                    .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                     .foregroundColor(Color.errorColor)
-                    .frame(height: 20)
-                    .padding(.top,3)
+                    .frame(height: config.isIPad ? 25 : 20)
+                    .padding(.top, 3)
                     .opacity(isValid ? 0 : 1)
             }
             .clipped()
         }
+        .padding(.horizontal, config.paddingStandard)
     }
 }

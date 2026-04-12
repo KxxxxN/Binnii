@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DetailSearchView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Binding var hideTabBar: Bool
     @State private var showConfirmPhotoView = false
     
@@ -39,84 +40,103 @@ struct DetailSearchView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            
+            ZStack {
+                Color.backgroundColor
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // MARK: - Header Section
-                ZStack {
-                    Text("ค้นหา")
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.black)
-                    HStack {
-                        BackButton()
-                        Spacer()
-                    }
-                }
-                .padding(.bottom, 27)
-
-                // MARK: - Content
-                ScrollView {
-                    Image(imageForCategory(category))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    
-                    Spacer().frame(height: 23)
-                    
-                    VStack(spacing: 0) {
-                        // แสดง component ตาม category
-                        switch category {
-                        case "ขวดพลาสติก":       RecycleWasteDetailPlasticBottle()
-                        case "แก้วพลาสติก":       RecycleWasteDetailPlasticCup()
-                        case "กระป๋อง":           RecycleWasteDetailCan()
-                        case "กล่องกระดาษ":       RecycleWasteDetailCardboardBox()
-                        case "กระดาษทั่วไป":      RecycleWasteDetailPaper()
-                        case "ถุงพลาสติก":        RecycleWasteDetailPlasticBag()
-                        case "เศษอาหาร":          WetWasteDetailFoodscraps()
-                        case "เปลือกผลไม้":       WetWasteDetailFruitPeel()
-                        case "เศษขนม":            WetWasteDetailCrumbs()
-                        case "เปลือกไข่":         WetWasteDetailEggshell()
-                        case "เครื่องดื่มเหลือ":  WetWasteDetailLeftoverDrinks()
-                        case "น้ำแข็งเหลือ":      WetWasteDetailLeftoverIce()
-                        case "ซองขนม":            GeneralWasteDetailSnackBag()
-                        case "ภาชนะใส่อาหาร":    GeneralWasteDetailFoodContainer()
-                        case "หลอด":              GeneralWasteDetailStraw()
-                        case "กระดาษทิชชู่":      GeneralWasteDetailTissue()
-                        case "ตะเกียบไม้":        GeneralWasteDetailChopsticks()
-                        case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon()
-                        default:
-                            Text("ไม่พบข้อมูลประเภทขยะนี้")
-                                .font(.noto(18, weight: .medium))
-                                .foregroundColor(.gray)
-                                .padding()
-                        }
+                VStack(spacing: 0) {
+                    // MARK: - Header Section
+                    ZStack {
+                        Text("ค้นหา")
+                            .font(.noto(config.fontTitle, weight: .bold))
+                            .foregroundColor(.black)
                         
-                        //  ปุ่มยืนยันภาพถ่าย
-                        Button {
-                            hideTabBar = true
-                            showConfirmPhotoView = true
-                        } label: {
-                            HStack {
-                                Text("ยืนยันภาพถ่าย")
-                                    .font(.noto(20, weight: .bold))
-                                    .foregroundColor(.white)
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 20))
-                            }
-                            .frame(width: 175, height: 49)
-                            .background(Color.mainColor)
-                            .cornerRadius(20)
+                        HStack {
+                            BackButton()
+                            Spacer()
                         }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, 37)
-                        .padding(.vertical, 30)
-                        .background(Color.knowledgeBackground)
                     }
+                    .padding(.horizontal, config.isIPad ? 60 : 20) 
+                    .padding(.bottom, config.isIPad ? 40 : 27)
+                    .padding(.top, config.headerTopPadding)
+
+                    // MARK: - Content
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            
+                            Image(imageForCategory(category))
+                                .resizable()
+                                .frame(maxWidth: .infinity)
+                                .aspectRatio(1.25, contentMode: .fill)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .padding(.horizontal, config.isIPad ? 60 : 20)
+                            
+                            Spacer().frame(height: config.isIPad ? 40 : 23)
+                            
+                            // MARK: - ส่วนเนื้อหารายละเอียด
+                            VStack(spacing: 0) {
+                                // ส่ง config เข้าไปในทุกๆ component ตาม category
+                                switch category {
+                                case "ขวดพลาสติก":       RecycleWasteDetailPlasticBottle(config: config)
+                                case "แก้วพลาสติก":       RecycleWasteDetailPlasticCup(config: config)
+                                case "กระป๋อง":           RecycleWasteDetailCan(config: config)
+                                case "กล่องกระดาษ":       RecycleWasteDetailCardboardBox(config: config)
+                                case "กระดาษทั่วไป":      RecycleWasteDetailPaper(config: config)
+                                case "ถุงพลาสติก":        RecycleWasteDetailPlasticBag(config: config)
+                                case "เศษอาหาร":          WetWasteDetailFoodscraps(config: config)
+                                case "เปลือกผลไม้":       WetWasteDetailFruitPeel(config: config)
+                                case "เศษขนม":            WetWasteDetailCrumbs(config: config)
+                                case "เปลือกไข่":         WetWasteDetailEggshell(config: config)
+                                case "เครื่องดื่มเหลือ":  WetWasteDetailLeftoverDrinks(config: config)
+                                case "น้ำแข็งเหลือ":      WetWasteDetailLeftoverIce(config: config)
+                                case "ซองขนม":            GeneralWasteDetailSnackBag(config: config)
+                                case "ภาชนะใส่อาหาร":     GeneralWasteDetailFoodContainer(config: config)
+                                case "หลอด":              GeneralWasteDetailStraw(config: config)
+                                case "กระดาษทิชชู่":      GeneralWasteDetailTissue(config: config)
+                                case "ตะเกียบไม้":        GeneralWasteDetailChopsticks(config: config)
+                                case "ช้อน-ส้อมพลาสติก":  GeneralWasteDetailSpoon(config: config)
+                                default:
+                                    Text("ไม่พบข้อมูลประเภทขยะนี้")
+                                        .font(.noto(config.detailBodyFontSize, weight: .medium))
+                                        .foregroundColor(.gray)
+                                        .padding()
+                                }
+                                
+                                // ปุ่มยืนยันภาพถ่าย
+                                Button {
+                                    hideTabBar = true
+                                    showConfirmPhotoView = true
+                                } label: {
+                                    HStack {
+                                        Text("ยืนยันภาพถ่าย")
+                                            .font(.noto(config.fontHeader)) 
+                                            .foregroundColor(.white)
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.white)
+                                            .font(.system(size: 20))
+                                    }
+                                    .frame(width: config.isIPad ? 220 : 175, height: config.isIPad ? 60 : 49)
+                                    .background(Color.mainColor)
+                                    .cornerRadius(20)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.horizontal, config.isIPad ? 60 : 37) // อิงระยะขอบจาก iPad
+                                .padding(.vertical, config.isIPad ? 40 : 30)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                            .background(
+                                Color.knowledgeBackground
+                                    .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
+                                    .ignoresSafeArea(.container, edges: .horizontal)
+                            )
+                        }
+                    }
+                    .edgesIgnoringSafeArea(.bottom)
                 }
-                .edgesIgnoringSafeArea(.bottom)
+                .ignoresSafeArea(.container, edges: .top) // ขยายพื้นที่ด้านบนสุดเพื่อให้สี Background ดันขึ้นสุดจอ
             }
         }
         .navigationDestination(isPresented: $showConfirmPhotoView) {
@@ -126,11 +146,3 @@ struct DetailSearchView: View {
         .onAppear { hideTabBar = true }
     }
 }
-struct PlasticbottleStep {
-    let imageName: String
-    let text: String
-    let imageSize: CGSize
-}
-
-
-

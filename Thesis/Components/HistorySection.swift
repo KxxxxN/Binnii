@@ -7,29 +7,14 @@
 import SwiftUI
 
 struct HistorySection: View {
-    
+    let config: ResponsiveConfig // 1. รับ config เข้ามาจากหน้าหลัก
     @Binding var hideTabBar: Bool
     let items: [HistoryItem]
     
-    // 1. ตรวจสอบ Size Class
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
     var body: some View {
-        let isIPad = horizontalSizeClass == .regular
-        
-        // 2. กำหนดตัวแปรสำหรับขนาดต่างๆ เพื่อลดความซ้ำซ้อนในโค้ด
-        let titleFontSize: CGFloat = isIPad ? 24 : 20
-        let subtitleFontSize: CGFloat = isIPad ? 18 : 14
-        let pointFontSize: CGFloat = isIPad ? 36 : 25
-        let pointLabelSize: CGFloat = isIPad ? 20 : 15
-        let cardHeight: CGFloat = isIPad ? 110 : 75
-        let cardPadding: CGFloat = isIPad ? 24 : 16
-        let cornerRad: CGFloat = isIPad ? 25 : 20
-        let vStackSpacing: CGFloat = isIPad ? 12 : 7
-        let textSpacing: CGFloat = isIPad ? 6 : 3
-        
-        VStack(spacing: vStackSpacing) {
+        VStack(spacing: config.rewardVStackSpacing) { // ใช้ 12:7 ร่วมกับ Reward
             SectionHeader(
+                config: config,
                 title: "ประวัติคะแนน",
                 destinationView: ScoreHistoryView(hideTabBar: $hideTabBar)
             )
@@ -38,13 +23,13 @@ struct HistorySection: View {
                 // ✅ Empty state card
                 NavigationLink(destination: ScoreHistoryView(hideTabBar: $hideTabBar)) {
                     HStack {
-                        VStack(alignment: .leading, spacing: textSpacing) {
+                        VStack(alignment: .leading, spacing: config.rewardTextSpacing) { // ใช้ 6:3 ร่วมกับ Reward
                             Text("ยังไม่มีคะแนน?")
-                                .font(.noto(titleFontSize, weight: .bold))
+                                .font(.noto(config.historyTitleFontSize, weight: .bold)) // ค่าใหม่ 24:20
                                 .foregroundColor(.white)
                             
                             Text("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!")
-                                .font(.noto(subtitleFontSize, weight: .medium))
+                                .font(.noto(config.rewardSubtitleFontSize, weight: .medium)) // ใช้ 18:14 ร่วมกับ Reward
                                 .foregroundColor(.white)
                         }
                         
@@ -52,31 +37,31 @@ struct HistorySection: View {
                         
                         VStack(alignment: .trailing, spacing: 0) {
                             Text("0")
-                                .font(.system(size: pointFontSize, weight: .bold))
+                                .font(.system(size: config.titleFontSize, weight: .bold)) // ใช้ 36:25 จาก Shared
                                 .foregroundColor(.white)
                             
                             Text("คะแนน")
-                                .font(.noto(pointLabelSize, weight: .bold))
+                                .font(.noto(config.mainPointsLabelFontSize, weight: .bold)) // ใช้ 20:15
                                 .foregroundColor(.white)
                         }
                     }
-                    .padding(.horizontal, cardPadding)
-                    .frame(maxWidth: .infinity) // ปรับให้ขยายเต็มพื้นที่ที่กำหนดใน MainAppView
-                    .frame(height: cardHeight)
+                    .padding(.horizontal, config.rewardCardPadding) // ใช้ 24:16 ร่วมกับ Reward
+                    .frame(maxWidth: .infinity)
+                    .frame(height: config.rewardCardHeight) // ใช้ 110:75 ร่วมกับ Reward
                     .background(Color.secondColor)
-                    .cornerRadius(cornerRad)
+                    .cornerRadius(config.bannerCornerRadius) // ใช้ 25:20
                 }
             } else {
                 ForEach(items) { item in
                     NavigationLink(destination: ScoreHistoryView(hideTabBar: $hideTabBar)) {
                         HStack {
-                            VStack(alignment: .leading, spacing: textSpacing) {
+                            VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
                                 Text(item.title)
-                                    .font(.noto(titleFontSize, weight: .bold))
+                                    .font(.noto(config.historyTitleFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 Text(item.date)
-                                    .font(.system(size: subtitleFontSize, weight: .medium))
+                                    .font(.system(size: config.rewardSubtitleFontSize, weight: .medium))
                                     .foregroundColor(.white)
                             }
                             
@@ -84,19 +69,19 @@ struct HistorySection: View {
                             
                             VStack(alignment: .trailing, spacing: 0) {
                                 Text(item.points)
-                                    .font(.system(size: pointFontSize, weight: .bold))
+                                    .font(.system(size: config.titleFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 Text(item.pointsLabel)
-                                    .font(.noto(pointLabelSize, weight: .bold))
+                                    .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                     .foregroundColor(.white)
                             }
                         }
-                        .padding(.horizontal, cardPadding)
-                        .frame(maxWidth: .infinity) // ปรับให้ขยายเต็มพื้นที่ที่กำหนดใน MainAppView
-                        .frame(height: cardHeight)
+                        .padding(.horizontal, config.rewardCardPadding)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: config.rewardCardHeight)
                         .background(Color.secondColor)
-                        .cornerRadius(cornerRad)
+                        .cornerRadius(config.bannerCornerRadius)
                     }
                 }
             }

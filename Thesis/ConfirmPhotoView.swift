@@ -11,6 +11,7 @@ import PhotosUI
 struct ConfirmPhotoView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     @State private var showSaveSearchPhotoView = false
 
@@ -18,14 +19,17 @@ struct ConfirmPhotoView: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedUIImage: UIImage? = nil
     @State private var isCameraActive = true
-    @State private var shouldCapture = false  // ✅ เพิ่ม
-    
+    @State private var shouldCapture = false
+
     @State private var isScanning = true
 
     var body: some View {
-        ZStack(alignment: .top) {
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
 
-            GeometryReader { geo in
+            ZStack(alignment: .top) {
+
+                // MARK: - Background
                 ZStack {
                     if let uiImage = selectedUIImage {
                         Image(uiImage: uiImage)
@@ -35,7 +39,6 @@ struct ConfirmPhotoView: View {
                             .clipped()
                             .background(Color.cameraBackground)
                     } else {
-                        // ✅ ส่ง binding ใหม่เข้าไป
                         CameraPreview(
                             isScanning: $isScanning,
                             isActive: $isCameraActive,
@@ -47,92 +50,109 @@ struct ConfirmPhotoView: View {
                     }
                 }
                 .ignoresSafeArea()
-            }
 
-            VStack(spacing: 0) {
+                // MARK: - Foreground
+                VStack(spacing: 0) {
 
-                headerView
+                    headerView(config: config)
 
-                VStack {
+                    VStack {
 
-                    Text("กรุณาถ่ายรูปขยะทีละชิ้น ให้ตรงกับที่ค้นหา")
-                        .font(.noto(20, weight: .medium))
-                        .foregroundColor(.black)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 343, height: 60)
-                        .background(Color.textFieldColor)
-                        .cornerRadius(20)
-                        .padding(.top, 35)
-
-                    Spacer()
-
-                    HStack {
-                        GalleryPickerButton(selectedItem: $selectedItem)
-                            .onChange(of: selectedItem) { _, newItem in
-                                loadImage(from: newItem)
-                            }
+                        Text("กรุณาถ่ายรูปขยะทีละชิ้น ให้ตรงกับที่ค้นหา")
+                            .font(.noto(config.fontHeader, weight: .medium))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: config.qrContentMaxWidth,
+                                   minHeight: config.confirmBannerHeight)
+                            .background(Color.textFieldColor)
+                            .cornerRadius(config.bannerCornerRadius)
+                            .padding(.top, config.confirmBannerTopPadding)
+                            .padding(.horizontal, config.paddingMedium)
 
                         Spacer()
 
-                        Button {
-                            // ✅ ถ้ามีรูปแล้ว (จาก gallery) → navigate เลย
-                            // ถ้ายังไม่มีรูป → สั่งถ่ายภาพจากกล้อง
-                            if selectedUIImage != nil {
-                                hideTabBar = true
-                                showSaveSearchPhotoView = true
-                            } else {
-                                shouldCapture = true
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .stroke(Color.mainColor, lineWidth: 3)
-                                    .frame(width: 85, height: 85)
+                        HStack {
+                            GalleryPickerButton(selectedItem: $selectedItem)
+                                .onChange(of: selectedItem) { _, newItem in
+                                    loadImage(from: newItem)
+                                }
 
-                                Circle()
-                                    .fill(Color.mainColor)
-                                    .frame(width: 73, height: 73)
+                            Spacer()
 
-                                Image("Camera")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 45, height: 45)
+                            Button {
+                                if selectedUIImage != nil {
+                                    hideTabBar = true
+                                    showSaveSearchPhotoView = true
+                                } else {
+                                    shouldCapture = true
+                                }
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .stroke(Color.mainColor, lineWidth: config.aiButtonOuterLineWidth)
+                                        .frame(width: config.aiButtonOuterSize, height: config.aiButtonOuterSize)
+
+                                    Circle()
+                                        .fill(Color.mainColor)
+                                        .frame(width: config.aiButtonInnerSize, height: config.aiButtonInnerSize)
+                                    Image("Camera")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: config.barcodeShutterIconSize,
+                                               height: config.barcodeShutterIconSize)
+                                }
                             }
+
+                            Spacer()
+                            Color.clear.frame(width: 55, height: 1)
                         }
-
-                        Spacer()
-                        Color.clear.frame(width: 55, height: 1)
+                        .frame(maxWidth: config.qrContentMaxWidth)
+                        .padding(.bottom, config.paddingStandard)
                     }
-                    .frame(maxWidth: 343)
-                    .padding(.bottom, 25)
                 }
             }
-        }
-        // ✅ เมื่อได้ภาพจากกล้อง → navigate อัตโนมัติ
-        .onChange(of: selectedUIImage) { _, newImage in
-            if newImage != nil {
-                shouldCapture = false
+            
+            .onAppear {
+                // ✅ 1. ล็อกหน้าจอเป็นแนวตั้งเมื่อเข้าหน้านี้
+                OrientationHelper.setOrientation(.portrait)
+                            
+                // ตั้งค่าอื่นๆ
                 hideTabBar = true
-                showSaveSearchPhotoView = true
+                isCameraActive = true
             }
-        }
-        .navigationDestination(isPresented: $showSaveSearchPhotoView) {
-            if let uiImage = selectedUIImage {
-                SaveSearchPhotoView(hideTabBar: $hideTabBar, selectedImage: uiImage)
+            .onDisappear {
+                // ✅ 2. ปลดล็อกหน้าจอให้หมุนได้อิสระเมื่อออกจากหน้านี้
+                // (หรือเปลี่ยนเป็นแนวที่โปรเจกต์คุณใช้เป็นหลัก)
+                OrientationHelper.setOrientation(.all)
+                            
+                isCameraActive = false
             }
+            .onChange(of: selectedUIImage) { _, newImage in
+                if newImage != nil {
+                    shouldCapture = false
+                    hideTabBar = true
+                    showSaveSearchPhotoView = true
+                }
+            }
+            .navigationDestination(isPresented: $showSaveSearchPhotoView) {
+                if let uiImage = selectedUIImage {
+                    SaveSearchPhotoView(hideTabBar: $hideTabBar, selectedImage: uiImage)
+                }
+            }
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
     }
 
-    var headerView: some View {
+    // MARK: - Header
+    private func headerView(config: ResponsiveConfig) -> some View {
         HStack {
             BackButton()
-            Color.clear.frame(width: 10, height: 10)
+            Color.clear.frame(width: config.spacingSmall, height: config.spacingSmall)  // เดิม: 10 → spacingSmall 10/20
 
             Spacer()
 
             Text("ยืนยันภาพถ่าย")
-                .font(.noto(25, weight: .bold))
+                .font(.noto(config.titleFontSize, weight: .bold))   // เดิม: 25 → titleFontSize 25/36
                 .foregroundColor(.black)
 
             Spacer()
@@ -141,11 +161,11 @@ struct ConfirmPhotoView: View {
                 Image(isFlashOn ? "FlashOn" : "FlashOff")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 35, height: 35)
-                    .padding(.trailing, 25)
+                    .frame(width: config.headerIconSize, height: config.headerIconSize)
+                    .padding(.trailing, config.paddingStandard)
             }
         }
-        .padding(.bottom, 18)
+        .padding(.bottom, config.paddingMedium)
         .frame(maxWidth: .infinity)
         .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
