@@ -10,6 +10,7 @@ import SwiftUI
 struct MainAppView: View {
     @State private var currentCarouselIndex = 0
     @Binding var hideTabBar: Bool
+    @Binding var tabIndex: Int
     @StateObject private var profileVM = UserProfileViewModel()
     @StateObject private var wasteVM = FrequentWasteViewModel()
 
@@ -95,7 +96,7 @@ struct MainAppView: View {
                             )
                         }
                     )
-                    WasteSeparationGuideSection(currentIndex: $currentCarouselIndex, hideTabBar: $hideTabBar)
+                    WasteSeparationGuideSection(currentIndex: $currentCarouselIndex, hideTabBar: $hideTabBar, tabIndex: $tabIndex)
                 }
                 .padding()
             }
@@ -294,6 +295,5 @@ struct RoundedCorner: Shape {
 }
 
 #Preview {
-    MainAppView(hideTabBar: .constant(false))
+    MainAppView(hideTabBar: .constant(false), tabIndex: .constant(0))
 }
-

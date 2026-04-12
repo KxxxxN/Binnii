@@ -47,37 +47,14 @@ struct AiScanView: View {
 
             ZStack(alignment: .top) {
 
-                GeometryReader { geo in
-                    ZStack {
-                        // ✅ ถ้ามีภาพที่ถ่ายหรือเลือกจาก gallery → แสดงภาพนั้น
-                        if let uiImage = capturedUIImage {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .clipped()
-                                .background(Color.cameraBackground)
-                        } else if let selectedImage {
-                            selectedImage
-                                .resizable()
-                                .scaledToFill()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .clipped()
-                                .background(Color.cameraBackground)
-                        } else {
-                            // ✅ ส่ง binding capturedImage และ shouldCapture
-                            CameraPreview(
-                                isScanning: $isScanning,
-                                isActive: $isCameraActive,
-                                capturedImage: $capturedUIImage,
-                                isFlashOn: $isFlashOn,
-                                shouldCapture: shouldCapture
-                            )
-                            Color.black.opacity(0.25)
-                        }
-                    }
-                    .ignoresSafeArea()
-                }
+                CameraContainerView(
+                    hideTabBar: $hideTabBar,
+                    capturedUIImage: $capturedUIImage,
+                    isFlashOn: $isFlashOn,
+                    isScanning: $isScanning,
+                    isCameraActive: $isCameraActive,
+                    shouldCapture: shouldCapture
+                )
 
                 VStack(spacing: 0) {
 
@@ -93,7 +70,6 @@ struct AiScanView: View {
                             .cornerRadius(20)
 
                         Spacer()
-                            .frame(height: 505)
 
                         HStack {
                             GalleryPickerButton(selectedItem: $selectedItem)
@@ -147,6 +123,7 @@ struct AiScanView: View {
                         .padding(.bottom, 25)
                         .padding(.top, 21)
                     }
+//                    .padding(.top, 18)
                 }
 
                 // Alert overlay
@@ -236,7 +213,13 @@ struct AiScanView: View {
             }
             .onDisappear { hideTabBar = false }
             .navigationDestination(isPresented: $showDetailView) {
-                DetailAiScanView(hideTabBar: $hideTabBar)
+                WasteDetailView(
+                    hideTabBar: $hideTabBar,
+                    category: aiResult,
+                    capturedImage: capturedUIImage,
+                    title: "สแกนด้วย AI",
+                    scanMethod: "ai"   // ✅
+                )
             }
             .navigationDestination(isPresented: $showBarcodeView) {
                 BarcodeScanView(hideTabBar: $hideTabBar)
@@ -296,12 +279,51 @@ struct AiScanView: View {
     }
 
     private func analyzeImage() {
+        guard let uiImage = capturedUIImage else { return }
         isAnalyzing = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            isAnalyzing = false
-            aiResult = "ขวดพลาสติก"
-            showResultAlert = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let model = try? MyGarbageModel(configuration: MLModelConfiguration()),
+                  let vnModel = try? VNCoreMLModel(for: model.model) else {
+                DispatchQueue.main.async { isAnalyzing = false }
+                return
+            }
+
+            let request = VNCoreMLRequest(model: vnModel) { request, _ in
+                DispatchQueue.main.async {
+                    isAnalyzing = false
+
+                    guard let results = request.results as? [VNClassificationObservation],
+                          let top = results.first else { return }
+
+                    // ✅ เพิ่มชั่วคราว print ดู label ทั้งหมด
+                    print("=== AI Results ===")
+                    results.prefix(5).forEach {
+                        print("🏷️ \($0.identifier) - \(String(format: "%.1f", $0.confidence * 100))%")
+                    }
+
+                    aiResult = labelToThai(top.identifier)
+                    showResultAlert = true
+                }
+            }
+            request.imageCropAndScaleOption = .centerCrop
+
+            guard let cgImage = uiImage.cgImage else { return }
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            try? handler.perform([request])
         }
     }
+
+    // ✅ แปลง label → ภาษาไทย (แก้ให้ตรงกับ label ใน model ของคุณ)
+    private func labelToThai(_ label: String) -> String {
+        switch label {
+        case "plasticBottle":   return "ขวดพลาสติก"
+        case "can":              return "กระป๋อง"
+        default:                 return "ไม่พบขยะชิ้นนี้"
+        }
+    }
+}
+
+#Preview {
+    AiScanView(hideTabBar: .constant(false))
 }

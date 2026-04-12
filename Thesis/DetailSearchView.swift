@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailSearchView: View {
-    @Environment(\.dismiss) var dismiss
+//    @Environment(\.dismiss) var dismiss
     @Binding var hideTabBar: Bool
     @State private var showConfirmPhotoView = false
     
@@ -92,35 +92,33 @@ struct DetailSearchView: View {
                                 .foregroundColor(.gray)
                                 .padding()
                         }
-                        
-                        //  ปุ่มยืนยันภาพถ่าย
-                        Button {
-                            hideTabBar = true
-                            showConfirmPhotoView = true
-                        } label: {
-                            HStack {
-                                Text("ยืนยันภาพถ่าย")
-                                    .font(.noto(20, weight: .bold))
-                                    .foregroundColor(.white)
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 20))
-                            }
-                            .frame(width: 175, height: 49)
-                            .background(Color.mainColor)
-                            .cornerRadius(20)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .padding(.horizontal, 37)
-                        .padding(.vertical, 30)
-                        .background(Color.knowledgeBackground)
                     }
+                }
+                .overlay(alignment: .bottomTrailing) {
+                    Button {
+                        hideTabBar = true
+                        showConfirmPhotoView = true
+                    } label: {
+                        HStack {
+                            Text("ยืนยันภาพถ่าย")
+                                .font(.noto(20, weight: .bold))
+                                .foregroundColor(.white)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.white)
+                                .font(.system(size: 20))
+                        }
+                        .frame(width: 175, height: 49)
+                        .background(Color.mainColor)
+                        .cornerRadius(20)
+                    }
+                    .padding(.trailing, 25)
+                    .padding(.bottom, 25)
                 }
                 .edgesIgnoringSafeArea(.bottom)
             }
         }
         .navigationDestination(isPresented: $showConfirmPhotoView) {
-            ConfirmPhotoView(hideTabBar: $hideTabBar)
+            ConfirmPhotoView(hideTabBar: $hideTabBar, category: category)
         }
         .navigationBarHidden(true)
         .onAppear { hideTabBar = true }
@@ -132,5 +130,7 @@ struct PlasticbottleStep {
     let imageSize: CGSize
 }
 
-
+#Preview {
+    DetailSearchView(hideTabBar: .constant(false), category: "ขวดพลาสติก")
+}
 

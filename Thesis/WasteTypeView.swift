@@ -51,7 +51,7 @@ struct WasteTypeView: View {
                     ScrollView {
                         VStack(spacing: 11) {
                             ForEach(pagedItems) { item in
-                                NavigationLink(destination: DetailView(hideTabBar: $hideTabBar)) {
+                                NavigationLink(destination: DetailWasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
                                     WasteItemCard(
                                         title: item.title,
                                         date: item.date,
@@ -66,7 +66,7 @@ struct WasteTypeView: View {
                         .padding(.bottom, 125)
                     }
                     
-                    paginationSection
+                    PaginationSection(currentPage: $currentPage, totalPages: totalPages)
                 }
             }
             .edgesIgnoringSafeArea(.top)
@@ -102,36 +102,6 @@ struct WasteTypeView: View {
         .frame(height: 123)
         .cornerRadius(20, corners: [.bottomLeft, .bottomRight])
     }
-
-
-    var paginationSection: some View {
-        HStack(spacing: 19) {
-            Button(action: { if currentPage > 1 { currentPage -= 1 } }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(currentPage == 1 ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
-            }
-            .disabled(currentPage == 1)
-
-            ForEach(1...totalPages, id: \.self) { page in
-                Button(action: { currentPage = page }) {
-                    Text("\(page)")
-                        .font(.noto(16, weight: .medium))
-                        .foregroundColor(currentPage == page ? .white : Color.mainColor)
-                        .frame(width: 30, height: 30)
-                        .background(currentPage == page ? Color.mainColor : Color.clear)
-                        .clipShape(Circle())
-                }
-            }
-
-            Button(action: { if currentPage < totalPages { currentPage += 1 } }) {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(currentPage == totalPages ? .gray : Color.mainColor)
-                    .font(.system(size: 20))
-            }
-            .disabled(currentPage == totalPages)
-        }
-    }
 }
 
 struct WasteItemCard: View {
@@ -150,14 +120,14 @@ struct WasteItemCard: View {
                 }
                 .frame(width: 140, height: 92)
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
             } else {
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: 20)
                     .fill(Color.thirdColor)
                     .frame(width: 140, height: 92)
             }
             
-            VStack(alignment: .leading, spacing: 7) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.noto(20, weight: .bold))
                     .foregroundColor(.black)
@@ -173,5 +143,11 @@ struct WasteItemCard: View {
         .frame(height: 110)
         .background(Color.thirdColor)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+}
+
+#Preview {
+    NavigationStack {
+        WasteTypeView(hideTabBar: .constant(false), category: "ขยะทั่วไป")
     }
 }

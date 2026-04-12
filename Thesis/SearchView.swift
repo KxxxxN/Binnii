@@ -18,12 +18,13 @@ struct SearchView: View {
     @FocusState private var isSearchFocused: Bool
 
     let searchItems = ["ขวดพลาสติก", "กระป๋อง", "ซองขนม", "เศษอาหาร", "ตะเกียบไม้"]
-    
+        
     var filteredItems: [String] {
+        let allLabels = WasteData.allExamples.map { $0.label }
         if searchText.isEmpty {
-            return searchItems
+            return allLabels // ✅ โชว์ทั้งหมดเลยตอน focus
         } else {
-            return searchItems.filter { $0.localizedCaseInsensitiveContains(searchText) }
+            return allLabels.filter { $0.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -31,12 +32,61 @@ struct SearchView: View {
         NavigationStack {
             ZStack(alignment: .top) {
                 Color.backgroundColor.ignoresSafeArea()
+                
+                if isSearchFocused {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            isSearchFocused = false
+                        }
+                        .zIndex(0)
+                }
+
 
                 VStack(spacing: 0) {
                     headerView
                     
-                    VStack(spacing: 0) {
-                        //  SearchSection อยู่นอก ScrollView
+                    //                    VStack(spacing: 0) {
+                    //  SearchSection อยู่นอก ScrollView
+                    //                        SearchSection(
+                    //                            hideTabBar: $hideTabBar,
+                    //                            searchText: $searchText,
+                    //                            searchItems: filteredItems,
+                    //                            onSelectItem: { _ in },
+                    //                            isFocused: $isSearchFocused
+                    //                        )
+                    //                        .padding(.horizontal, 35)
+                    //                        .padding(.top, 18)
+                    //                        .padding(.bottom, 10)
+                    //                        .zIndex(1)
+                    
+                    ZStack(alignment: .top) {
+                        ScrollView {
+                        SearchWasteExamplesGrid(
+                            hideTabBar: $hideTabBar,
+                            wasteExamples: WasteData.allExamples
+                        )
+                        .padding(.horizontal, 35)
+                        .padding(.top, 90)
+                    }
+                    .scrollDismissesKeyboard(.immediately)
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear.frame(height: 80)
+                    }
+                    .opacity((isSearchFocused || !searchText.isEmpty) ? 0.3 : 1.0)
+                    .overlay(alignment: .bottom) {
+                        AiScanBottomNavigationBar(selectedTab: $selectedTabnavigationItem) { index in
+                            hideTabBar = true
+                            switch index {
+                            case 0: showBarcodeView = true
+                            case 1: showAiScanView = true
+                            default: break
+                            }
+                        }
+                        .padding(.horizontal, 47)
+                        .padding(.bottom, 18)
+                        .opacity(isSearchFocused ? 0 : 1)
+                    }
                         SearchSection(
                             hideTabBar: $hideTabBar,
                             searchText: $searchText,
@@ -48,35 +98,7 @@ struct SearchView: View {
                         .padding(.top, 18)
                         .padding(.bottom, 10)
                         .zIndex(1)
-
-                        //  ScrollView อยู่ข้างล่าง ไม่ทับกัน
-                        ScrollView {
-                            SearchWasteExamplesGrid(
-                                hideTabBar: $hideTabBar,
-                                wasteExamples: WasteData.allExamples
-                            )
-                            .padding(.horizontal, 35)
-                        }
-                        .safeAreaInset(edge: .bottom) {
-                            Color.clear.frame(height: 80) //  เว้นพื้นที่ด้านล่าง
-                        }
-                        .opacity((isSearchFocused || !searchText.isEmpty) ? 0.3 : 1.0)
                     }
-
-//                    Spacer()
-                        .overlay(alignment: .bottom) {
-                            AiScanBottomNavigationBar(selectedTab: $selectedTabnavigationItem) { index in
-                                hideTabBar = true
-                                switch index {
-                                case 0: showBarcodeView = true
-                                case 1: showAiScanView = true
-                                default: break
-                                }
-                            }
-                            .padding(.horizontal, 47)
-                            .padding(.bottom, 18)
-                            .opacity(isSearchFocused ? 0 : 1)
-                        }
                 }
             }
             .navigationDestination(isPresented: $showAiScanView) {
@@ -87,9 +109,10 @@ struct SearchView: View {
             }
             .navigationBarHidden(true)
             .edgesIgnoringSafeArea(.top)
-            .onTapGesture {
-                if isSearchFocused { isSearchFocused = false }
-            }
+//            .contentShape(Rectangle())
+//            .onTapGesture {
+//                if isSearchFocused { isSearchFocused = false }
+//            }
         }
     }
 
@@ -120,12 +143,14 @@ struct SearchSection: View {
     var onSelectItem: (String) -> Void
     var isFocused: FocusState<Bool>.Binding
 
+    @State private var isExpanded = false
+    
     private let rowHeight: CGFloat = 46
     private let searchBarHeight: CGFloat = 50
     private let verticalPadding: CGFloat = 20
 
     private var containerHeight: CGFloat {
-        if searchText.isEmpty && !isFocused.wrappedValue {
+        if searchText.isEmpty {
             return searchBarHeight
         }
         let itemCount = max(searchItems.count, 1)
@@ -141,7 +166,7 @@ struct SearchSection: View {
             VStack(spacing: 0) {
                 SearchBar(searchText: $searchText, isFocused: isFocused)
 
-                if !searchText.isEmpty || isFocused.wrappedValue {
+                if !searchText.isEmpty {
                     VStack(spacing: 0) {
                         if searchItems.isEmpty {
                             Text("ไม่พบรายการที่ค้นหา")
@@ -177,9 +202,23 @@ struct SearchSection: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: containerHeight)
+        .onChange(of: isFocused.wrappedValue) {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isExpanded = isFocused.wrappedValue
+            }
+        }
+        .onChange(of: searchText) {
+            if !searchText.isEmpty {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isExpanded = true
+                }
+            }
+        }
     }
 }
+//        .animation(.easeInOut(duration: 0.25), value: containerHeight)
+//    }
+//}
 
 struct SearchBar: View {
     @Binding var searchText: String
@@ -234,7 +273,7 @@ struct WasteData {
             examples: [
                 WasteExample(image: "SnackBag", label: "ซองขนม"),
                 WasteExample(image: "Tissue", label: "กระดาษทิชชู่"),
-                WasteExample(image: "Foambox", label: "ภาชนะ ใส่อาหาร"),
+                WasteExample(image: "Foambox", label: "ภาชนะใส่อาหาร"),
                 WasteExample(image: "Chopstick", label: "ตะเกียบไม้"),
                 WasteExample(image: "Straw", label: "หลอด"),
                 WasteExample(image: "Spoon", label: "ช้อน-ส้อม พลาสติก")
@@ -250,7 +289,7 @@ struct WasteData {
                 WasteExample(image: "Bottle", label: "ขวดพลาสติก"),
                 WasteExample(image: "Box", label: "กล่องกระดาษ"),
                 WasteExample(image: "Plasticcup", label: "แก้วพลาสติก"),
-                WasteExample(image: "GlassBottle", label: "ขวดแก้ว"),
+                WasteExample(image: "paper", label: "กระดาษทั่วไป"),
                 WasteExample(image: "Can", label: "กระป๋อง"),
                 WasteExample(image: "Bag", label: "ถุงพลาสติก")
             ]
@@ -283,4 +322,8 @@ struct SearchWasteExamplesGrid: View {
         }
         .padding(.top, 20)
     }
+}
+
+#Preview{
+    SearchView(hideTabBar: .constant(false))
 }

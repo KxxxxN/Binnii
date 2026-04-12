@@ -98,8 +98,8 @@ struct ScoreHistoryView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .background(Color.white)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .background(Color.white)
+//            .tabViewStyle(.page(indexDisplayMode: .never))
+//            .background(Color.white)
 
         }
         .navigationBarHidden(true)

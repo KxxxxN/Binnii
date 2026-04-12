@@ -21,7 +21,7 @@ struct BarcodeScanView: View {
     @State private var selectedTabnavigationItem = 0
     @State private var isFlashOn = false
     @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var selectedUIImage: UIImage? = nil
+//    @State private var selectedUIImage: UIImage? = nil
     @State private var isCameraActive = true
     @State private var scannedBarcode: String? = nil
 //    @State private var scannedCategory: String = ""
@@ -33,53 +33,32 @@ struct BarcodeScanView: View {
         NavigationStack {
             ZStack(alignment: .top) {
 
-                GeometryReader { geo in
-                    ZStack {
-                        if let selectedUIImage {
-                            GeometryReader { geo in
-                                Image(uiImage: selectedUIImage.fixedOrientation())
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: geo.size.width, height: geo.size.height)
-                                    .clipped()
-                            }
-                            .ignoresSafeArea()
-                        } else {
-                            // เปิด scanMode และรับค่า barcode
-                            CameraPreview(
-                                isScanning: $isScanning,
-                                isActive: $isCameraActive,
-                                capturedImage: Binding(
-                                    get: { capturedBarcodeImage },
-                                    set: { capturedBarcodeImage = $0 }
-                                ),
-                                isFlashOn: $isFlashOn,
-                                scanMode: true,
-                                barcodeMode: true,
-                                onScan: { barcode in
-                                    guard !showDetailBarcodeView else { return }
-                                    scannedBarcode = barcode
-                                    isScanning = false
-                                    hideTabBar = true
-                                    Task {
-                                        await barcodeVM.fetchProduct(barcode: barcode)
-                                        // รอให้ capturedBarcodeImage ถูก set จาก photoOutput ก่อน
-                                        var waited = 0
-                                        while capturedBarcodeImage == nil && waited < 10 {
-                                            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 วินาที
-                                            waited += 1
-                                        }
-                                        showDetailBarcodeView = true
-                                    }
+                CameraContainerView(
+                        hideTabBar: $hideTabBar,
+                        capturedUIImage: $capturedBarcodeImage,
+                        isFlashOn: $isFlashOn,
+                        isScanning: $isScanning,
+                        isCameraActive: $isCameraActive,
+                        scanMode: true,
+                        barcodeMode: true,
+                        onScan: { barcode in
+                            guard !showDetailBarcodeView else { return }
+                            scannedBarcode = barcode
+                            isScanning = false
+                            hideTabBar = true
+                            Task {
+                                await barcodeVM.fetchProduct(barcode: barcode)
+                                var waited = 0
+                                while capturedBarcodeImage == nil && waited < 10 {
+                                    try? await Task.sleep(nanoseconds: 100_000_000)
+                                    waited += 1
                                 }
-                            )
-                            .id(cameraID)
-                            Color.black.opacity(0.25)
+                                showDetailBarcodeView = true
+                            }
                         }
-                    }
-                    .ignoresSafeArea()
-                }
-
+                    )
+                    .id(cameraID)
+                
                 VStack(spacing: 0) {
 
                     headerView
@@ -164,10 +143,12 @@ struct BarcodeScanView: View {
             }
 
             .navigationDestination(isPresented: $showDetailBarcodeView) {
-                DetailBarcodeView(
+                WasteDetailView(
                     hideTabBar: $hideTabBar,
                     category: barcodeVM.category,
-                    capturedImage: capturedBarcodeImage
+                    capturedImage: capturedBarcodeImage,
+                    title: "สแกนบาร์โค้ด",
+                    scanMethod: "barcode"
                 )
             }
             .navigationBarHidden(true)
@@ -176,7 +157,7 @@ struct BarcodeScanView: View {
                     isScanning = false
                     isCameraActive = false
                     capturedBarcodeImage = nil
-                    selectedUIImage = nil
+//                    selectedUIImage = nil
                     selectedItem = nil
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -225,7 +206,7 @@ struct BarcodeScanView: View {
                 if case .success(let data) = result,
                    let data,
                    let uiImage = UIImage(data: data) {
-                    selectedUIImage = uiImage.fixedOrientation()
+//                    selectedUIImage = uiImage.fixedOrientation()
                     scanBarcodeFromImage(uiImage.fixedOrientation())
                 }
             }

@@ -54,7 +54,15 @@ struct QRScanView: View {
 
                 VStack(spacing: 0) {
 
-                    Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
+//                    Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
+//                        .font(.noto(20, weight: .medium))
+//                        .foregroundColor(.black)
+//                        .multilineTextAlignment(.center)
+//                        .frame(width: 343, height: 115)
+//                        .background(Color.textFieldColor)
+//                        .cornerRadius(20)
+                    
+                    NavigationLink("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน", destination: AiScanView(hideTabBar: $hideTabBar))
                         .font(.noto(20, weight: .medium))
                         .foregroundColor(.black)
                         .multilineTextAlignment(.center)

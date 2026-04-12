@@ -62,7 +62,15 @@ struct CameraPreview: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
+        
+        class PreviewView: UIView {
+            override func layoutSubviews() {
+                super.layoutSubviews()
+                layer.sublayers?.forEach { $0.frame = bounds }
+            }
+        }
+        
+        let view = PreviewView(frame: .zero)
         let session = context.coordinator.session
         session.sessionPreset = .high
         
@@ -105,13 +113,18 @@ struct CameraPreview: UIViewRepresentable {
         
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
-        previewLayer.frame = UIScreen.main.bounds
+//        previewLayer.frame = UIScreen.main.bounds
         view.layer.addSublayer(previewLayer)
         
         return view
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {
+        
+        if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
+            previewLayer.frame = uiView.bounds
+        }
+        
         let session = context.coordinator.session
         
         // Flash control
