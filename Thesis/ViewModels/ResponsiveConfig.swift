@@ -66,7 +66,8 @@ struct ResponsiveConfig {
     var sectionHeaderTitleFont: CGFloat { fontSubHeader }
     var sectionHeaderButtonFont: CGFloat { fontCaption }
         
-    var itemCardImageHeight: CGFloat { isIPad ? 120 : 92 }
+    var itemCardImageHeight: CGFloat { isIPad ? 150 : 120 }
+    var mainItemCardImageHeight: CGFloat { isIPad ? 107 : 87 }
     var itemCardTitleFont: CGFloat { fontCaption }
     var itemCardCountFont: CGFloat { fontTiny }
     var itemCardHeight: CGFloat { isIPad ? 200 : 150 }
@@ -214,7 +215,7 @@ struct ResponsiveConfig {
     var wasteItemCardSpacing: CGFloat     { isIPad ? 65 : 49 }
     var wasteItemImageWidth: CGFloat      { isIPad ? 190 : 140 }
     var wasteItemImageHeight: CGFloat     { isIPad ? 124 : 92 }
-    var wasteItemImageRadius: CGFloat     { isIPad ? 40 : 30 }
+    var wasteItemImageRadius: CGFloat     { isIPad ? 40 : 20 }
     var wasteItemCardHeight: CGFloat      { isIPad ? 148 : 110 }
     
     // MARK: - Profile View

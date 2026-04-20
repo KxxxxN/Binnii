@@ -25,7 +25,7 @@ class FrequentWasteViewModel: ObservableObject {
         "แก้วพลาสติก": "Plasticcup",
         "กระป๋อง": "Can",
         "เศษอาหาร": "Foodscraps",
-        "ซองขนม": "Chips",
+        "ซองขนม": "SnackBag",
         "ถุงพลาสติก": "Plasticbag",
         "เปลือกไข่": "Egg",
         "หลอด": "Straw",
@@ -33,44 +33,14 @@ class FrequentWasteViewModel: ObservableObject {
         "กระดาษทิชชู่": "Tissue",
         "เปลือกผลไม้": "Fruit",
         "ภาชนะใส่อาหาร": "FoodContainers",
-        "เศษขนม": "Snacks",
+        "เศษขนม": "Snack",
         "เครื่องดื่มเหลือ": "Drink",
         "น้ำแข็งเหลือ": "Ice",
-        "ตะเกียบ": "Shopsticks",
+        "ตะเกียบ": "Chopsticks",
         "กล่องกระดาษ": "Box",
         "กระดาษทั่วไป": "Paper"
         
     ]
-    
-    //    func fetchWasteCounts() async {
-    //        isLoading = true
-    //        defer { isLoading = false }
-    //
-    //        do {
-    //            let session = try await supabase.auth.session
-    //
-    //            struct WasteCount: Decodable {
-    //                let category: String
-    //                let count: Int
-    //            }
-    //
-    //            let rows: [WasteCount] = try await supabase
-    //                .rpc("get_waste_counts", params: ["p_user_id": session.user.id.uuidString])
-    //                .execute()
-    //                .value
-    //
-    //            wasteItems = rows.map { row in
-    //                WasteItem(
-    //                    imageName: imageMap[row.category] ?? "Bottle",
-    //                    title: row.category,
-    //                    count: "\(row.count) ครั้ง"
-    //                )
-    //            }
-    //        } catch {
-    //            print("❌ fetchWasteCounts error: \(error)")
-    //        }
-    //    }
-    //}
     
     func fetchWasteCounts() async {
         isLoading = true
@@ -104,11 +74,16 @@ class FrequentWasteViewModel: ObservableObject {
                 .sorted { extractNumber($0.count) > extractNumber($1.count) } // เรียงมาก→น้อย
         } catch {
             print("❌ fetchWasteCounts error: \(error)")
+            // ✅ แสดง default items ทั้งหมดเป็น 0 ครั้ง แทนที่จะว่างเปล่า
+            wasteItems = imageMap.map { (title, imageName) in
+                WasteItem(imageName: imageName, title: title, count: "0 ครั้ง")
+            }
+            .sorted { $0.title < $1.title }
         }
     }
-    
     // ✅ เพิ่ม helper function
     private func extractNumber(_ text: String) -> Int {
         Int(text.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
     }
 }
+

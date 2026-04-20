@@ -79,7 +79,7 @@ struct WasteTypeView: View {
                         ScrollView {
                             VStack(spacing: 11) {
                                 ForEach(pagedItems) { item in
-                                    NavigationLink(destination: DetailView(hideTabBar: $hideTabBar)) {
+                                    NavigationLink(destination: DetailWasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
                                         WasteItemCard(
                                             title: item.title,
                                             date: item.date,
@@ -88,29 +88,7 @@ struct WasteTypeView: View {
                                         )
                                     }
                                     .buttonStyle(.plain)
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                
-                headerView
-                if vm.isLoading {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                } else {
-                    ScrollView {
-                        VStack(spacing: 11) {
-                            ForEach(pagedItems) { item in
-                                NavigationLink(destination: DetailWasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
-                                    WasteItemCard(
-                                        title: item.title,
-                                        date: item.date,
-                                        imageUrl: item.imageUrl
-                                    )
                                 }
-
-                                paginationSection(config: config)
                             }
                             .padding(.horizontal, config.paddingMedium)
                             .padding(.top, config.wasteGridTopPadding)
@@ -118,7 +96,7 @@ struct WasteTypeView: View {
                         }
                     }
                     
-                    PaginationSection(currentPage: $currentPage, totalPages: totalPages)
+                    PaginationSection(config: config, currentPage: $currentPage, totalPages: totalPages)
                 }
                 .edgesIgnoringSafeArea(.top)
             }
@@ -149,39 +127,6 @@ struct WasteTypeView: View {
         .frame(height: config.searchHeaderHeight)
         .cornerRadius(config.bannerCornerRadius, corners: [.bottomLeft, .bottomRight])
     }
-
-    // MARK: - Pagination
-    private func paginationSection(config: ResponsiveConfig) -> some View {
-        HStack(spacing: config.paginationSpacing) {
-            Button(action: { if currentPage > 1 { currentPage -= 1 } }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(currentPage == 1 ? .gray : Color.mainColor)
-                    .font(.system(size: config.fontHeader))
-            }
-            .disabled(currentPage == 1)
-
-            ForEach(1...totalPages, id: \.self) { page in
-                Button(action: { currentPage = page }) {
-                    Text("\(page)")
-                        .font(.noto(config.fontBody, weight: .medium))
-                        .foregroundColor(currentPage == page ? .white : Color.mainColor)
-                        .frame(width: config.paginationButtonSize,
-                               height: config.paginationButtonSize)
-                        .background(currentPage == page ? Color.mainColor : Color.clear)
-                        .clipShape(Circle())
-                }
-            }
-
-            Button(action: { if currentPage < totalPages { currentPage += 1 } }) {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(currentPage == totalPages ? .gray : Color.mainColor)
-                    .font(.system(size: config.fontHeader))
-            }
-            .disabled(currentPage == totalPages)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, config.paddingMedium)
-    }
 }
 
 // MARK: - WasteItemCard
@@ -211,8 +156,6 @@ struct WasteItemCard: View {
             }
             
             VStack(alignment: .leading, spacing: 3) {
-
-            VStack(alignment: .leading, spacing: 7) {
                 Text(title)
                     .font(.noto(config.fontHeader, weight: .bold))
                     .foregroundColor(.black)

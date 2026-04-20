@@ -10,34 +10,34 @@ import SwiftUI
 struct SearchView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass // รับค่า Size Class
     @Binding var hideTabBar: Bool
+    @Binding var currentTab: ScanTab
+    @Binding var slideDirection: Int
+    
     @State private var searchText = ""
     @State private var selectedTabnavigationItem = 2
-    @State private var showBarcodeView = false
-    @State private var showAiScanView = false
     @State private var selectedItem: String? = nil
     @State private var showDetailSearch = false
     @FocusState private var isSearchFocused: Bool
-
-    let searchItems = ["ขวดพลาสติก", "กระป๋อง", "ซองขนม", "เศษอาหาร", "ตะเกียบไม้"]
-        
+    
+    //    let searchItems = ["ขวดพลาสติก", "กระป๋อง", "ซองขนม", "เศษอาหาร", "ตะเกียบไม้"]
+    private func switchTab(to tab: ScanTab) {
+        slideDirection = tab.rawValue > currentTab.rawValue ? -1 : 1
+        currentTab = tab
+    }
+    
     var filteredItems: [String] {
         let allLabels = WasteData.allExamples.map { $0.label }
         if searchText.isEmpty {
-            return allLabels // ✅ โชว์ทั้งหมดเลยตอน focus
+            return allLabels
         } else {
             return allLabels.filter { $0.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
     var body: some View {
-        // ใช้ GeometryReader เพื่อสร้าง ResponsiveConfig
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            NavigationStack {
-                ZStack(alignment: .top) {
-                    Color.backgroundColor.ignoresSafeArea()
-        NavigationStack {
             ZStack(alignment: .top) {
                 Color.backgroundColor.ignoresSafeArea()
                 
@@ -49,87 +49,33 @@ struct SearchView: View {
                         }
                         .zIndex(0)
                 }
-
-
+                
+                
                 VStack(spacing: 0) {
-                    headerView
-                    
-                    //                    VStack(spacing: 0) {
-                    //  SearchSection อยู่นอก ScrollView
-                    //                        SearchSection(
-                    //                            hideTabBar: $hideTabBar,
-                    //                            searchText: $searchText,
-                    //                            searchItems: filteredItems,
-                    //                            onSelectItem: { _ in },
-                    //                            isFocused: $isSearchFocused
-                    //                        )
-                    //                        .padding(.horizontal, 35)
-                    //                        .padding(.top, 18)
-                    //                        .padding(.bottom, 10)
-                    //                        .zIndex(1)
+                    HeaderView(config: config)
                     
                     ZStack(alignment: .top) {
                         ScrollView {
-                        SearchWasteExamplesGrid(
-                            hideTabBar: $hideTabBar,
-                            wasteExamples: WasteData.allExamples
-                        )
-                        .padding(.horizontal, 35)
-                        .padding(.top, 90)
-                    }
-                    .scrollDismissesKeyboard(.immediately)
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear.frame(height: 80)
-                    }
-                    .opacity((isSearchFocused || !searchText.isEmpty) ? 0.3 : 1.0)
-                    .overlay(alignment: .bottom) {
-                        AiScanBottomNavigationBar(selectedTab: $selectedTabnavigationItem) { index in
-                            hideTabBar = true
-                            switch index {
-                            case 0: showBarcodeView = true
-                            case 1: showAiScanView = true
-                            default: break
-                    VStack(spacing: 0) {
-                        HeaderView(config: config) // แยก Component Header
-                        
-                        VStack(spacing: 0) {
-                            // SearchSection อยู่นอก ScrollView
-                            SearchSection(
+                            SearchWasteExamplesGrid(
                                 config: config,
                                 hideTabBar: $hideTabBar,
-                                searchText: $searchText,
-                                searchItems: filteredItems,
-                                onSelectItem: { _ in },
-                                isFocused: $isSearchFocused
+                                wasteExamples: WasteData.allExamples
                             )
-                            // ใช้ค่าจาก config แทนการ hardcode
                             .padding(.horizontal, config.isIPad ? 60 : 35)
-                            .padding(.top, config.isIPad ? 24 : 18)
-                            .padding(.bottom, config.isIPad ? 20 : 10)
-                            .zIndex(1)
-
-                            // ScrollView อยู่ข้างล่าง ไม่ทับกัน
-                            ScrollView {
-                                SearchWasteExamplesGrid(
-                                    config: config,
-                                    hideTabBar: $hideTabBar,
-                                    wasteExamples: WasteData.allExamples
-                                )
-                                .padding(.horizontal, config.isIPad ? 60 : 35)
-                            }
-                            .safeAreaInset(edge: .bottom) {
-                                // เว้นพื้นที่ด้านล่างเผื่อ Navigation Bar แบบ Responsive
-                                Color.clear.frame(height: config.isIPad ? 100 : 80)
-                            }
-                            .opacity((isSearchFocused || !searchText.isEmpty) ? 0.3 : 1.0)
+                            .padding(.top, 90)
                         }
-
+                        .scrollDismissesKeyboard(.immediately)
+                        .safeAreaInset(edge: .bottom) {
+                            Color.clear.frame(height: config.isIPad ? 100 : 80)
+                        }
+                        .opacity((isSearchFocused || !searchText.isEmpty) ? 0.3 : 1.0)
                         .overlay(alignment: .bottom) {
-                            AiScanBottomNavigationBar(selectedTab: $selectedTabnavigationItem) { index in
-                                hideTabBar = true
+                            AiScanBottomNavigationBar(
+                                selectedTab: $selectedTabnavigationItem
+                            ) { index in
                                 switch index {
-                                case 0: showBarcodeView = true
-                                case 1: showAiScanView = true
+                                case 0: switchTab(to: .barcode)
+                                case 1: switchTab(to: .ai)
                                 default: break
                                 }
                             }
@@ -137,25 +83,8 @@ struct SearchView: View {
                             .padding(.bottom, config.isIPad ? 24 : 18)
                             .opacity(isSearchFocused ? 0 : 1)
                         }
-                    }
-                }
-                .navigationDestination(isPresented: $showAiScanView) {
-                    AiScanView(hideTabBar: $hideTabBar)
-                }
-                .navigationDestination(isPresented: $showBarcodeView) {
-                    BarcodeScanView(hideTabBar: $hideTabBar)
-                }
-                .navigationBarHidden(true)
-                .edgesIgnoringSafeArea(.top)
-                .onTapGesture {
-                    if isSearchFocused { isSearchFocused = false }
-                }
-            }
-                        .padding(.horizontal, 47)
-                        .padding(.bottom, 18)
-                        .opacity(isSearchFocused ? 0 : 1)
-                    }
                         SearchSection(
+                            config: config,
                             hideTabBar: $hideTabBar,
                             searchText: $searchText,
                             searchItems: filteredItems,
@@ -169,22 +98,16 @@ struct SearchView: View {
                     }
                 }
             }
-            .navigationDestination(isPresented: $showAiScanView) {
-                AiScanView(hideTabBar: $hideTabBar)
-            }
-            .navigationDestination(isPresented: $showBarcodeView) {
-                BarcodeScanView(hideTabBar: $hideTabBar)
-            }
             .navigationBarHidden(true)
             .edgesIgnoringSafeArea(.top)
-//            .contentShape(Rectangle())
-//            .onTapGesture {
-//                if isSearchFocused { isSearchFocused = false }
-//            }
+            .onAppear {
+                selectedTabnavigationItem = 2
+            }
+            
         }
     }
 }
-
+    
 // แยก Header ออกมาเป็น Component เพื่อรับ config
 struct HeaderView: View {
     let config: ResponsiveConfig
@@ -208,7 +131,7 @@ struct HeaderView: View {
         .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
 }
-
+    
 struct SearchSection: View {
     let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
@@ -216,13 +139,13 @@ struct SearchSection: View {
     let searchItems: [String]
     var onSelectItem: (String) -> Void
     var isFocused: FocusState<Bool>.Binding
-
+    
     @State private var isExpanded = false
     
     private let rowHeight: CGFloat = 46
     private let searchBarHeight: CGFloat = 50
     private let verticalPadding: CGFloat = 20
-
+    
     private var containerHeight: CGFloat {
         if searchText.isEmpty {
             return searchBarHeight
@@ -230,12 +153,12 @@ struct SearchSection: View {
         let itemCount = max(searchItems.count, 1)
         return searchBarHeight + (CGFloat(itemCount) * rowHeight) + verticalPadding
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             SearchBar(config: config, searchText: $searchText, isFocused: isFocused)
-
-            if !searchText.isEmpty || isFocused.wrappedValue {
+            
+            if !searchText.isEmpty {
                 VStack(spacing: 0) {
                     if searchItems.isEmpty {
                         Text("ไม่พบรายการที่ค้นหา")
@@ -257,7 +180,7 @@ struct SearchSection: View {
                                     }
                                     .padding(.vertical, config.isIPad ? 16 : 11)
                                 }
-
+                                
                                 if index < searchItems.count - 1 {
                                     Rectangle()
                                         .fill(Color.gray.opacity(0.3))
@@ -276,47 +199,9 @@ struct SearchSection: View {
         .background(
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.searchColor)
-                .frame(height: containerHeight)
-
-            VStack(spacing: 0) {
-                SearchBar(searchText: $searchText, isFocused: isFocused)
-
-                if !searchText.isEmpty {
-                    VStack(spacing: 0) {
-                        if searchItems.isEmpty {
-                            Text("ไม่พบรายการที่ค้นหา")
-                                .font(.noto(16, weight: .bold))
-                                .foregroundColor(.gray)
-                                .frame(height: rowHeight)
-                        } else {
-                            ForEach(searchItems.indices, id: \.self) { index in
-                                VStack(spacing: 0) {
-                                    NavigationLink {
-                                        DetailSearchView(hideTabBar: $hideTabBar, category: searchItems[index])
-                                    } label: {
-                                        HStack {
-                                            Text(searchItems[index])
-                                                .font(.noto(16, weight: .bold))
-                                                .foregroundColor(.black)
-                                            Spacer()
-                                        }
-                                        .padding(.vertical, 11)
-                                    }
-
-                                    if index < searchItems.count - 1 {
-                                        Rectangle()
-                                            .fill(Color.gray.opacity(0.3))
-                                            .frame(height: 1)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
-                }
-            }
-        }
+//                .frame(height: containerHeight)
+        )
+        
         .onChange(of: isFocused.wrappedValue) {
             withAnimation(.easeInOut(duration: 0.25)) {
                 isExpanded = isFocused.wrappedValue
@@ -329,32 +214,26 @@ struct SearchSection: View {
                 }
             }
         }
-        )
-        // แอนิเมชันตอนยืดหดกล่องค้นหา
-        .animation(.easeInOut(duration: 0.25), value: searchText.isEmpty && !isFocused.wrappedValue)
     }
 }
-//        .animation(.easeInOut(duration: 0.25), value: containerHeight)
-//    }
-//}
-
+    
 struct SearchBar: View {
     let config: ResponsiveConfig
     @Binding var searchText: String
     var isFocused: FocusState<Bool>.Binding
-
+    
     var body: some View {
         HStack(spacing: config.isIPad ? 12 : 8) {
             TextField("ค้นหา", text: $searchText)
                 .font(.noto(config.buttonFont))
                 .focused(isFocused)
                 .padding(.leading, config.isIPad ? 35 : 23)
-
+            
             Button { } label: {
                 Image("SearchBlack")
                     .resizable()
                     .scaledToFit()
-                    // ปรับขนาดไอคอนให้สัมพันธ์กับหน้าจอ
+                // ปรับขนาดไอคอนให้สัมพันธ์กับหน้าจอ
                     .frame(width: config.isIPad ? 45 : 37, height: config.isIPad ? 45 : 37)
             }
             .padding(.trailing, config.isIPad ? 35 : 23)
@@ -367,7 +246,7 @@ struct SearchBar: View {
         )
     }
 }
-
+    
 struct WasteData {
     static let categories: [WasteCategory] = [
         WasteCategory(
@@ -394,10 +273,10 @@ struct WasteData {
             examples: [
                 WasteExample(image: "SnackBag", label: "ซองขนม"),
                 WasteExample(image: "Tissue", label: "กระดาษทิชชู่"),
-                WasteExample(image: "Foambox", label: "ภาชนะใส่อาหาร"),
-                WasteExample(image: "Chopstick", label: "ตะเกียบไม้"),
+                WasteExample(image: "FoodContainers", label: "ภาชนะใส่อาหาร"),
+                WasteExample(image: "Chopsticks", label: "ตะเกียบไม้"),
                 WasteExample(image: "Straw", label: "หลอด"),
-                WasteExample(image: "Spoon", label: "ช้อน-ส้อม พลาสติก")
+                WasteExample(image: "Plasticcutlery", label: "ช้อน-ส้อม พลาสติก")
             ]
         ),
         WasteCategory(
@@ -410,18 +289,18 @@ struct WasteData {
                 WasteExample(image: "Bottle", label: "ขวดพลาสติก"),
                 WasteExample(image: "Box", label: "กล่องกระดาษ"),
                 WasteExample(image: "Plasticcup", label: "แก้วพลาสติก"),
-                WasteExample(image: "paper", label: "กระดาษทั่วไป"),
+                WasteExample(image: "Paper", label: "กระดาษทั่วไป"),
                 WasteExample(image: "Can", label: "กระป๋อง"),
-                WasteExample(image: "Bag", label: "ถุงพลาสติก")
+                WasteExample(image: "Plasticbag", label: "ถุงพลาสติก")
             ]
         )
     ]
-
+    
     static var allExamples: [WasteExample] {
         categories.flatMap { $0.examples }
     }
 }
-
+    
 struct SearchWasteExamplesGrid: View {
     let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
@@ -455,6 +334,12 @@ struct SearchWasteExamplesGrid: View {
     }
 }
 
-#Preview{
-    SearchView(hideTabBar: .constant(false))
+#Preview {
+    NavigationStack {
+        SearchView(
+            hideTabBar: .constant(false),
+            currentTab: .constant(.search),
+            slideDirection: .constant(0)
+        )
+    }
 }

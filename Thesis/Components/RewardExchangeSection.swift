@@ -7,8 +7,11 @@
 import SwiftUI
 
 struct RewardExchangeSection: View {
-    let config: ResponsiveConfig // 1. รับ config เข้ามาจากหน้าหลัก
+    let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
+    let totalPoints: Int
+    
+    private var canRedeem: Bool { totalPoints >= 500 }
     
     var body: some View {
         VStack(spacing: config.rewardVStackSpacing) {
@@ -28,7 +31,7 @@ struct RewardExchangeSection: View {
                 HStack {
                     VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            Text("300")
+                            Text("500")
                                 .font(.system(size: config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
 
@@ -37,7 +40,7 @@ struct RewardExchangeSection: View {
                                 .foregroundColor(.white)
                         }
 
-                        Text("แลกชั่วโมงจิตอาสาได้ 1 ชั่วโมง")
+                        Text("แลกชั่วโมงจิตอาสาได้ 5 ชั่วโมง")
                             .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
                             .foregroundColor(.white)
                     }
@@ -46,10 +49,10 @@ struct RewardExchangeSection: View {
 
                     Text("แลกคะแนน")
                         .font(.noto(config.buttonFont, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(canRedeem ? Color.white : Color.white.opacity(0.5))
                         .padding(.horizontal, config.rewardCardPadding) // ใช้ค่าเดิม 24:16
                         .padding(.vertical, config.rewardButtonVPadding)
-                        .background(Color.mainColor)
+                        .background(canRedeem ? Color.mainColor : Color.mainColor.opacity(0.5))
                         .cornerRadius(config.bannerCornerRadius) // ใช้ค่าเดิม 25:20
                 }
                 .padding(config.rewardCardPadding)
@@ -59,6 +62,7 @@ struct RewardExchangeSection: View {
                 .cornerRadius(20) // มุมของการ์ดเป็น 20 คงที่ตามเดิม
             }
             .buttonStyle(.plain)
+            .allowsHitTesting(canRedeem)
         }
     }
 }

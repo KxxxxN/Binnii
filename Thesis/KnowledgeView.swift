@@ -38,10 +38,10 @@ struct KnowledgeView: View {
             examples: [
                 WasteExample(image: "SnackBag", label: "ซองขนม"),
                 WasteExample(image: "Tissue", label: "กระดาษทิชชู่"),
-                WasteExample(image: "Foambox", label: "ภาชนะใส่อาหาร"),
-                WasteExample(image: "Chopstick", label: "ตะเกียบไม้"),
+                WasteExample(image: "FoodContainers", label: "ภาชนะใส่อาหาร"),
+                WasteExample(image: "Chopsticks", label: "ตะเกียบไม้"),
                 WasteExample(image: "Straw", label: "หลอด"),
-                WasteExample(image: "Spoon", label: "ช้อน-ส้อมพลาสติก")
+                WasteExample(image: "Plasticcutlery", label: "ช้อน-ส้อมพลาสติก")
             ]
         ),
         WasteCategory(
@@ -54,9 +54,9 @@ struct KnowledgeView: View {
                 WasteExample(image: "Bottle", label: "ขวดพลาสติก"),
                 WasteExample(image: "Box", label: "กล่องกระดาษ"),
                 WasteExample(image: "Plasticcup", label: "แก้วพลาสติก"),
-                WasteExample(image: "paper", label: "กระดาษทั่วไป"),
+                WasteExample(image: "Paper", label: "กระดาษทั่วไป"),
                 WasteExample(image: "Can", label: "กระป๋อง"),
-                WasteExample(image: "Bag", label: "ถุงพลาสติก")
+                WasteExample(image: "Plasticbag", label: "ถุงพลาสติก")
             ]
         ),
     ]

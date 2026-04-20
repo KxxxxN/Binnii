@@ -101,6 +101,6 @@ struct DropdownOverlay: View {
             }
         default: break
         }
-        currentPage = 0
+        currentPage = 1
     }
 }

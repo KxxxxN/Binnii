@@ -15,7 +15,7 @@ struct ScoreItem: Identifiable {
 }
 
 struct ScoreHistoryView: View {
-    @State private var currentPage = 0
+    @State private var currentPage = 1
     @Binding var hideTabBar: Bool
     @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var historyVM = ScoreHistoryViewModel()
@@ -126,20 +126,20 @@ struct ScoreHistoryView: View {
 }
 
 // MARK: - PageIndicator
-struct PageIndicator: View {
-    let count: Int
-    let current: Int
-
-    var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<count, id: \.self) { index in
-                Circle()
-                    .fill(index == current ? Color.mainColor : Color.thirdColor)
-                    .frame(width: 8, height: 8)
-            }
-        }
-    }
-}
+//struct PageIndicator: View {
+//    let count: Int
+//    let current: Int
+//
+//    var body: some View {
+//        HStack(spacing: 8) {
+//            ForEach(0..<count, id: \.self) { index in
+//                Circle()
+//                    .fill(index == current ? Color.mainColor : Color.thirdColor)
+//                    .frame(width: 8, height: 8)
+//            }
+//        }
+//    }
+//}
 
 // MARK: - ScoreSortMenu
 struct ScoreSortMenu: View {
@@ -186,13 +186,13 @@ struct PageView: View {
 
     init(items: [ScoreItem], config: ResponsiveConfig, availableHeight: CGFloat) {
         _items = State(initialValue: items)
-        _currentPage = State(initialValue: 0)
+        _currentPage = State(initialValue: 1)
         self.config = config
         self.availableHeight = availableHeight
     }
 
     var body: some View {
-        let totalPages = max(0, (items.count - 1) / itemsPerPage)
+        let totalPages = max(1, Int(ceil(Double(items.count) / Double(itemsPerPage))))
 
         VStack(spacing: 11) {
             if items.isEmpty {
@@ -268,16 +268,15 @@ struct PageView: View {
                 .cornerRadius(config.bannerCornerRadius)
                 .padding(.horizontal, config.paddingMedium)
 
-                CustomPaginationView(currentPage: $currentPage, maxPage: totalPages)
-                    .padding(.vertical, config.paddingMedium)
-                    .background(Color.white)
-                    .cornerRadius(10)
+                PaginationSection(config: config, currentPage: $currentPage, totalPages: totalPages)
+//                    .background(Color.white)
+//                    .cornerRadius(10)
             }
         }
     }
 
     var currentItems: [ScoreItem] {
-        let start = currentPage * itemsPerPage
+        let start = (currentPage - 1) * itemsPerPage
         let end = min(start + itemsPerPage, items.count)
         guard start < end else { return [] }
         return Array(items[start..<end])

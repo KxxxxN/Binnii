@@ -12,17 +12,18 @@ import Auth
 
 struct WasteDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     var category: String
     var capturedImage: UIImage?
     var showBarcodeImage: Bool = false
     var title: String = "ยืนยันภาพถ่าย"
     var scanMethod: String = "search"
-
+    
     @State private var isSaving = false
     @State private var showSaveSuccess = false
     @State private var showSaveError = false
-
+    
     private func binForCategory(_ category: String) -> String {
         switch category {
         case "ขวดพลาสติก", "แก้วพลาสติก", "กระป๋อง", "กล่องกระดาษ", "กระดาษทั่วไป", "ถุงพลาสติก":
@@ -35,15 +36,15 @@ struct WasteDetailView: View {
             return "ถังขยะทั่วไป"
         }
     }
-
+    
     private func save() async {
         isSaving = true
         defer { isSaving = false }
-
+        
         do {
             let user = try await supabase.auth.session.user
             var imageURL: String? = nil
-
+            
             if let uiImage = capturedImage,
                let data = uiImage.jpegData(compressionQuality: 0.8) {
                 let fileName = "\(user.id)_\(Date().timeIntervalSince1970).jpg"
@@ -55,7 +56,7 @@ struct WasteDetailView: View {
                     .getPublicURL(path: fileName)
                 imageURL = url.absoluteString
             }
-
+            
             try await supabase
                 .from("scan_history")
                 .insert([
@@ -71,110 +72,119 @@ struct WasteDetailView: View {
             try await supabase.auth.update(
                 user: UserAttributes(data: ["points": .integer(currentPoints)])
             )
-
+            
             showSaveSuccess = true
         } catch {
             print("Save error: \(error)")
             showSaveError = true
         }
     }
-
+    
     var body: some View {
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
-
-            VStack(spacing: 0) {
-                // MARK: - Header
-                ZStack {
-                    Text(title)
-                        .font(.noto(25, weight: .bold))
-                        .foregroundColor(.black)
-
-                    HStack {
-                        BackButton()
-                        Spacer()
-                        Button {
-                            Task { await save() }
-                        } label: {
-                            if isSaving {
-                                ProgressView().padding(.trailing, 25)
-                            } else {
-                                Text("บันทึก")
-                                    .font(.noto(16, weight: .medium))
-                                    .foregroundColor(.mainColor)
-                                    .padding(.trailing, 25)
+        GeometryReader { geo in
+            let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
+            ZStack {
+                Color.backgroundColor.ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // MARK: - Header
+                    ZStack {
+                        Text(title)
+                            .font(.noto(25, weight: .bold))
+                            .foregroundColor(.black)
+                        
+                        HStack {
+                            BackButton()
+                            Spacer()
+                            Button {
+                                Task { await save() }
+                            } label: {
+                                if isSaving {
+                                    ProgressView().padding(.trailing, 25)
+                                } else {
+                                    Text("บันทึก")
+                                        .font(.noto(16, weight: .medium))
+                                        .foregroundColor(.mainColor)
+                                        .padding(.trailing, 25)
+                                }
                             }
-                        }
-                        .disabled(isSaving)
-                    }
-                }
-                .padding(.bottom, 20)
-
-                // MARK: - Content
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // รูปภาพ
-                        Group {
-                            if let uiImage = capturedImage {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } else {
-                                Image("BarcodeEx")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            }
-                        }
-                        .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .padding(.bottom, 30)
-
-                        // รายละเอียดขยะ
-                        switch category {
-                        case "ขวดพลาสติก":   RecycleWasteDetailPlasticBottle(showDate: true)
-                        case "แก้วพลาสติก":  RecycleWasteDetailPlasticCup(showDate: true)
-                        case "กระป๋อง":      RecycleWasteDetailCan(showDate: true)
-                        case "กล่องกระดาษ":  RecycleWasteDetailCardboardBox(showDate: true)
-                        case "กระดาษทั่วไป": RecycleWasteDetailPaper(showDate: true)
-                        case "ถุงพลาสติก":   RecycleWasteDetailPlasticBag(showDate: true)
-                        case "ซองขนม":       GeneralWasteDetailSnackBag(showDate: true)
-                        case "ภาชนะใส่อาหาร": GeneralWasteDetailFoodContainer(showDate: true)
-                        case "หลอด":         GeneralWasteDetailStraw(showDate: true)
-                        case "กระดาษทิชชู่": GeneralWasteDetailTissue(showDate: true)
-                        case "ตะเกียบไม้":   GeneralWasteDetailChopsticks(showDate: true)
-                        case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon(showDate: true)
-                        case "เศษอาหาร":     WetWasteDetailFoodscraps(showDate: true)
-                        case "เปลือกผลไม้":  WetWasteDetailFruitPeel(showDate: true)
-                        case "เศษขนม":       WetWasteDetailCrumbs(showDate: true)
-                        case "เปลือกไข่":    WetWasteDetailEggshell(showDate: true)
-                        case "เครื่องดื่มเหลือ": WetWasteDetailLeftoverDrinks(showDate: true)
-                        case "น้ำแข็งเหลือ": WetWasteDetailLeftoverIce(showDate: true)
-                        default:
-                            Text("ไม่พบข้อมูลประเภทขยะนี้")
-                                .font(.noto(18, weight: .medium))
-                                .foregroundColor(.gray)
-                                .padding()
+                            .disabled(isSaving)
                         }
                     }
-                    .frame(minHeight: 750)
+                    .padding(.bottom, 20)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+                    
+                    // MARK: - Content
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // รูปภาพ
+                            Group {
+                                if let uiImage = capturedImage {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                } else {
+                                    Image("BarcodeEx")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                }
+                            }
+                            .frame(width: UIScreen.main.bounds.width - 40, height: 290)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .padding(.bottom, 30)
+                            
+                            // รายละเอียดขยะ
+                            switch category {
+                            case "ขวดพลาสติก":   RecycleWasteDetailPlasticBottle(config: config, showDate: true)
+                            case "แก้วพลาสติก":  RecycleWasteDetailPlasticCup(config: config, showDate: true)
+                            case "กระป๋อง":      RecycleWasteDetailCan(config: config, showDate: true)
+                            case "กล่องกระดาษ":  RecycleWasteDetailCardboardBox(config: config, showDate: true)
+                            case "กระดาษทั่วไป": RecycleWasteDetailPaper(config: config, showDate: true)
+                            case "ถุงพลาสติก":   RecycleWasteDetailPlasticBag(config: config, showDate: true)
+                            case "ซองขนม":       GeneralWasteDetailSnackBag(config: config, showDate: true)
+                            case "ภาชนะใส่อาหาร": GeneralWasteDetailFoodContainer(config: config, showDate: true)
+                            case "หลอด":         GeneralWasteDetailStraw(config: config, showDate: true)
+                            case "กระดาษทิชชู่": GeneralWasteDetailTissue(config: config, showDate: true)
+                            case "ตะเกียบไม้":   GeneralWasteDetailChopsticks(config: config, showDate: true)
+                            case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon(config: config, showDate: true)
+                            case "เศษอาหาร":     WetWasteDetailFoodscraps(config: config, showDate: true)
+                            case "เปลือกผลไม้":  WetWasteDetailFruitPeel(config: config, showDate: true)
+                            case "เศษขนม":       WetWasteDetailCrumbs(config: config, showDate: true)
+                            case "เปลือกไข่":    WetWasteDetailEggshell(config: config, showDate: true)
+                            case "เครื่องดื่มเหลือ": WetWasteDetailLeftoverDrinks(config: config, showDate: true)
+                            case "น้ำแข็งเหลือ": WetWasteDetailLeftoverIce(config: config, showDate: true)
+                            default:
+                                Text("ไม่พบข้อมูลประเภทขยะนี้")
+                                    .font(.noto(18, weight: .medium))
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
+                        }
+                        .frame(minHeight: 750)
+                    }
+                    .edgesIgnoringSafeArea(.bottom)
                 }
-                .edgesIgnoringSafeArea(.bottom)
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear { hideTabBar = true }
-        .overlay {
-            if showSaveSuccess {
-                SuccessPopupView(message: "บันทึกสำเร็จ") {
-                    showSaveSuccess = false
-                    dismiss()
+            .navigationBarHidden(true)
+            .onAppear { hideTabBar = true }
+            .overlay {
+                if showSaveSuccess {
+                    SuccessPopupView(message: "บันทึกสำเร็จ") {
+                        showSaveSuccess = false
+                        dismiss()
+                    }
                 }
-            }
-            if showSaveError {
-                ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
-                    showSaveError = false
+                if showSaveError {
+                    ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
+                        showSaveError = false
+                    }
                 }
             }
         }
     }
+}
+
+#Preview {
+    WasteDetailView(hideTabBar: .constant(false), category: "เศษอาหาร")
 }

@@ -62,14 +62,18 @@ struct QRScanView: View {
 //                        .frame(width: 343, height: 115)
 //                        .background(Color.textFieldColor)
 //                        .cornerRadius(20)
-                    
-                    NavigationLink("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน", destination: AiScanView(hideTabBar: $hideTabBar))
-                        .font(.noto(20, weight: .medium))
-                        .foregroundColor(.black)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 343, height: 115)
-                        .background(Color.textFieldColor)
-                        .cornerRadius(20)
+                    Button {
+                        hideTabBar = true
+                        showAiScanView = true
+                    } label: {
+                        Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
+                            .font(.noto(20, weight: .medium))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 343, height: 115)
+                            .background(Color.textFieldColor)
+                            .cornerRadius(20)
+                    }
                     
                     .padding(.top, 62)
 
@@ -105,7 +109,10 @@ struct QRScanView: View {
                     Color.clear.frame(height: 50)
                 }
             }
-
+            .navigationDestination(isPresented: $showAiScanView) {
+                ScanContainerView(hideTabBar: $hideTabBar)
+            }
+            
             // Result Alert
             if showResultAlert {
                 ZStack {
@@ -244,19 +251,20 @@ struct QRScanView: View {
                     }
                 }
             }
-            .onAppear {
-                hideTabBar = true
-                isCameraActive = true
-                OrientationHelper.setOrientation(.portrait)
-            }
-            .onDisappear {
+        }
+        .onAppear {
+            hideTabBar = true
+            isCameraActive = true
+            isScanning = true
+            cameraID = UUID()
+            OrientationHelper.setOrientation(.portrait)
+        }
+        .onDisappear {
+            if !showAiScanView {
                 hideTabBar = false
-                isCameraActive = false
-                OrientationHelper.setOrientation(.all)
             }
-            .navigationDestination(isPresented: $showAiScanView) {
-                AiScanView(hideTabBar: $hideTabBar)
-            }
+            isCameraActive = false
+            OrientationHelper.setOrientation(.all)
         }
     }
 
