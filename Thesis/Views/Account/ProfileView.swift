@@ -20,11 +20,10 @@ struct ProfileView: View {
     
     var body: some View {
         GeometryReader { geo in
-            // เรียกใช้ ResponsiveConfig
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
             VStack(spacing: 0) {
-                // MARK: - 1. ส่วน Header
+                // MARK: - Header
                 ZStack {
                     Text("แก้ไขโปรไฟล์")
                         .font(.noto(config.titleFontSize, weight: .bold))
@@ -44,7 +43,7 @@ struct ProfileView: View {
                         if !viewModel.isEditing {
                             Button(action: { viewModel.startEditing() }) {
                                 Text("แก้ไข")
-                                    .font(.noto(config.fontBody, weight: .medium)) // ใช้ config font
+                                    .font(.noto(config.fontBody, weight: .medium))
                                     .foregroundColor(Color.mainColor)
                                     .padding(.horizontal, config.paddingStandard)
                             }
@@ -54,11 +53,10 @@ struct ProfileView: View {
                     .padding(.bottom, config.bottomTitlePadding)
                 }
                 
-                // MARK: - 2. ส่วนเนื้อหา
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         
-                        // --- รูปโปรไฟล์ ---
+                        // MARK: - Profile Image
                         let isEditing = viewModel.isEditing
                         let profileImageSnapshot = viewModel.profileImage
                         PhotosPicker(selection: $selectedItem, matching: .images) {
@@ -84,13 +82,13 @@ struct ProfileView: View {
                             .overlay(alignment: .bottomTrailing) {
                                 if isEditing {
                                     Image(systemName: "pencil")
-                                        .font(.system(size: config.isIPad ? 32 : 24)) // ปรับขนาดไอคอนปากกา
+                                        .font(.system(size: config.isIPad ? 32 : 24))
                                         .foregroundColor(.black)
                                         .offset(x: 8, y: 5)
                                 }
                             }
                         }
-                        .padding(.top, 35)
+                        .padding(.top, 11)
                         .padding(.bottom, 11)
                         .disabled(!isEditing)
                         .onChange(of: selectedItem) { _, newItem in
@@ -103,8 +101,8 @@ struct ProfileView: View {
                             }
                         }
                         
-                        // --- ฟอร์มกรอกข้อมูล ---
-                        VStack(alignment: .leading, spacing: config.spacingSmall){
+                        // MARK: - Form
+                        VStack(alignment: .leading, spacing: 0){
                             
                             ProfileInputField(
                                 title: "ชื่อ",
@@ -150,12 +148,11 @@ struct ProfileView: View {
                             
                             ProfilePasswordField(title: "รหัสผ่าน", password: viewModel.password, isEditing: $viewModel.isEditing, currentEmail: viewModel.email, config: config)
                         }
-                        .frame(maxWidth: config.profileMaxWidth) // จำกัดความกว้างบน iPad
+                        .frame(maxWidth: config.profileMaxWidth)
                         .padding(.horizontal, config.paddingStandard)
                         
                         Spacer(minLength: 40)
                         
-                        // --- ปุ่มบันทึก / ยกเลิก ---
                         if viewModel.isEditing {
                             HStack(spacing: config.isIPad ? 50 : 35) {
                                 SecondButton(
@@ -179,6 +176,7 @@ struct ProfileView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
             .ignoresSafeArea()
@@ -190,7 +188,7 @@ struct ProfileView: View {
                 NotificationCenter.default.post(name: .popToProfile, object: nil)
             }
             
-            // --- Popups ---
+            // MARK: - Popups
             if viewModel.showSuccessPopup {
                 SuccessPopupView(message: "บันทึกข้อมูลสำเร็จ") {
                     withAnimation { viewModel.showSuccessPopup = false }
@@ -205,4 +203,8 @@ struct ProfileView: View {
         }
         .navigationBarBackButtonHidden(true)
     }
+}
+
+#Preview {
+    ProfileView()
 }

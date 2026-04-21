@@ -8,23 +8,15 @@
 import SwiftUI
 
 struct TranslateView: View {
-    //    @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
-    @State private var selectedLanguageCode: String = "TH"
-    
-    let languages = [
-        (code: "TH", name: "ภาษาไทย", image: "Thai"),
-        (code: "EN", name: "English", image: "English")
-    ]
+    @StateObject private var viewModel = TranslateViewModel()
     
     var body: some View {
         GeometryReader { geo in
-            // เรียกใช้ ResponsiveConfig
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             VStack(spacing: 0) {
                 
-                // Header
+                // MARK: - Header
                 ZStack {
                     Text("เปลี่ยนภาษา")
                         .font(.noto(config.titleFontSize, weight: .bold))
@@ -39,20 +31,20 @@ struct TranslateView: View {
                 .padding(.top, config.topPadding)
                 .padding(.bottom, config.bottomTitlePadding)
                 
-                // Language Selection List
+                // MARK: - Language List
                 VStack(spacing: 0) {
-                    ForEach(languages, id: \.code) { lang in
+                    ForEach(viewModel.languages, id: \.code) { lang in
                         LanguageSelectionRow(
                             code: lang.code,
                             name: lang.name,
                             imageName: lang.image,
-                            selectedCode: selectedLanguageCode //
+                            selectedCode: viewModel.selectedLanguageCode
                         ) { newCode in
-                            selectedLanguageCode = newCode
+                            viewModel.selectLanguage(newCode)
                         }
                     }
                 }
-                .padding(.top, 40)
+                .padding(.top, 35)
                 
                 Spacer()
             }

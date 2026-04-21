@@ -25,6 +25,7 @@ struct ProfileInputField: View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             // 1. หัวข้อ
             Title(title: title)
+                .padding(.leading, 6)
             
             // 2. ส่วนของ Input / Text
             HStack {
@@ -56,10 +57,9 @@ struct ProfileInputField: View {
                         .padding(.trailing, config.paddingMedium)
                 }
             }
-            // เปลี่ยนจาก Fixed Width เป็น maxWidth และปรับความสูงตามจอ
-            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
+            .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
-            .cornerRadius(config.bannerCornerRadius) // 25 สำหรับ iPad, 20 สำหรับ iPhone
+            .cornerRadius(config.bannerCornerRadius)
             .modifier(ValidationBorder(isValid: isEditing ? !(isSubmitted && isInvalid) : true))
             
             // 3. ส่วนแสดงข้อความ Error
@@ -72,7 +72,7 @@ struct ProfileInputField: View {
             }
             .frame(height: config.isIPad ? 26 : 20, alignment: .top) // ขยายพื้นที่ Error เล็กน้อยบน iPad
             .clipped()
-            .padding(.leading, 7)
+            .padding(.leading, 6)
         }
         .frame(maxWidth: .infinity)
     }
@@ -89,6 +89,7 @@ struct ProfileEmailField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title)
+                .padding(.leading, 6)
             
             Group {
                 if isEditing {
@@ -103,7 +104,7 @@ struct ProfileEmailField: View {
                                 .foregroundColor(.black)
                         }
                         .padding(.horizontal, config.paddingMedium)
-                        .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
+                        .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
                         .overlay(
                             RoundedRectangle(cornerRadius: config.bannerCornerRadius)
                                 .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
@@ -118,7 +119,7 @@ struct ProfileEmailField: View {
                         Spacer()
                     }
                     .padding(.horizontal, config.paddingMedium)
-                    .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
+                    .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
                     .background(Color.textFieldColor)
                     .cornerRadius(config.bannerCornerRadius)
                 }
@@ -143,6 +144,7 @@ struct ProfilePasswordField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title)
+                .padding(.leading, 6)
             
             Group {
                 if isEditing {
@@ -158,7 +160,7 @@ struct ProfilePasswordField: View {
                                 .foregroundColor(Color.mainColor)
                         }
                         .padding(.horizontal, config.paddingMedium)
-                        .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
+                        .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
                         .overlay(
                             RoundedRectangle(cornerRadius: config.bannerCornerRadius)
                                 .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
@@ -174,7 +176,7 @@ struct ProfilePasswordField: View {
                         Spacer()
                     }
                     .padding(.horizontal, config.paddingMedium)
-                    .frame(maxWidth: .infinity, minHeight: config.isIPad ? 65 : 49)
+                    .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
                     .background(Color.textFieldColor)
                     .cornerRadius(config.bannerCornerRadius)
                 }
@@ -185,4 +187,8 @@ struct ProfilePasswordField: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview{
+    ProfileView()
 }

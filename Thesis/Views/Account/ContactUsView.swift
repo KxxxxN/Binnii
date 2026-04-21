@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct ContactUsView: View {
-//    @Environment(\.dismiss) private var dismiss
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     var body: some View {
-//        NavigationStack {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
@@ -59,7 +57,6 @@ struct ContactUsView: View {
             .ignoresSafeArea()
             .navigationBarBackButtonHidden(true)
         }
-//        }
     }
 }
 

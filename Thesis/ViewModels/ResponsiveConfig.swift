@@ -39,7 +39,7 @@ struct ResponsiveConfig {
     // MARK: - General / Shared
     var titleFontSize: CGFloat { fontTitle }
     var sectionFontSize: CGFloat { fontBody }
-    var buttonHeight: CGFloat { isIPad ? 50 : 40 }
+    var buttonHeight: CGFloat { isIPad ? 59 : 49 }
     var buttonFont: CGFloat { fontBody }
     var historyTitleFontSize: CGFloat { isIPad ? 24 : 20 }
     
@@ -230,4 +230,5 @@ struct ResponsiveConfig {
     var accountRowSpacing: CGFloat { isIPad ? 22 : 15 }
     var accountRowFontSize: CGFloat { isIPad ? 26 : 20 }
     var accountRowChevronSize: CGFloat { isIPad ? 32 : 24 }
+    var faqRowHeight: CGFloat { isIPad ? 95 : 75 } 
 }

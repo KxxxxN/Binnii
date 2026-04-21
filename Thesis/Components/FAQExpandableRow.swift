@@ -28,7 +28,7 @@ struct FAQExpandableRow: View {
                     Text("\(item.question)?")
                         .font(.noto(config.accountRowFontSize, weight: .bold))
                         .foregroundColor(Color.black)
-                        .padding(.leading, config.accountRowIconLeading)
+                        .padding(.leading, config.spacingMedium)
                         .multilineTextAlignment(.leading)
                     
                     Spacer()
@@ -38,7 +38,7 @@ struct FAQExpandableRow: View {
                         .font(.system(size: config.accountRowChevronSize))
                 }
                 .padding(.trailing, config.paddingMedium)
-                .frame(maxWidth: .infinity, minHeight: config.accountRowHeight)
+                .frame(maxWidth: .infinity, minHeight: config.faqRowHeight)
                 .background(Color.accountSecColor)
                 .cornerRadius(cornerRadiusValue, corners: isExpanded ? [.topLeft, .topRight] : .allCorners)
             }
@@ -50,15 +50,16 @@ struct FAQExpandableRow: View {
                         .foregroundColor(.black)
                         .lineLimit(nil)
                 }
-                .padding(.horizontal, config.accountRowIconLeading)
-                // 💡 ปรับ Padding ตรงนี้เพิ่มเล็กน้อย เพื่อไม่ให้ข้อความชิดขอบบนของคำตอบมากเกินไป
-                .padding(.vertical, 15)
+                .padding(.horizontal, config.spacingMedium)
+                .padding(.vertical)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.accountSecColor)
                 .cornerRadius(cornerRadiusValue, corners: [.bottomLeft, .bottomRight])
-                // ❌ ลบ .offset(y: -cornerRadiusValue) ออกไปเลย กล่องมันต่อกันสนิทอยู่แล้วครับ
             }
         }
-        // ❌ ลบ .padding(.bottom, ...) ออกไปด้วยครับ ไม่ต้องชดเชยระยะแล้ว
     }
+}
+
+#Preview {
+    FAQView()
 }

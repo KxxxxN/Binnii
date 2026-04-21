@@ -14,7 +14,6 @@ struct RecyclableItem: Identifiable {
     let imageName: String
     let title: String
     let countNumber: Int
-//    let count: String
 }
 
 struct NavigationItem: Identifiable {
@@ -22,4 +21,16 @@ struct NavigationItem: Identifiable {
     let icon: String
     let label: String
     var isActive: Bool
+}
+
+struct FAQItem: Identifiable {
+    let id = UUID()
+    let question: String
+    let answer: String
+}
+
+struct Language {
+    let code: String
+    let name: String
+    let image: String
 }

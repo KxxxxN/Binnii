@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct HelpCenterView: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     
     var body: some View {
         GeometryReader { geo in
-            // เรียกใช้ ResponsiveConfig
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
             VStack(spacing: 0) {
                 
+                // MARK: - Header
                 ZStack {
                     Text("ช่วยเหลือ")
                         .font(.noto(config.titleFontSize, weight: .bold))
@@ -31,18 +30,14 @@ struct HelpCenterView: View {
                 .padding(.top, config.topPadding)
                 .padding(.bottom, config.bottomTitlePadding)
                 
-                // Menu List
+                // MARK: - Menu List
                 VStack(spacing: 0) {
-                    
-                    // วิธีการใช้งาน
                     HelpMenuRow(
                         title: "วิธีการใช้งาน",
                         imageName: "BookGuide",
                         destination: Text("หน้าวิธีการใช้งาน"),
                         config: config
                     )
-                    
-                    // คำถามที่พบบ่อย
                     HelpMenuRow(
                         title: "คำถามที่พบบ่อย",
                         imageName: "Question",
@@ -50,7 +45,7 @@ struct HelpCenterView: View {
                         config: config
                     )
                 }
-                .padding(.top, 40)
+                .padding(.top, 35)
                 
                 Spacer()
             }
