@@ -14,22 +14,21 @@ struct EmailForgotPassword: View {
     
     
     var body: some View {
-        //        NavigationStack {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            VStack(spacing: 0){ //เปิด Vstack1
-                ZStack { //เปิด Zstack1
+            VStack(spacing: 0){
+                ZStack {
                     Text("ลืมรหัสผ่าน")
-                        .font(.noto(25, weight: .bold))
-                    HStack { //เปิด Hstack1
+                        .font(.noto(config.titleFontSize, weight: .bold))
+                    HStack {
                         BackButton()
                         
                         Spacer()
-                    }//ปิด Hstack1
-                }//ปิด Zstack1
+                    }
+                }
                 .padding(.top, config.topPadding)
-                .padding(.bottom, config.bottomTitlePadding)
+                .padding(.bottom, config.isIPad ? 80 : 57)
                 
                 LoginInputField(
                     title: "ที่อยู่อีเมล",
@@ -51,22 +50,20 @@ struct EmailForgotPassword: View {
                             await viewModel.forgotPassword()
                         }
                     },
-                    width: 155,
-                    height: 49
+                    width: config.isIPad ? 220 : 155,
+                    height: config.isIPad ? 60 : 49
                 )
                 .padding(.top, 40)
                 
                 Spacer()
                 
-            }//ปิด Vstack1
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.backgroundColor)
             .ignoresSafeArea()
             .navigationDestination(isPresented: $viewModel.navigateToOTP) {
-                // ส่ง email ไปยังหน้า OTP ด้วยเพื่อให้ User รู้ว่าส่งไปที่ไหน หรือใช้ในการ verify ต่อ
                 OTPConfirmView(source: .forgotPassword, email: viewModel.emailForgotPassword)
             }
-            //        }
             .navigationBarBackButtonHidden(true)
         }
     }

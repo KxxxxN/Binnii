@@ -53,6 +53,16 @@ class NewPasswordViewModel: ObservableObject {
         return ValidationHelper.isPasswordValid(password) && (password == confirmPassword) && !password.isEmpty
     }
     
+    func validateOnPasswordChange() {
+        clearErrorOnTyping(for: "new")
+        if !password.isEmpty {
+            isPasswordValid = ValidationHelper.isPasswordValid(password)
+        }
+        if !confirmPassword.isEmpty {
+            isConfirmPasswordValid = (password == confirmPassword)
+        }
+    }
+    
     func saveNewPassword() async {
         self.isSubmitted = true
         

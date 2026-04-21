@@ -70,6 +70,13 @@ class ChangePasswordViewModel: ObservableObject {
         return isPasswordValid && isConfirmPasswordValid
     }
     
+    func validateOnPasswordChange() {
+        clearError(for: "password")
+        if !confirmPassword.isEmpty {
+            isConfirmPasswordValid = (password == confirmPassword)
+        }
+    }
+    
     func changePassword() async {
         if validateFormChangePassword() {
             do {

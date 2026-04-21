@@ -47,9 +47,9 @@ struct ChangePasswordField: View {
                 }
             }
             .padding()
-            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 49)
+            .frame(maxWidth: config.isIPad ? .infinity : 345, maxHeight: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
-            .cornerRadius(config.isIPad ? 25 : 20) // ปรับความโค้งบน iPad
+            .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
             
             Group {
@@ -63,6 +63,9 @@ struct ChangePasswordField: View {
             .padding(.leading, 7)
             .padding(.top, 4)
         }
-        .padding(.horizontal, config.paddingStandard)
     }
+}
+
+#Preview {
+   ChangePasswordView()
 }

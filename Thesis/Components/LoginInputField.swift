@@ -17,12 +17,11 @@ struct LoginInputField: View {
     var errorMessage: String = "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
     var isSecure: Bool = false
     var isPasswordToggle: Binding<Bool>?
-    
-    // 1. เพิ่มตัวแปรรับค่า ResponsiveConfig
     let config: ResponsiveConfig
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
+            Title(title: title)
 
             HStack {
                 ZStack(alignment: .leading) {
@@ -66,4 +65,8 @@ struct LoginInputField: View {
         }
         .padding(.horizontal, config.paddingStandard)
     }
+}
+
+#Preview {
+    LoginView()
 }

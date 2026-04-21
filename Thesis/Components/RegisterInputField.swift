@@ -17,8 +17,6 @@ struct RegisterInputField: View {
     var errorMessage: String = "จำเป็นต้องระบุ"
     var isSecure: Bool = false
     var isPasswordToggle: Binding<Bool>?
-    
-    // 1. เพิ่มตัวแปรรับค่า ResponsiveConfig
     let config: ResponsiveConfig
     
     var body: some View {
@@ -49,7 +47,7 @@ struct RegisterInputField: View {
                 }
             }
             .padding()
-            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 49)
+            .frame(maxWidth: config.isIPad ? .infinity : 345, maxHeight: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
             .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
@@ -67,4 +65,8 @@ struct RegisterInputField: View {
         }
         .padding(.horizontal, config.paddingStandard)
     }
+}
+
+#Preview {
+    RegisterView()
 }

@@ -9,9 +9,7 @@ import SwiftUI
 
 struct NewPasswordView: View {
     @StateObject private var viewModel = NewPasswordViewModel()
-    // 1. ดึง Size Class เพื่อทำ Responsive
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-//    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         GeometryReader { geo in
@@ -21,7 +19,7 @@ struct NewPasswordView: View {
                 VStack(spacing: 0) {
                     // MARK: - Header
                     ZStack {
-                        Text("ตั้งรหัสผ่านใหม่")
+                        Text("เปลี่ยนรหัสผ่าน")
                             .font(.noto(config.titleFontSize, weight: .bold))
                         HStack {
                             BackButton(action: {
@@ -30,10 +28,9 @@ struct NewPasswordView: View {
                             Spacer()
                         }
                     }
-                    .padding(.top, config.topPadding)
                     .padding(.bottom, config.bottomTitlePadding)
                     
-                    // 1. ช่องรหัสผ่านปัจจุบัน
+                    // MARK: - Old Password
                     ChangePasswordField(
                         title: "รหัสผ่านเก่า",
                         placeholder: "กรอกรหัสผ่านปัจจุบัน",
@@ -48,8 +45,8 @@ struct NewPasswordView: View {
                     .onChange(of: viewModel.oldPassword) { _, _ in
                         viewModel.clearErrorOnTyping(for: "old")
                     }
-                    
-                    // 2. ช่องรหัสผ่านใหม่
+
+                    // MARK: - New Password
                     ChangePasswordField(
                         title: "รหัสผ่านใหม่",
                         placeholder: "อย่างน้อย 8 ตัวอักษร",
@@ -60,28 +57,20 @@ struct NewPasswordView: View {
                         : "รูปแบบรหัสผ่านไม่ถูกต้อง",
                         isSecure: true,
                         isPasswordToggle: $viewModel.isPasswordVisible,
-                        config: config // ✅ ส่ง config
+                        config: config
                     )
                     .onChange(of: viewModel.password) { _, _ in
-                        viewModel.clearErrorOnTyping(for: "new") // ✅ ระบุว่าเป็นช่อง new
-                        
-                        // Logic ตรวจสอบความถูกต้องอื่นๆ ของคุณคงเดิม
-                        if !viewModel.password.isEmpty {
-                            viewModel.isPasswordValid = ValidationHelper.isPasswordValid(viewModel.password)
-                        }
-                        if !viewModel.confirmPassword.isEmpty {
-                            viewModel.isConfirmPasswordValid = (viewModel.password == viewModel.confirmPassword)
-                        }
+                        viewModel.validateOnPasswordChange()
                     }
                     
-                    // Checklist แสดงเงื่อนไขรหัสผ่านใหม่
                     if !ValidationHelper.isPasswordValid(viewModel.password) {
-                        PasswordValidationCheckView(password: viewModel.password, config: config) // ✅ ส่ง config
+                        PasswordValidationCheckView(password: viewModel.password, config: config)
                             .padding(.top, 1)
                             .padding(.bottom, 7)
+                            .padding(.horizontal)
                     }
-                    
-                    // 3. ช่องยืนยันรหัสผ่านใหม่
+
+                    // MARK: - Confirm Password
                     ChangePasswordField(
                         title: "ยืนยันรหัสผ่านใหม่",
                         placeholder: "กรอกรหัสผ่านใหม่อีกครั้ง",
@@ -90,13 +79,13 @@ struct NewPasswordView: View {
                         errorMessage: viewModel.confirmPassword.isEmpty ? "กรุณากรอกรหัสผ่านอีกครั้ง" : "รหัสผ่านไม่ตรงกัน",
                         isSecure: true,
                         isPasswordToggle: $viewModel.isConfirmPasswordVisible,
-                        config: config // ✅ ส่ง config
+                        config: config
                     )
                     .onChange(of: viewModel.confirmPassword) { _, _ in
                         viewModel.clearErrorOnTyping(for: "confirm")
                     }
                     
-                    HStack(alignment: .bottom, spacing: config.isIPad ? 50 : 35){ // ✅ ปรับช่องว่างระหว่างปุ่มบน iPad
+                    HStack(alignment: .bottom, spacing: config.isIPad ? 50 : 35){
                         SecondButton(
                             title: "ยกเลิก",
                             action: { viewModel.navigateToProfile = true },
@@ -123,15 +112,14 @@ struct NewPasswordView: View {
                 .blur(radius: (viewModel.showSuccessAlert || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessAlert || viewModel.showErrorPopup)
                 
-                // MARK: Success Popup
+                // MARK: - Popups
                 if viewModel.showSuccessAlert {
                     SuccessPopupView(message: "เปลี่ยนรหัสผ่านสำเร็จ") {
                         viewModel.showSuccessAlert = false
                         viewModel.navigateToProfile = true
                     }
                 }
-                
-                // MARK: Error Popup
+
                 if viewModel.showErrorPopup{
                     ErrorPopupView(title: "เปลี่ยนรหัสผ่านไม่สำเร็จ"){
                         withAnimation {

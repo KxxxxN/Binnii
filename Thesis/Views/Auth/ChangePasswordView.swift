@@ -10,33 +10,31 @@ import SwiftUI
 
 struct ChangePasswordView: View {
     @StateObject private var viewModel = ChangePasswordViewModel()
-    
-    // 1. ดึง Size Class เพื่อทำ Responsive
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             ZStack {
                 Color.backgroundColor.ignoresSafeArea()
                 
                 GeometryReader { geo in
                     let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
                     
-                    // ✅ 1. เพิ่ม ScrollView ครอบ VStack
                     ScrollView(.vertical, showsIndicators: false) {
-                        VStack{ //เปิด Vstack1
-                            ZStack { //เปิด Zstack1
+                        VStack{
+                            // MARK: - Header
+                            ZStack {
                                 Text("เปลี่ยนรหัสผ่านใหม่")
                                     .font(.noto(config.titleFontSize, weight: .bold))
-                                HStack { //เปิด Hstack1
+                                HStack {
                                     BackButton()
                                     Spacer()
-                                }//ปิด Hstack1
-                            }//ปิด Zstack1
-                            .padding(.top, config.topPadding)
-                            .padding(.bottom, config.bottomTitlePadding)
+                                }
+                            }
+                            .padding(.bottom, config.isIPad ? 100 : 21)
+
                             
-                            // --- 1. ช่องรหัสผ่านใหม่ ---
+                            // MARK: - New Password
                             ChangePasswordField(
                                 title: "รหัสผ่าน",
                                 placeholder: "อย่างน้อย 8 ตัวอักษร",
@@ -45,23 +43,20 @@ struct ChangePasswordView: View {
                                 errorMessage: viewModel.isChangePasswordSubmitted && !viewModel.isPasswordValid ? (viewModel.password.isEmpty ? "กรุณากรอกรหัสผ่าน" : !ValidationHelper.isPasswordValid(viewModel.password) ? "รูปแบบรหัสผ่านไม่ถูกต้อง" : "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม") : "",
                                 isSecure: true,
                                 isPasswordToggle: $viewModel.isPasswordVisible,
-                                config: config // ✅ ส่ง config เข้าไป
+                                config: config
                             )
                             .onChange(of: viewModel.password) { _, _ in
-                                viewModel.clearError(for: "password")
-                                // ตรวจสอบ Confirm Password ใหม่ด้วยถ้ามีข้อมูลอยู่แล้ว
-                                if !viewModel.confirmPassword.isEmpty {
-                                    viewModel.isConfirmPasswordValid = (viewModel.password == viewModel.confirmPassword)
-                                }
+                                viewModel.validateOnPasswordChange()
                             }
                             
                             if !ValidationHelper.isPasswordValid(viewModel.password) {
                                 PasswordValidationCheckView(password: viewModel.password, config: config)
                                     .padding(.top, -7)
                                     .padding(.bottom, 5)
+                                    .padding(.horizontal)
                             }
                             
-                            // --- 2. ช่องยืนยันรหัสผ่าน ---
+                            // MARK: - Confirm Password
                             ChangePasswordField(
                                 title: "ยืนยันรหัสผ่าน",
                                 placeholder: "กรอกรหัสผ่านอีกครั้ง",
@@ -76,6 +71,7 @@ struct ChangePasswordView: View {
                                 viewModel.clearError(for: "confirmPassword")
                             }
 
+                            // MARK: - Submit Button
                             PrimaryButton(
                                 title: "ยืนยัน",
                                 action: {
@@ -88,15 +84,13 @@ struct ChangePasswordView: View {
                             )
                             .padding(.top, config.isIPad ? 65 : 55)
                             
-                            Spacer() // ดันเนื้อหาขึ้นด้านบน
+                            Spacer()
                             
-                        }//ปิด Vstack1
-                        // ✅ 2. กำหนด minHeight ให้ VStack เพื่อให้ Spacer() ยังทำงานได้ถูกต้องในเนื้อหาที่สั้นกว่าจอ
+                        }
                         .frame(minHeight: geo.size.height)
                         
-                    } // ปิด ScrollView
+                    }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    // ✅ ย้าย Modifier เหล่านี้มาไว้ที่ ScrollView
                     .blur(radius: (viewModel.showSuccessPopup || viewModel.showErrorPopup) ? 3 : 0)
                     .disabled(viewModel.showSuccessPopup || viewModel.showErrorPopup)
                 }
@@ -126,5 +120,9 @@ struct ChangePasswordView: View {
                 LoginView()
             }
         }
-    }
+//    }
+}
+
+#Preview {
+   ChangePasswordView()
 }

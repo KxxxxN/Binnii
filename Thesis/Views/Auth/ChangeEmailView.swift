@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ChangeEmailView: View {
     @StateObject private var viewModel = ChangeEmailViewModel()
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
@@ -27,8 +26,7 @@ struct ChangeEmailView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
-                .padding(.bottom, config.bottomTitlePadding)
+                .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Input Field
                 LoginInputField(

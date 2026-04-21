@@ -11,10 +11,7 @@ import SwiftUI
 struct ConfirmEmailView: View {
     let currentEmail: String
     @StateObject private var viewModel = ConfirmEmailViewModel()
-    
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
-//    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         GeometryReader { geo in
@@ -23,7 +20,7 @@ struct ConfirmEmailView: View {
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
-                    Text("ยืนยันแก้ไขรหัสผ่าน")
+                    Text("ยืนยันอีเมลของคุณ")
                         .font(.noto(config.titleFontSize, weight: .bold))
                         .foregroundColor(.black)
                     HStack {
@@ -31,9 +28,7 @@ struct ConfirmEmailView: View {
                         Spacer()
                     }
                 }
-                .padding(.horizontal, config.paddingStandard)
-                .padding(.top, config.topPadding)
-                .padding(.bottom, config.bottomTitlePadding)
+                .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Email Input Field
                 ReadOnlyEmailField(

@@ -10,7 +10,6 @@ import SwiftUI
 struct ConfirmPasswordView: View {
     @StateObject private var viewModel = ConfirmPasswordViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         GeometryReader { geo in
@@ -27,8 +26,7 @@ struct ConfirmPasswordView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
-                .padding(.bottom, config.bottomTitlePadding)
+                .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Input Field
                 LoginInputField(

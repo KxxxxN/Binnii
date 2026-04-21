@@ -7,16 +7,9 @@
 
 import SwiftUI
 
-enum OTPSource {
-    case forgotPassword // ไป ChangePasswordView
-    case changeEmail    // แสดง Popup สำเร็จ
-    case confirmEmail   // ไป NewPasswordView
-}
-
 struct OTPConfirmView: View {
     let source: OTPSource
     let email: String
-//    let refCode: String
     
     @StateObject private var viewModel = OTPConfirmViewModel()
     @FocusState private var focusedField: Int?
@@ -42,12 +35,10 @@ struct OTPConfirmView: View {
                                 Spacer()
                             }
                         }
-                        .padding(.top, config.topPadding)
-                        .padding(.bottom, config.bottomTitlePadding)
-                        .padding(.bottom, config.isIPad ? 80 : 65)
+                        .padding(.bottom, config.isIPad ? 80 : 42)
                         
                         Text("ใส่รหัสที่ส่งไปยังอีเมลของคุณ")
-                            .font(.noto(config.isIPad ? 24 : 20, weight: .semibold)) // ปรับขนาดฟอนต์บน iPad
+                            .font(.noto(config.isIPad ? 24 : 20, weight: .semibold))
                             .padding(.bottom, config.isIPad ? 24 : 18)
                         
                         // MARK: - OTP Input
@@ -62,17 +53,6 @@ struct OTPConfirmView: View {
                             .padding(.bottom, 0)
                             .opacity(viewModel.shouldShowError ? 1 : 0)
                         
-                        // MARK: - Reference Code (Commented)
-                        // HStack(spacing: 5){
-                        //     Text("รหัสอ้างอิง :")
-                        //         .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
-                        //         .foregroundColor(Color.placeholderColor)
-                        //
-                        //     let refCode = "A9F4K2"
-                        //     Text(refCode)
-                        //         .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
-                        //         .foregroundColor(Color.placeholderColor)
-                        // }
                         .padding(.bottom, config.isIPad ? 25 : 18)
                         
                         // MARK: - Action Button
@@ -84,7 +64,7 @@ struct OTPConfirmView: View {
                                     await viewModel.verifyOTP(source: source, email: email)
                                 }
                             },
-                            width: config.isIPad ? 220 : 155, // ปรับขนาดปุ่มบน iPad
+                            width: config.isIPad ? 220 : 155,
                             height: config.isIPad ? 60 : 49
                         )
                         
@@ -97,7 +77,7 @@ struct OTPConfirmView: View {
                             if viewModel.resendCooldown > 0 {
                                 Text("ส่งรหัสใหม่ (\(viewModel.resendCooldown))")
                                     .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
-                                    .foregroundColor(.placeholderColor)  // สีจางลงตอน cooldown
+                                    .foregroundColor(.placeholderColor) 
                             } else {
                                 Button(action: {
                                     Task {
@@ -124,8 +104,6 @@ struct OTPConfirmView: View {
                     focusedField = 0
                     viewModel.startCooldown()
                 }
-                
-                // MARK: - Navigation
                 .navigationDestination(isPresented: $viewModel.navigateToChangePW) {
                     ChangePasswordView()
                 }
@@ -138,11 +116,10 @@ struct OTPConfirmView: View {
             }
             .navigationBarBackButtonHidden(true)
             
-            // MARK: - Popups (วางไว้ที่ ZStack นอกสุด)
+            // MARK: - Popups
             if viewModel.showSuccessPopup {
                 SuccessPopupView(message: "แก้ไขอีเมลสำเร็จ") {
                     viewModel.showSuccessPopup = false
-//                    viewModel.emailChangeSuccess = true
                     viewModel.navigateToProfile = true
                 }
             }
@@ -151,7 +128,7 @@ struct OTPConfirmView: View {
                 ErrorPopupView(title: "แก้ไขอีเมลไม่สำเร็จ"){
                     withAnimation {
                         viewModel.showErrorPopup = false
-                        viewModel.resetOTPFields() // ล้างข้อมูลเพื่อให้พิมพ์ใหม่ได้ง่าย
+                        viewModel.resetOTPFields()
                         focusedField = 0
                     }
                 }
