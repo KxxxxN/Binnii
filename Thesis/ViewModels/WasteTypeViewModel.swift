@@ -6,36 +6,42 @@
 //
 
 
-//
-//  WasteTypeViewModel.swift
-//  Thesis
-//
-
+//  ViewModels/WasteTypeViewModel.swift
 import SwiftUI
 import Supabase
 
 @MainActor
-class WasteTypeViewModel: ObservableObject {
-    @Published var items: [WasteTypeItem] = []
-    @Published var isLoading: Bool = false
+final class WasteTypeViewModel: ObservableObject {
 
+    @Published private(set) var items        : [WasteTypeItem] = []
+    @Published private(set) var isLoading    : Bool            = false
+    @Published private(set) var errorMessage : String?         = nil
+
+    // สร้าง formatter ครั้งเดียว
+    private let inputFormatter: DateFormatter = {
+        let f        = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        f.locale     = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
+    private let displayFormatter: DateFormatter = {
+        let f        = DateFormatter()
+        f.dateFormat = "d/M/yyyy"
+        f.locale     = Locale(identifier: "en_US_POSIX")
+        f.calendar   = Calendar(identifier: .buddhist)
+        return f
+    }()
+
+    // MARK: - Fetch
     func fetchItems(category: String) async {
-        isLoading = true
+        guard !isLoading else { return }
+        isLoading    = true
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
             let session = try await supabase.auth.session
-
-            struct ScanRow: Decodable {
-                let category: String
-                let imageUrl: String?
-                let scannedAt: String
-                enum CodingKeys: String, CodingKey {
-                    case category
-                    case imageUrl = "image_url"
-                    case scannedAt = "scanned_at"
-                }
-            }
 
             let rows: [ScanRow] = try await supabase
                 .from("scan_history")
@@ -46,26 +52,35 @@ class WasteTypeViewModel: ObservableObject {
                 .execute()
                 .value
 
-            let parser = DateFormatter()
-            parser.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-            parser.locale = Locale(identifier: "en_US_POSIX")
+            items = rows.map { mapToItem($0) }
 
-            let display = DateFormatter()
-            display.dateFormat = "d/M/yyyy"
-            display.locale = Locale(identifier: "en_US_POSIX")
-            display.calendar = Calendar(identifier: .gregorian)
-
-            items = rows.map { row in
-                let cleanedDate = String(row.scannedAt.prefix(19))
-                let dateStr = parser.date(from: cleanedDate).map { display.string(from: $0) } ?? row.scannedAt
-                return WasteTypeItem(
-                    title: row.category,
-                    date: dateStr,
-                    imageUrl: row.imageUrl
-                )
-            }
         } catch {
-            print("❌ fetchItems error: \(error)")
+            errorMessage = "โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่"
+            items        = []
+            print("❌ WasteTypeViewModel.fetchItems:", error)
         }
+    }
+
+    // MARK: - Pagination
+    func pagedItems(page: Int, perPage: Int) -> [WasteTypeItem] {
+        let start = (page - 1) * perPage
+        let end   = min(start + perPage, items.count)
+        guard start < end else { return [] }
+        return Array(items[start..<end])
+    }
+
+    func totalPages(perPage: Int) -> Int {
+        max(1, Int(ceil(Double(items.count) / Double(perPage))))
+    }
+
+    // MARK: - Private
+    private func mapToItem(_ row: ScanRow) -> WasteTypeItem {
+        let cleaned = String(row.scannedAt.prefix(19))
+        let dateStr = inputFormatter.date(from: cleaned)
+                        .map { displayFormatter.string(from: $0) }
+                      ?? row.scannedAt
+        return WasteTypeItem(title: row.category,
+                             date: dateStr,
+                             imageUrl: row.imageUrl)
     }
 }

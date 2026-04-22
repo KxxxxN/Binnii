@@ -20,65 +20,7 @@ struct WasteDetailView: View {
     var title: String = "ยืนยันภาพถ่าย"
     var scanMethod: String = "search"
     
-    @State private var isSaving = false
-    @State private var showSaveSuccess = false
-    @State private var showSaveError = false
-    
-    private func binForCategory(_ category: String) -> String {
-        switch category {
-        case "ขวดพลาสติก", "แก้วพลาสติก", "กระป๋อง", "กล่องกระดาษ", "กระดาษทั่วไป", "ถุงพลาสติก":
-            return "ถังขยะรีไซเคิล"
-        case "ซองขนม", "กระดาษทิชชู่", "ภาชนะใส่อาหาร", "ตะเกียบไม้", "หลอด", "ช้อน-ส้อมพลาสติก":
-            return "ถังขยะทั่วไป"
-        case "เศษอาหาร", "เปลือกไข่", "เปลือกผลไม้", "เครื่องดื่มเหลือ", "เศษขนม", "น้ำแข็งเหลือ":
-            return "ถังขยะเปียก"
-        default:
-            return "ถังขยะทั่วไป"
-        }
-    }
-    
-    private func save() async {
-        isSaving = true
-        defer { isSaving = false }
-        
-        do {
-            let user = try await supabase.auth.session.user
-            var imageURL: String? = nil
-            
-            if let uiImage = capturedImage,
-               let data = uiImage.jpegData(compressionQuality: 0.8) {
-                let fileName = "\(user.id)_\(Date().timeIntervalSince1970).jpg"
-                try await supabase.storage
-                    .from("scan-images")
-                    .upload(fileName, data: data, options: FileOptions(upsert: true))
-                let url = try supabase.storage
-                    .from("scan-images")
-                    .getPublicURL(path: fileName)
-                imageURL = url.absoluteString
-            }
-            
-            try await supabase
-                .from("scan_history")
-                .insert([
-                    "user_id": user.id.uuidString,
-                    "category": category,
-                    "bin_type": binForCategory(category),
-                    "image_url": imageURL ?? "",
-                    "points": "10",
-                    "scan_method": scanMethod
-                ])
-                .execute()
-            let currentPoints = (user.userMetadata["points"]?.intValue ?? 0) + 1
-            try await supabase.auth.update(
-                user: UserAttributes(data: ["points": .integer(currentPoints)])
-            )
-            
-            showSaveSuccess = true
-        } catch {
-            print("Save error: \(error)")
-            showSaveError = true
-        }
-    }
+    @StateObject private var viewModel = WasteDetailViewModel()
     
     var body: some View {
         GeometryReader { geo in
@@ -87,79 +29,13 @@ struct WasteDetailView: View {
                 Color.backgroundColor.ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // MARK: - Header
-                    ZStack {
-                        Text(title)
-                            .font(.noto(25, weight: .bold))
-                            .foregroundColor(.black)
-                        
-                        HStack {
-                            BackButton()
-                            Spacer()
-                            Button {
-                                Task { await save() }
-                            } label: {
-                                if isSaving {
-                                    ProgressView().padding(.trailing, 25)
-                                } else {
-                                    Text("บันทึก")
-                                        .font(.noto(16, weight: .medium))
-                                        .foregroundColor(.mainColor)
-                                        .padding(.trailing, 25)
-                                }
-                            }
-                            .disabled(isSaving)
-                        }
-                    }
-                    .padding(.bottom, 20)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+                    headerView(config: config)
                     
                     // MARK: - Content
                     ScrollView {
                         VStack(spacing: 0) {
-                            // รูปภาพ
-                            Group {
-                                if let uiImage = capturedImage {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                } else {
-                                    Image("BarcodeEx")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                }
-                            }
-                            .frame(width: UIScreen.main.bounds.width - 40, height: 290)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .padding(.bottom, 30)
-                            
-                            // รายละเอียดขยะ
-                            switch category {
-                            case "ขวดพลาสติก":   RecycleWasteDetailPlasticBottle(config: config, showDate: true)
-                            case "แก้วพลาสติก":  RecycleWasteDetailPlasticCup(config: config, showDate: true)
-                            case "กระป๋อง":      RecycleWasteDetailCan(config: config, showDate: true)
-                            case "กล่องกระดาษ":  RecycleWasteDetailCardboardBox(config: config, showDate: true)
-                            case "กระดาษทั่วไป": RecycleWasteDetailPaper(config: config, showDate: true)
-                            case "ถุงพลาสติก":   RecycleWasteDetailPlasticBag(config: config, showDate: true)
-                            case "ซองขนม":       GeneralWasteDetailSnackBag(config: config, showDate: true)
-                            case "ภาชนะใส่อาหาร": GeneralWasteDetailFoodContainer(config: config, showDate: true)
-                            case "หลอด":         GeneralWasteDetailStraw(config: config, showDate: true)
-                            case "กระดาษทิชชู่": GeneralWasteDetailTissue(config: config, showDate: true)
-                            case "ตะเกียบไม้":   GeneralWasteDetailChopsticks(config: config, showDate: true)
-                            case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon(config: config, showDate: true)
-                            case "เศษอาหาร":     WetWasteDetailFoodscraps(config: config, showDate: true)
-                            case "เปลือกผลไม้":  WetWasteDetailFruitPeel(config: config, showDate: true)
-                            case "เศษขนม":       WetWasteDetailCrumbs(config: config, showDate: true)
-                            case "เปลือกไข่":    WetWasteDetailEggshell(config: config, showDate: true)
-                            case "เครื่องดื่มเหลือ": WetWasteDetailLeftoverDrinks(config: config, showDate: true)
-                            case "น้ำแข็งเหลือ": WetWasteDetailLeftoverIce(config: config, showDate: true)
-                            default:
-                                Text("ไม่พบข้อมูลประเภทขยะนี้")
-                                    .font(.noto(18, weight: .medium))
-                                    .foregroundColor(.gray)
-                                    .padding()
-                            }
+                            photoView
+                            WasteDetailContentView(category: category, config: config)
                         }
                         .frame(minHeight: 750)
                     }
@@ -169,19 +45,64 @@ struct WasteDetailView: View {
             .navigationBarHidden(true)
             .onAppear { hideTabBar = true }
             .overlay {
-                if showSaveSuccess {
+                if viewModel.showSaveSuccess {
                     SuccessPopupView(message: "บันทึกสำเร็จ") {
-                        showSaveSuccess = false
+                        viewModel.showSaveSuccess = false
                         dismiss()
                     }
                 }
-                if showSaveError {
+                if viewModel.showSaveError {
                     ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
-                        showSaveError = false
+                        viewModel.showSaveError = false
                     }
                 }
             }
         }
+    }
+    private func headerView(config: ResponsiveConfig) -> some View {
+        ZStack {
+            Text(title)
+                .font(.noto(25, weight: .bold))
+                .foregroundColor(.black)
+
+            HStack {
+                BackButton()
+                Spacer()
+                Button {
+                    Task { await viewModel.save(category: category, scanMethod: scanMethod, capturedImage: capturedImage) }
+                } label: {
+                    if viewModel.isSaving {
+                        ProgressView().padding(.trailing, 25)
+                    } else {
+                        Text("บันทึก")
+                            .font(.noto(config.fontBody, weight: .medium))
+                            .foregroundColor(.mainColor)
+                            .padding(.trailing, 25)
+                    }
+                }
+                .disabled(viewModel.isSaving)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, config.isIPad ? 40 : 27)
+        .frame(maxWidth: .infinity)
+        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+    }
+    private var photoView: some View {
+        Group {
+            if let uiImage = capturedImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                Image("BarcodeEx")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width - 40, height: 290)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .padding(.bottom, 30)
     }
 }
 

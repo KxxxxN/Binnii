@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct FrequentWasteCard: View {
-    let item: WasteItem
+    let item: FrequentWasteItem
+    let config: ResponsiveConfig
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,24 +17,25 @@ struct FrequentWasteCard: View {
                 Image(item.imageName)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 100)
+                    .frame(height: config.itemCardImageHeight)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 140)
+            .frame(height: config.wasteCardImageZStackHeight)
 
             VStack(spacing: 4) {
                 Text(item.title)
-                    .font(.noto(14, weight: .semibold))
+                    .font(.noto(config.fontCaption, weight: .semibold))
                     .foregroundColor(.black)
 
                 Text(item.count)
-                    .font(.noto(12, weight: .medium))
+                    .font(.noto(config.fontSmall, weight: .medium))
                     .foregroundColor(.black)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, config.paddingMedium)
         }
-        .frame(height: 215)
+        .frame(height: config.wasteCardTotalHeight)
         .background(Color.thirdColor)
-        .cornerRadius(20)
+        .cornerRadius(config.bannerCornerRadius)     
     }
 }
+

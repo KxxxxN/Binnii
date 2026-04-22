@@ -6,17 +6,12 @@
 //
 
 
-//
-//  FrequentWasteViewModel.swift
-//  Thesis
-//
-
 import SwiftUI
 import Supabase
 
 @MainActor
 class FrequentWasteViewModel: ObservableObject {
-    @Published var wasteItems: [WasteItem] = []
+    @Published var wasteItems: [FrequentWasteItem] = []
     @Published var isLoading: Bool = false
     
     // map category name → image name
@@ -65,7 +60,7 @@ class FrequentWasteViewModel: ObservableObject {
             // ✅ วน imageMap ทุกรายการ ถ้าไม่มีใน Supabase ให้ count = 0
             wasteItems = imageMap
                 .map { (title, imageName) in
-                    WasteItem(
+                    FrequentWasteItem(
                         imageName: imageName,
                         title: title,
                         count: "\(countDict[title] ?? 0) ครั้ง"
@@ -76,7 +71,7 @@ class FrequentWasteViewModel: ObservableObject {
             print("❌ fetchWasteCounts error: \(error)")
             // ✅ แสดง default items ทั้งหมดเป็น 0 ครั้ง แทนที่จะว่างเปล่า
             wasteItems = imageMap.map { (title, imageName) in
-                WasteItem(imageName: imageName, title: title, count: "0 ครั้ง")
+                FrequentWasteItem(imageName: imageName, title: title, count: "0 ครั้ง")
             }
             .sorted { $0.title < $1.title }
         }
