@@ -60,9 +60,10 @@ struct ChangePasswordField: View {
             }
             .frame(height: config.isIPad ? 25 : 20, alignment: .top)
             .clipped()
-            .padding(.leading, 7)
+            .padding(.leading, 6)
             .padding(.top, 4)
         }
+        .padding(.horizontal, config.paddingStandard)
     }
 }
 

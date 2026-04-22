@@ -34,3 +34,8 @@ struct Language {
     let name: String
     let image: String
 }
+
+struct ScanResult {
+    let label: String
+    let thai: String
+}

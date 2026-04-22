@@ -17,14 +17,11 @@ struct OTPConfirmView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        ZStack {
-            Color.backgroundColor.ignoresSafeArea()
-            
             GeometryReader { geo in
                 let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
                 
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
+//                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
                         // MARK: - Header
                         ZStack {
                             Text("ยืนยันรหัส OTP")
@@ -35,6 +32,7 @@ struct OTPConfirmView: View {
                                 Spacer()
                             }
                         }
+                        .padding(.top, config.topPadding)
                         .padding(.bottom, config.isIPad ? 80 : 42)
                         
                         Text("ใส่รหัสที่ส่งไปยังอีเมลของคุณ")
@@ -95,9 +93,11 @@ struct OTPConfirmView: View {
                         
                         Spacer()
                     }
-                    .frame(minHeight: geo.size.height) 
-                }
+//                    .frame(minHeight: geo.size.height) 
+//                }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
                 .blur(radius: (viewModel.showSuccessPopup || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessPopup || viewModel.showErrorPopup)
                 .onAppear {
@@ -135,7 +135,6 @@ struct OTPConfirmView: View {
             }
         }
     }
-}
 
 #Preview {
     OTPConfirmView(source: .changeEmail, email: "1123kansinee@gmail.com")

@@ -6,11 +6,6 @@
 //
 
 
-//
-//  UserProfileViewModel.swift
-//  Thesis
-//
-
 import SwiftUI
 import Supabase
 

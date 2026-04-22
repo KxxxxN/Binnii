@@ -10,56 +10,35 @@ import PhotosUI
 
 struct ConfirmPhotoView: View {
     
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     var category: String
-    @State private var showSaveSearchPhotoView = false
     
-    @State private var isFlashOn = false
-    @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var selectedUIImage: UIImage? = nil
-    @State private var isCameraActive = true
-    @State private var shouldCapture = false
-    
-    @State private var isScanning = true
+    @StateObject private var viewModel = ConfirmPhotoViewModel()
     
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-            
-            ////                MARK: - Foreground
-            //                VStack(spacing: 0) {
-            //
-            //                    headerView(config: config)
-            //
-            //                    VStack {
-            //
-            //                        Text("กรุณาถ่ายรูปขยะทีละชิ้น ให้ตรงกับที่ค้นหา")
-            //                            .font(.noto(config.fontHeader, weight: .medium))
-            //                            .foregroundColor(.black)
-            //                            .multilineTextAlignment(.center)
-            //                            .frame(maxWidth: config.qrContentMaxWidth,
-            //                                   minHeight: config.confirmBannerHeight)
-            //                            .background(Color.textFieldColor)
-            //                            .cornerRadius(config.bannerCornerRadius)
-            //                            .padding(.top, config.confirmBannerTopPadding)
-            //                            .padding(.horizontal, config.paddingMedium)
-            
+                        
             ZStack(alignment: .top) {
                 
                 CameraContainerView(
                     hideTabBar: $hideTabBar,
-                    capturedUIImage: $selectedUIImage,
-                    isFlashOn: $isFlashOn,
-                    isScanning: $isScanning,
-                    isCameraActive: $isCameraActive,
-                    shouldCapture: shouldCapture
+                    capturedUIImage: $viewModel.selectedUIImage,
+                    isFlashOn: $viewModel.isFlashOn,
+                    isScanning: $viewModel.isScanning,
+                    isCameraActive: $viewModel.isCameraActive,
+                    shouldCapture: viewModel.shouldCapture
                 )
                 
                 VStack(spacing: 0) {
                     
-                    headerView(config: config)
+                    ScanHeaderView(
+                        title: "ยืนยันภาพถ่าย",
+                        isFlashOn: viewModel.isFlashOn,
+                        onFlashToggle: { viewModel.isFlashOn.toggle() },
+                        config: config
+                    )
                     
                     VStack {
                         
@@ -76,64 +55,26 @@ struct ConfirmPhotoView: View {
                         
                         Spacer()
                         
-                        HStack {
-                            GalleryPickerButton(selectedItem: $selectedItem)
-                                .onChange(of: selectedItem) { _, newItem in
-                                    loadImage(from: newItem)
-                                }
-                            
-                            Spacer()
-                            
-                            Button {
-                                if selectedUIImage != nil {
-                                    hideTabBar = true
-                                    showSaveSearchPhotoView = true
-                                } else {
-                                    shouldCapture = true
-                                }
-                            } label: {
-                                ZStack {
-                                    Circle()
-                                        .stroke(Color.mainColor, lineWidth: config.aiButtonOuterLineWidth)
-                                        .frame(width: config.aiButtonOuterSize, height: config.aiButtonOuterSize)
-                                    
-                                    Circle()
-                                        .fill(Color.mainColor)
-                                        .frame(width: config.aiButtonInnerSize, height: config.aiButtonInnerSize)
-                                    Image("Camera")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: config.barcodeShutterIconSize,height: config.barcodeShutterIconSize)
-                                }
-                            }
-                            .frame(maxWidth: config.qrContentMaxWidth)
-                            .padding(.bottom, config.paddingStandard)
-                            
-                            //                            Spacer()
-                            Color.clear.frame(width: 55, height: 1)
-                        }
-                        .frame(maxWidth: config.qrContentMaxWidth)
+                    ScanBottomControls(
+                            selectedItem: $viewModel.selectedItem,
+                            captureImageName: "Camera",
+                            onImageSelected: { viewModel.loadImage(from: $0) },
+                            onCapture: { viewModel.handleCaptureButton(hideTabBar: $hideTabBar) },
+                            config: config
+                        )
+
                         .padding(.bottom, config.paddingStandard)
                     }
                 }
             }
-            // ✅ เมื่อได้ภาพจากกล้อง → navigate อัตโนมัติ
-            .onChange(of: selectedUIImage) { _, newImage in
-                if newImage != nil && !showSaveSearchPhotoView {
-                    shouldCapture = false
-                    hideTabBar = true
-                    showSaveSearchPhotoView = true
-                    
-                    //            .onAppear {
-                    //                OrientationHelper.setOrientation(.portrait)
-                    //
-                    //                hideTabBar = true
-                    //                showSaveSearchPhotoView = true
-                    //            }
-                }
+            .onChange(of: viewModel.selectedUIImage) { _, newImage in
+                viewModel.onImageChanged(newImage, hideTabBar: $hideTabBar)
             }
-            .navigationDestination(isPresented: $showSaveSearchPhotoView) {
-                if let uiImage = selectedUIImage {
+            .onChange(of: viewModel.showSaveSearchPhotoView) { _, isShowing in
+                if !isShowing { viewModel.resetAfterDismiss() }
+            }
+            .navigationDestination(isPresented: $viewModel.showSaveSearchPhotoView) {
+                if let uiImage = viewModel.selectedUIImage {
                     WasteDetailView(
                         hideTabBar: $hideTabBar,
                         category: category,
@@ -143,78 +84,11 @@ struct ConfirmPhotoView: View {
                     )
                 }
             }
-            
-            .onChange(of: showSaveSearchPhotoView) { _, isShowing in
-                if !isShowing {
-                    selectedUIImage = nil
-                    selectedItem = nil
-                    isCameraActive = true
-                    //            .onDisappear {
-                    //                OrientationHelper.setOrientation(.all)
-                    //                isCameraActive = false
-                    //            }
-                    //            .onChange(of: selectedUIImage) { _, newImage in
-                    //                if newImage != nil {
-                    //                    shouldCapture = false
-                    //                    hideTabBar = true
-                    //                    showSaveSearchPhotoView = true
-                    //                }
-                    //            }
-                    //            .navigationDestination(isPresented: $showSaveSearchPhotoView) {
-                    //                if let uiImage = selectedUIImage {
-                    //                    SaveSearchPhotoView(hideTabBar: $hideTabBar, selectedImage: uiImage)
-                }
-            }
             .navigationBarHidden(true)
         }
     }
-    
-    // MARK: - Header
-    private func headerView(config: ResponsiveConfig) -> some View {
-        HStack {
-            BackButton()
-            Color.clear.frame(width: config.spacingSmall, height: config.spacingSmall)
-            //            Color.clear.frame(width: 10, height: 10)
-            
-            Spacer()
-            
-            Text("ยืนยันภาพถ่าย")
-                .font(.noto(config.titleFontSize, weight: .bold))
-            //                .font(.noto(25, weight: .bold))
-                .foregroundColor(.black)
-            
-            Spacer()
-            
-            Button { isFlashOn.toggle() } label: {
-                Image(isFlashOn ? "FlashOn" : "FlashOff")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: config.headerIconSize, height: config.headerIconSize)
-                    .padding(.trailing, config.paddingStandard)
-                //                    .frame(width: 35, height: 35)
-                //                    .padding(.trailing, 25)
-            }
-        }
-        .padding(.bottom, config.paddingMedium)
-        //        .padding(.bottom, 18)
-        .frame(maxWidth: .infinity)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
-    }
-    
-    private func loadImage(from item: PhotosPickerItem?) {
-        guard let item else { return }
-        item.loadTransferable(type: Data.self) { result in
-            DispatchQueue.main.async {
-                if case .success(let data) = result,
-                   let data,
-                   let uiImage = UIImage(data: data) {
-                    selectedUIImage = uiImage.fixedOrientation()
-                }
-            }
-        }
-    }
 }
-
+    
 #Preview {
     ConfirmPhotoView(hideTabBar: .constant(false), category: "ขวดพลาสติก")
 }

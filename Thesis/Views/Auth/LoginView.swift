@@ -24,7 +24,7 @@ struct LoginView: View {
                 
                 GeometryReader { geo in
                     let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
-                    let _: CGFloat = config.isIPad ? 20 : 15
+                    let bodyFontSize: CGFloat = config.isIPad ? 20 : 15
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         
@@ -73,11 +73,11 @@ struct LoginView: View {
                                     
                                     NavigationLink(destination: EmailForgotPassword()){
                                         Text("ลืมรหัสผ่าน?")
-                                            .font(.noto(15, weight: .medium))
+                                            .font(.noto(bodyFontSize, weight: .medium))
                                             .foregroundColor(.mainColor)
                                     }
                                 }
-                                .padding(.horizontal, config.isIPad ?  200 : 46)
+                                .padding(.horizontal,config.isIPad ?  200 : 46)
                             }
                             
                             // MARK: - Login Button
@@ -96,12 +96,12 @@ struct LoginView: View {
                             // MARK: - Register Link
                             HStack(spacing: 8){
                                 Text("ยังไม่มีบัญชี?")
-                                    .font(.noto(15,weight: .medium))
+                                    .font(.noto(bodyFontSize, weight: .medium))
                                     .foregroundColor(.black)
                                 
                                 NavigationLink(destination: RegisterView()){
                                     Text("ลงทะเบียน")
-                                        .font(.noto(15,weight: .bold))
+                                        .font(.noto(bodyFontSize, weight: .medium))
                                         .foregroundColor(.mainColor)
                                         .underline(color: .mainColor)
                                 }
@@ -115,7 +115,7 @@ struct LoginView: View {
                                     .background(Color.textFieldColor)
                                 
                                 Text("หรือลงชื่อเข้าใช้ด้วย")
-                                    .font(.noto(15,weight: .medium))
+                                    .font(.noto(bodyFontSize, weight: .medium))
                                     .foregroundColor(Color.black)
                                 
                                 Divider()
