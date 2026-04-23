@@ -23,7 +23,7 @@ struct UserProfile: Decodable {
 
 @MainActor
 class UserProfileViewModel: ObservableObject{
-    @Published var fullName: String = ""
+    @Published var fullName: String = "ชื่อ - นามสกุล"
     @Published var totalPoints: Int = 0
     @Published var profileImage: UIImage? = nil
     @Published var isLoading: Bool = false
@@ -38,7 +38,13 @@ class UserProfileViewModel: ObservableObject{
         await fetchLatestHistory(userId: userId)
     }
     
-    // ✅ ดึงชื่อ-นามสกุลจาก table users
+    func clearProfile() {
+        print("🧹 clearProfile called")
+        fullName = "ชื่อ - นามสกุล"
+        totalPoints = 0
+        profileImage = nil
+        latestHistory = nil
+    }
     private func fetchName() async {
         do {
             let user = try await supabase.auth.session.user
@@ -48,7 +54,6 @@ class UserProfileViewModel: ObservableObject{
             let lastName  = meta["last_name"]?.stringValue ?? ""
             fullName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
 
-            // ✅ โหลดรูป avatar
             if let avatarURLString = meta["avatar_url"]?.stringValue,
                let url = URL(string: avatarURLString) {
                 let (data, _) = try await URLSession.shared.data(from: url)
@@ -57,12 +62,11 @@ class UserProfileViewModel: ObservableObject{
                 }
             }
         } catch {
-            fullName = "ไม่พบข้อมูล"
+            fullName = "ชื่อ - นามสกุล"
             print("❌ fetchName error: \(error)")
         }
     }
     
-    // ✅ SUM points จาก table scan_history
     private func fetchTotalPoints(userId: UUID) async {
         do {
             struct PointsRow: Decodable {
@@ -72,7 +76,7 @@ class UserProfileViewModel: ObservableObject{
             let rows: [PointsRow] = try await supabase
                 .from("scan_history")
                 .select("points")
-                .eq("user_id", value: userId.uuidString)  // ✅ ส่งเป็น String
+                .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
             

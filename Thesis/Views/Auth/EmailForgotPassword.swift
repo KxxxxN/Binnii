@@ -11,60 +11,75 @@ struct EmailForgotPassword: View {
     
     @StateObject private var viewModel = ForgotPasswordViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State private var showErrorPopup = false
     
     
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            VStack(spacing: 0){
-                ZStack {
-                    Text("ลืมรหัสผ่าน")
-                        .font(.noto(config.titleFontSize, weight: .bold))
-                    HStack {
-                        BackButton()
-                        
-                        Spacer()
-                    }
-                }
-                .padding(.top, config.headerTopPadding)
-                .padding(.bottom, config.isIPad ? 80 : 57)
-                
-                LoginInputField(
-                    title: "ที่อยู่อีเมล",
-                    placeholder: "กรอกอีเมล",
-                    text: $viewModel.emailForgotPassword,
-                    isValid: .constant(!viewModel.isForgotSubmitted || viewModel.emailErrorForgot == nil),
-                    errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : "", config: config
-                )
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .onChange(of: viewModel.emailForgotPassword) {
-                    viewModel.clearError()
-                }
-                
-                PrimaryButton(
-                    title: "ส่งรหัส OTP",
-                    action: {
-                        Task {
-                            await viewModel.forgotPassword()
+            ZStack{
+                VStack(spacing: 0){
+                    ZStack {
+                        Text("ลืมรหัสผ่าน")
+                            .font(.noto(config.titleFontSize, weight: .bold))
+                        HStack {
+                            BackButton()
+                            
+                            Spacer()
                         }
-                    },
-                    width: config.isIPad ? 220 : 155,
-                    height: config.isIPad ? 60 : 49
-                )
-                .padding(.top, 40)
-                
-                Spacer()
-                
+                    }
+                    .padding(.top, config.headerTopPadding)
+                    .padding(.bottom, config.isIPad ? 80 : 57)
+                    
+                    LoginInputField(
+                        title: "ที่อยู่อีเมล",
+                        placeholder: "กรอกอีเมล",
+                        text: $viewModel.emailForgotPassword,
+                        isValid: .constant(!viewModel.isForgotSubmitted || viewModel.emailErrorForgot == nil),
+                        errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : "", config: config
+                    )
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+                    .onChange(of: viewModel.emailForgotPassword) {
+                        viewModel.clearError()
+                    }
+                    
+                    PrimaryButton(
+                        title: "ส่งรหัส OTP",
+                        action: {
+                            Task {
+                                await viewModel.forgotPassword()
+                                if viewModel.hasNetworkError {
+                                    showErrorPopup = true
+                                    viewModel.hasNetworkError = false
+                                }
+                            }
+                        },
+                        width: config.isIPad ? 220 : 155,
+                        height: config.isIPad ? 60 : 49
+                    )
+                    .padding(.top, 40)
+                    
+                    Spacer()
+                    
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
+                .navigationDestination(isPresented: $viewModel.navigateToOTP) {
+                    OTPConfirmView(source: .forgotPassword, email: viewModel.emailForgotPassword)
+                }
+                .navigationBarBackButtonHidden(true)
+                .blur(radius: showErrorPopup ? 3 : 0)
+                .disabled(showErrorPopup)
+                if showErrorPopup {
+                    ErrorPopupView(
+                        title: "ส่งรหัส OTP ไม่สำเร็จ",
+                        onDismiss: { showErrorPopup = false }
+                    )
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundColor)
-            .ignoresSafeArea()
-            .navigationDestination(isPresented: $viewModel.navigateToOTP) {
-                OTPConfirmView(source: .forgotPassword, email: viewModel.emailForgotPassword)
-            }
-            .navigationBarBackButtonHidden(true)
         }
     }
 }

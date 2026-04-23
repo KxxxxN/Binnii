@@ -12,11 +12,13 @@ struct ConfirmEmailView: View {
     let currentEmail: String
     @StateObject private var viewModel = ConfirmEmailViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State private var showErrorPopup = false
     
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
+            ZStack {
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
@@ -52,6 +54,10 @@ struct ConfirmEmailView: View {
                     action: {
                         Task {
                             await viewModel.verifyEmailBeforeChange()
+                            if viewModel.hasNetworkError {
+                                showErrorPopup = true
+                                viewModel.hasNetworkError = false
+                            }
                         }
                     },
                     width: config.isIPad ? 220 : 155,
@@ -74,6 +80,16 @@ struct ConfirmEmailView: View {
                 )
             }
             .navigationBarBackButtonHidden(true)
+            .blur(radius: showErrorPopup ? 3 : 0)
+            .disabled(showErrorPopup)
+                
+                if showErrorPopup {
+                    ErrorPopupView(
+                        title: "ส่งรหัส OTP ไม่สำเร็จ",
+                        onDismiss: { showErrorPopup = false }
+                    )
+                }
+            }
         }
     }
 }

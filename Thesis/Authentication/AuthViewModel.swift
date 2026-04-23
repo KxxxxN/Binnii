@@ -33,7 +33,7 @@ class AuthViewModel: ObservableObject {
             print("No active session or error: \(error.localizedDescription)")
         }
     }
-      
+    
     // MARK: - Email Auth
     func signUp(email:String,password:String) async {
         do {
@@ -58,29 +58,29 @@ class AuthViewModel: ObservableObject {
     }
     
     // ✅ X (Twitter) Login
-//    func signInWithX() async {
-//        do {
-//            let url = try supabase.auth.getOAuthSignInURL(
-//                provider: .twitter,
-//                redirectTo: URL(string: "binnii://login-callback")!
-//            )
-//            await UIApplication.shared.open(url)
-//        } catch {
-//            print("X Sign in Failed: \(error.localizedDescription)")
-//        }
-//    }
-//
-//    func signInWithGoogle() async {
-//        do {
-//            let url = try supabase.auth.getOAuthSignInURL(
-//                provider: .google,
-//                redirectTo: URL(string: "binnii://login-callback")!
-//            )
-//            await UIApplication.shared.open(url)
-//        } catch {
-//            print("Google Sign in Failed: \(error.localizedDescription)")
-//        }
-//    }
+    //    func signInWithX() async {
+    //        do {
+    //            let url = try supabase.auth.getOAuthSignInURL(
+    //                provider: .twitter,
+    //                redirectTo: URL(string: "binnii://login-callback")!
+    //            )
+    //            await UIApplication.shared.open(url)
+    //        } catch {
+    //            print("X Sign in Failed: \(error.localizedDescription)")
+    //        }
+    //    }
+    //
+    //    func signInWithGoogle() async {
+    //        do {
+    //            let url = try supabase.auth.getOAuthSignInURL(
+    //                provider: .google,
+    //                redirectTo: URL(string: "binnii://login-callback")!
+    //            )
+    //            await UIApplication.shared.open(url)
+    //        } catch {
+    //            print("Google Sign in Failed: \(error.localizedDescription)")
+    //        }
+    //    }
     // MARK: - OAuth
     func signInWithOAuth(provider: Provider) async {
         errorMessage = nil
@@ -115,6 +115,31 @@ class AuthViewModel: ObservableObject {
             self.isAuthenticated = false
         } catch {
             print("Sign out Failed: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Delete Account
+    func deleteUser() async {
+        do {
+            print("Calling delete-user function...")
+            
+            let session = try await supabase.auth.session
+            let token = session.accessToken
+            print("Access token: \(token.prefix(20))...") // print แค่ต้นๆ
+            
+            try await supabase.functions.invoke(
+                "delete-user",
+                options: FunctionInvokeOptions(
+                    headers: ["Authorization": "Bearer \(token)"]
+                )
+            )
+            
+            self.session = nil
+            self.isAuthenticated = false
+            print("Delete Account Success!")
+        } catch {
+            self.errorMessage = error.localizedDescription
+            print("Delete Account Failed: \(error.localizedDescription)")
         }
     }
 }

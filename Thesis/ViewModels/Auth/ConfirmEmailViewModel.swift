@@ -13,6 +13,7 @@ import Supabase
 class ConfirmEmailViewModel: ObservableObject {
     @Published var email = ""
     @Published var navigateToOTP = false
+    @Published var hasNetworkError = false
 
     func verifyEmailBeforeChange() async {
         do {
@@ -21,6 +22,7 @@ class ConfirmEmailViewModel: ObservableObject {
             print("OTP Sent to \(email)")
         } catch {
             print("Error: \(error.localizedDescription)")
+            self.hasNetworkError = true
         }
     }
 }

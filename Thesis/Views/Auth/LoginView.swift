@@ -12,9 +12,9 @@ struct LoginView: View {
     @StateObject var viewModel = LoginViewModel()
     @State private var path = NavigationPath()
     @EnvironmentObject var authViewModel: AuthViewModel
-    
-    // 1. ดึง Size Class เพื่อทำ Responsive
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         
@@ -29,6 +29,12 @@ struct LoginView: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         
                         VStack(alignment: .center) {
+                            
+                            HStack {
+                                BackButton()
+                                Spacer()
+                            }
+                            .padding(.top, config.headerTopPadding)
                             
                             Spacer()
                             
@@ -151,6 +157,11 @@ struct LoginView: View {
                     .background(Color.backgroundColor)
                     .ignoresSafeArea(.keyboard)
                     .frame(maxWidth: .infinity, minHeight: geo.size.height)
+                }
+            }
+            .onChange(of: isLoggedIn) {
+                if isLoggedIn {
+                    dismiss()
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: .popToLogin)) { _ in

@@ -9,6 +9,7 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var emailErrorForgot: String? = nil
     @Published var isForgotSubmitted: Bool = false
     @Published var navigateToOTP = false
+    @Published var hasNetworkError = false
     
     func clearError() {
         emailErrorForgot = nil
@@ -51,6 +52,7 @@ class ForgotPasswordViewModel: ObservableObject {
             } else {
                 self.emailErrorForgot = "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"
             }
+            self.hasNetworkError = true
         }
     }
 }

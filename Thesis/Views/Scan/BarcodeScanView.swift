@@ -84,6 +84,16 @@ struct BarcodeScanView: View {
                 if viewModel.barcodeVM.isLoading {
                     BarcodeLoadingOverlay(config: config)
                 }
+                
+                if viewModel.showBarcodeNotFound {
+                    BarcodeScanResultAlert(
+                        onDismiss: {
+                            viewModel.showBarcodeNotFound = false
+                            viewModel.resetAfterDismiss()
+                        },
+                        config: config
+                    )
+                }
             }
             .onAppear { viewModel.onViewAppear(hideTabBar: $hideTabBar) }
             .onDisappear { viewModel.onViewDisappear() }

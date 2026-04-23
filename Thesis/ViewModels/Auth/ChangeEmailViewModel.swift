@@ -21,6 +21,8 @@ class ChangeEmailViewModel: ObservableObject {
     
     @Published var navigateToProfile: Bool = false
     
+    @Published var hasNetworkError = false
+    
     func validateEmail() async {
         self.isSubmitted = true
         
@@ -58,10 +60,9 @@ class ChangeEmailViewModel: ObservableObject {
                 self.emailError = "อีเมลนี้ถูกใช้งานแล้ว"
             } else {
                 self.emailError = "ไม่สามารถใช้อีเมลนี้ได้ หรือส่งคำขอบ่อยเกินไป"
+                self.hasNetworkError = true
             }
         }
-        
-//        self.isLoading = false
     }
     
     func clearError() {

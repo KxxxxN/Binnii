@@ -10,8 +10,10 @@ struct RewardExchangeSection: View {
     let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
     let totalPoints: Int
+    @AppStorage("isLoggedIn") var isLoggedIn = false
     
-    private var canRedeem: Bool { totalPoints >= 500 }
+    private var displayPoints: Int { isLoggedIn ? 500 : 0 }
+    private var canRedeem: Bool { isLoggedIn && totalPoints >= 500 }
     
     var body: some View {
         VStack(spacing: config.rewardVStackSpacing) {
@@ -20,7 +22,6 @@ struct RewardExchangeSection: View {
                 Text("แลกคะแนน")
                     .font(.noto(config.sectionHeaderTitleFont, weight: .bold))
                     .foregroundColor(.black)
-
                 Spacer()
             }
 
@@ -31,18 +32,19 @@ struct RewardExchangeSection: View {
                 HStack {
                     VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            Text("500")
+                            Text("\(displayPoints)")
                                 .font(.system(size: config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
-
                             Text("คะแนน")
                                 .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                 .foregroundColor(.white)
                         }
-
-                        Text("แลกชั่วโมงจิตอาสาได้ 5 ชั่วโมง")
-                            .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
-                            .foregroundColor(.white)
+                        
+                        Text(displayPoints == 0
+                             ? "สะสมคะแนนเพื่อแลกชั่วโมงจิตอาสาได้เลย!"
+                             : "แลกชั่วโมงจิตอาสาได้ 5 ชั่วโมง")
+                        .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
+                        .foregroundColor(.white)
                     }
 
                     Spacer()
@@ -50,19 +52,20 @@ struct RewardExchangeSection: View {
                     Text("แลกคะแนน")
                         .font(.noto(config.buttonFont, weight: .bold))
                         .foregroundColor(canRedeem ? Color.white : Color.white.opacity(0.5))
-                        .padding(.horizontal, config.rewardCardPadding) // ใช้ค่าเดิม 24:16
+                        .padding(.horizontal, config.rewardCardPadding)
                         .padding(.vertical, config.rewardButtonVPadding)
                         .background(canRedeem ? Color.mainColor : Color.mainColor.opacity(0.5))
-                        .cornerRadius(config.bannerCornerRadius) // ใช้ค่าเดิม 25:20
+                        .cornerRadius(config.bannerCornerRadius)
                 }
                 .padding(config.rewardCardPadding)
-                .frame(maxWidth: .infinity) // ยืดให้เต็มกรอบที่ Parent View กำหนดไว้
+                .frame(maxWidth: .infinity)
                 .frame(height: config.rewardCardHeight)
                 .background(Color.secondColor)
-                .cornerRadius(20) // มุมของการ์ดเป็น 20 คงที่ตามเดิม
+                .cornerRadius(20)
             }
             .buttonStyle(.plain)
             .allowsHitTesting(canRedeem)
         }
     }
 }
+

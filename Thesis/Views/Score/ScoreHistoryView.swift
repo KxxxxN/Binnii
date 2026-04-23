@@ -20,6 +20,7 @@ struct ScoreHistoryView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var historyVM = ScoreHistoryViewModel()
     @StateObject private var profileVM = UserProfileViewModel()
+    @AppStorage("isLoggedIn") var isLoggedIn = false
 
     var body: some View {
         GeometryReader { geo in
@@ -120,6 +121,11 @@ struct ScoreHistoryView: View {
                     print("❌ No session: \(error)")
                 }
                 await historyVM.fetchHistory()
+            }
+            .onChange(of: isLoggedIn) {
+                if !isLoggedIn {
+                    profileVM.clearProfile()
+                }
             }
         }
     }

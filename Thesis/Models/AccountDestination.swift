@@ -13,4 +13,5 @@ enum AccountDestination: Hashable {
     case contactUs
     case confirmPassword
     case confirmEmail(String)
+    case deleteAccountSuccess
 }

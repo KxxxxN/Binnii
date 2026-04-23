@@ -6,9 +6,6 @@
 //
 
 
-// AiScanResultAlert.swift
-// Thesis
-
 import SwiftUI
 
 struct AiScanResultAlert: View {
@@ -16,6 +13,16 @@ struct AiScanResultAlert: View {
     let onRescan: () -> Void
     let onConfirm: () -> Void
     let config: ResponsiveConfig
+    
+    static func makeResultTitle(category: String, config: ResponsiveConfig) -> AttributedString {
+        var result = AttributedString("ขยะชิ้นนี้คือ ")
+        var highlight = AttributedString(category)
+        highlight.foregroundColor = .black
+        highlight.font = .noto(config.isIPad ? 32 : 25, weight: .bold)
+        result += highlight
+        result += AttributedString("\nถูกต้องหรือไม่?")
+        return result
+    }
 
     var body: some View {
         ZStack {
@@ -57,9 +64,21 @@ struct AiScanResultAlert: View {
                 }
             }
             .padding(config.paddingStandard)
-            .frame(width: config.isIPad ? 460 : 343, height: config.qrAlertHeight)
+            .frame(width: config.isIPad ? 380 : 380)
             .background(Color.white)
             .cornerRadius(20)
         }
+    }
+}
+
+#Preview {
+    GeometryReader { geo in
+        let config = ResponsiveConfig(horizontalSizeClass: .compact, geo: geo)
+        AiScanResultAlert(
+            resultTitle: AiScanResultAlert.makeResultTitle(category: "ขวดพลาสติก", config: config),
+            onRescan: {},
+            onConfirm: {},
+            config: config
+        )
     }
 }

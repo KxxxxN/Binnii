@@ -15,6 +15,7 @@ final class AccountViewModel: ObservableObject {
     // MARK: - Published
     @Published var path = NavigationPath()
     @Published var isNotificationOn = true
+    @Published var hasError = false
     
     @AppStorage("isLoggedIn") var isLoggedIn = false
     
@@ -42,13 +43,22 @@ final class AccountViewModel: ObservableObject {
     // MARK: - Auth Actions
     func signOut() async {
         await authViewModel.signOut()
-        isLoggedIn = false
+        if authViewModel.isAuthenticated {
+            hasError = true
+        } else {
+            isLoggedIn = false
+        }
     }
-    
-    func deleteAccount() {
-        // TODO: implement delete account
-        print("Delete Account")
+
+    func deleteAccount() async {
+        await authViewModel.deleteUser()
+        if authViewModel.isAuthenticated {
+            hasError = true
+        } else {
+            isLoggedIn = false
+        }
     }
+
     
     func loadSession() async {
         await authViewModel.getInitialSession()

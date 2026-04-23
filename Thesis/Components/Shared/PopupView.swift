@@ -67,7 +67,7 @@ struct SuccessPopupView: View {
             
             VStack {
                 VStack(spacing: 29) {
-                    Image("Passmark") // ต้องมั่นใจว่า asset นี้มีอยู่ในโครงการ
+                    Image("Passmark")
                         .resizable()
                         .frame(width: 111, height: 111)
                     

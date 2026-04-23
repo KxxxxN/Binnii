@@ -14,6 +14,7 @@ import Vision
 final class BarcodeScanViewModel: ObservableObject {
 
     // MARK: - UI State
+    @Published var showBarcodeNotFound = false
     @Published var showDetailBarcodeView: Bool = false
     @Published var selectedTabNavigationItem: Int = 0
     @Published var isFlashOn: Bool = false
@@ -54,7 +55,12 @@ final class BarcodeScanViewModel: ObservableObject {
                 try? await Task.sleep(nanoseconds: 100_000_000)
                 waited += 1
             }
-            showDetailBarcodeView = true
+            if barcodeVM.isNotFound {
+                showBarcodeNotFound = true
+                isScanning = true
+            } else {
+                showDetailBarcodeView = true
+            }
         }
     }
 
@@ -63,23 +69,26 @@ final class BarcodeScanViewModel: ObservableObject {
         hideTabBar.wrappedValue = true
         Task {
             await barcodeVM.fetchProduct(barcode: "test_barcode")
-            showDetailBarcodeView = true
+            if barcodeVM.isNotFound {
+                showBarcodeNotFound = true
+            } else {
+                showDetailBarcodeView = true
+            }
         }
     }
 
     // MARK: - Reset after detail dismiss
     func resetAfterDismiss() {
-        isScanning = false
-        isCameraActive = false
         capturedBarcodeImage = nil
         selectedItem = nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.cameraID = UUID()
-            self.isScanning = true
-            self.isCameraActive = true
-        }
+        isCameraActive = false
+        isScanning = false
+        cameraID = UUID()
+        isCameraActive = true
+        isScanning = true
+        barcodeVM.isNotFound = false
     }
-
+    
     // MARK: - Image Loading from Gallery
     func loadImage(from item: PhotosPickerItem?, hideTabBar: Binding<Bool>) {
         guard let item else { return }
@@ -109,7 +118,11 @@ final class BarcodeScanViewModel: ObservableObject {
                 hideTabBar.wrappedValue = true
                 Task {
                     await self.barcodeVM.fetchProduct(barcode: barcode)
-                    self.showDetailBarcodeView = true
+                    if self.barcodeVM.isNotFound {  
+                        self.showBarcodeNotFound = true
+                    } else {
+                        self.showDetailBarcodeView = true
+                    }
                 }
             }
         }

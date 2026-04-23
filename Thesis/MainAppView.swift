@@ -13,6 +13,7 @@ struct MainAppView: View {
     @Binding var tabIndex: Int
     @StateObject private var profileVM = UserProfileViewModel()
     @StateObject private var wasteVM = FrequentWasteViewModel()
+    @AppStorage("isLoggedIn") var isLoggedIn = false
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
@@ -129,13 +130,20 @@ struct MainAppView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
-            .task {
+            .task(id: isLoggedIn) {
+                profileVM.clearProfile()
+                guard isLoggedIn else { return }
                 do {
                     let session = try await supabase.auth.session
                     await profileVM.fetchProfile(userId: session.user.id)
                     await wasteVM.fetchWasteCounts()
                 } catch {
                     print("❌ No session: \(error)")
+                }
+            }
+            .onChange(of: isLoggedIn) {
+                if !isLoggedIn {
+                    profileVM.clearProfile()
                 }
             }
         }

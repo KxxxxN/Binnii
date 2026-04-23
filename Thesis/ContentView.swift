@@ -11,6 +11,12 @@ struct ContentView: View {
     
     @Binding var hideTabBar: Bool
     @State var index = 0
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    @State private var displayIndex = 0
+    @State private var showLoginPopup = false
+    @State private var pendingIndex = 0
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var navigateToLogin = false
     
     var body: some View {
         
@@ -18,19 +24,52 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 
                 ZStack {
-                    if self.index == 0 { MainAppView(hideTabBar: $hideTabBar, tabIndex: $index) }
-                    else if self.index == 1 { QRScanView(hideTabBar: $hideTabBar, index: $index) }
-                    else if self.index == 2 { KnowledgeView(hideTabBar: $hideTabBar) }
+                    if displayIndex == 0 { MainAppView(hideTabBar: $hideTabBar, tabIndex: $index) }
+                    else if displayIndex == 1 { QRScanView(hideTabBar: $hideTabBar, index: $index) }
+                    else if displayIndex == 2 { KnowledgeView(hideTabBar: $hideTabBar) }
                     else { AccountView() }
+                    
+                    if showLoginPopup {
+                        LoginPopupView(
+                            isPresented: $showLoginPopup,
+                            onDismiss: {
+                                index = 0
+                                displayIndex = 0
+                            },
+                            onLogin: {
+                                index = 0
+                                displayIndex = 0
+                                navigateToLogin = true
+                            }
+                        )
+                    }
                 }
                 
                 if !hideTabBar && index != 1 {
                     MainTabView(index: self.$index)
+                        .disabled(showLoginPopup)
                 }
             }
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.bottom)
             .navigationBarHidden(true)
+            .navigationDestination(isPresented: $navigateToLogin) {
+                LoginView()
+            }
+        }
+        .onChange(of: index) {
+            if (index == 1 || index == 3) && !isLoggedIn {
+                displayIndex = index
+                showLoginPopup = true
+            } else {
+                displayIndex = index
+            }
+        }
+        .onChange(of: isLoggedIn) {
+            if !isLoggedIn {
+                index = 0
+                displayIndex = 0
+            }
         }
     }
 }
