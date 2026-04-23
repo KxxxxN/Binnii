@@ -30,7 +30,6 @@ struct ReadOnlyEmailField: View {
                     .foregroundColor(.placeholderColor)
                     .padding(.trailing, config.isIPad ? 20 : 15)
             }
-//            .frame(maxWidth: .infinity, maxHeight: config.isIPad ? 60 : 49)
             .frame(maxWidth: config.isIPad ? 445 : 345, maxHeight: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
             .cornerRadius(config.isIPad ? 25 : 20)

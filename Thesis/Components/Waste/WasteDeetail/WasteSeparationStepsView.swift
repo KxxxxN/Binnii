@@ -6,14 +6,6 @@
 //
 
 
-//
-//  WasteSeparationStepsView.swift
-//  Thesis
-//
-//  Shared component สำหรับแสดง steps + bin icons
-//  ใช้ร่วมกันใน WetWasteDetailContent, GeneralWasteDetailContent, RecycleWasteDetailContent
-//
-
 import SwiftUI
 
 struct WasteSeparationStepsView: View {

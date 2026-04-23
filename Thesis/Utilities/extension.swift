@@ -10,7 +10,6 @@ import Foundation
 extension Notification.Name {
     static let popToAccount = Notification.Name("popToAccount")
     static let navigateToNewPassword = Notification.Name("navigateToNewPassword")
-//    static let navigateToConfirmEmail = Notification.Name("navigateToConfirmEmail")
     static let popToProfile = Notification.Name("popToProfile")
     static let popToLogin = Notification.Name("popToLogin")
 }
