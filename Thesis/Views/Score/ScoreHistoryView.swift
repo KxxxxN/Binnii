@@ -180,7 +180,7 @@ struct PageView: View {
     @State private var isDropdownOpen = false
     @State private var selectedSort = "ใหม่ที่สุด"
     let config: ResponsiveConfig
-    let availableHeight: CGFloat  // ✅ รับความสูงที่เหลือใต้ header
+    let availableHeight: CGFloat
 
     let itemsPerPage = 7
 
@@ -198,7 +198,6 @@ struct PageView: View {
             if items.isEmpty {
 
                 // MARK: - Empty State
-                // ✅ ครอบ ScrollView + minHeight เพื่อให้ scroll ได้ใน landscape
                 ScrollView {
                     VStack(spacing: config.spacingMedium) {
                         Image("ListEmpty")
@@ -215,7 +214,6 @@ struct PageView: View {
                             .font(.noto(config.fontSubHeader, weight: .bold))
                             .foregroundColor(.textFieldColor)
                     }
-                    // ✅ portrait → จัดกลาง, landscape → scroll ได้
                     .frame(maxWidth: .infinity, minHeight: availableHeight)
                 }
 
@@ -269,8 +267,6 @@ struct PageView: View {
                 .padding(.horizontal, config.paddingMedium)
 
                 PaginationSection(config: config, currentPage: $currentPage, totalPages: totalPages)
-//                    .background(Color.white)
-//                    .cornerRadius(10)
             }
         }
     }

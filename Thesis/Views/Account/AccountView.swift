@@ -22,7 +22,7 @@ struct AccountView: View {
                         // MARK: - Header
                         Text("บัญชีผู้ใช้")
                             .font(.noto(config.titleFontSize, weight: .bold))
-                            .padding(.top, config.topPadding)
+                            .padding(.top, config.headerTopPadding)
                             .padding(.bottom, config.bottomTitlePadding)
                         
                         // MARK: - Menu Sections
@@ -102,7 +102,8 @@ struct AccountView: View {
                     .frame(width: config.screenWidth)
                 }
             }
-            .background(Color.backgroundColor.ignoresSafeArea())
+            .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .navigationBarHidden(true)
             .onAppear {
                 Task {

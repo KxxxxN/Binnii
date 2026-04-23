@@ -28,6 +28,7 @@ struct ConfirmEmailView: View {
                         Spacer()
                     }
                 }
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Email Input Field
@@ -61,7 +62,8 @@ struct ConfirmEmailView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundColor.ignoresSafeArea())
+            .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .onAppear {
                 viewModel.email = currentEmail
             }

@@ -13,13 +13,10 @@ struct DetailWasteTypeView: View {
     @Binding var hideTabBar: Bool
     let category: String
     
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
-            
-            ZStack {
-                Color.backgroundColor
-                    .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     
@@ -41,7 +38,8 @@ struct DetailWasteTypeView: View {
                     }
                     .edgesIgnoringSafeArea(.bottom)
                 }
-            }
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
             .navigationBarHidden(true)
             .onAppear {
                 hideTabBar = true

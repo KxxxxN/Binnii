@@ -12,22 +12,7 @@ struct RewardExchangeView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
-
-    let pointsData: [(label: String, value: String, isBold: Bool)] = [
-        ("คะแนนทั้งหมด :", "333", false),
-        ("ต้องการแลกคะแนน :", "300", true),
-        ("คะแนนคงเหลือ :", "33", false)
-    ]
-
-    let conditionsList = [
-        "ผู้ใช้จะได้รับ คะแนนจากการแยกขยะถูกประเภทผ่านระบบสแกนขยะ",
-        "คะแนนสามารถใช้ แลกเป็นชั่วโมงจิตอาสาของมหาวิทยาลัย",
-        "ระบบจะตรวจสอบข้อมูลการแยกขยะจากบัญชีผู้ใช้ก่อนยืนยันชั่วโมง",
-        "ชั่วโมงจิตอาสาที่แลกแล้ว ไม่สามารถยกเลิกหรือโอนให้ผู้อื่นได้",
-        "เฉพาะนักศึกษาของมหาวิทยาลัยเท่านั้นที่สามารถแลกได้",
-        "การโกงระบบหรือส่งข้อมูลเท็จ จะถูกตัดสิทธิ์ทันที",
-        "มหาวิทยาลัยขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไขโดยไม่ต้องแจ้งล่วงหน้า"
-    ]
+    @StateObject private var vm = RewardExchangeViewModel()
 
     var body: some View {
         GeometryReader { geo in
@@ -65,10 +50,17 @@ struct RewardExchangeView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
 
-                        PointsSummaryCard(pointsData: pointsData, config: config)
-                            .padding(.top, config.rewardScrollTopPadding)
+                        PointsSummaryCard(pointsData: vm.pointsData, config: config)
+                                                    .padding(.top, config.rewardScrollTopPadding)
 
-                        ConditionsAndExchangeSection(conditionsList: conditionsList, config: config)
+                        ConditionsAndExchangeSection(
+                            conditionsList: vm.conditionsList,
+                            config: config,
+                            onConfirm: {
+                                vm.confirmExchange()
+                            }
+                        )
+
                     }
                     .padding(.horizontal, config.paddingMedium)
                 }
@@ -120,6 +112,7 @@ struct PointsSummaryCard: View {
 struct ConditionsAndExchangeSection: View {
     let conditionsList: [String]
     let config: ResponsiveConfig
+    let onConfirm: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -167,7 +160,7 @@ struct ConditionsAndExchangeSection: View {
             .frame(maxWidth: config.mainContentMaxWidth)
 
             // ปุ่มยืนยัน
-            Button(action: { /* Action */ }) {
+            Button(action: { onConfirm() }) {
                 Text("ยืนยันแลกคะแนน")
                     .font(.noto(config.fontSubHeader, weight: .bold))
                     .foregroundColor(.white)

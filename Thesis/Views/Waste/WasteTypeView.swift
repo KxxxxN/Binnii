@@ -66,10 +66,13 @@ struct WasteTypeView: View {
                         ScrollView {
                             VStack(spacing: 11) {
                                 ForEach(pagedItems) { item in
-                                    NavigationLink(destination: DetailWasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
+                                    NavigationLink(destination: HistoryWasteDetailView(
+                                        hideTabBar: $hideTabBar,
+                                        item: item
+                                    )) {
                                         WasteItemCard(
                                             title: item.title,
-                                            date: item.date,
+                                            date: item.dateOnly,
                                             imageUrl: item.imageUrl,
                                             config: config
                                         )

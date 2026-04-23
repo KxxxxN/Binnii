@@ -18,9 +18,9 @@ struct DetailSearchView: View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            ZStack {
-                Color.backgroundColor
-                    .ignoresSafeArea()
+//            ZStack {
+//                Color.backgroundColor
+//                    .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     
@@ -64,8 +64,10 @@ struct DetailSearchView: View {
                     }
                     .edgesIgnoringSafeArea(.bottom)
                 }
-            }
+//            }
         }
+        .background(Color.backgroundColor)
+        .ignoresSafeArea()
         .navigationDestination(isPresented: $showConfirmPhotoView) {
             ConfirmPhotoView(hideTabBar: $hideTabBar, category: category)
         }

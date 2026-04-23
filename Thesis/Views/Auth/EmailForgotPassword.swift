@@ -27,7 +27,7 @@ struct EmailForgotPassword: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.isIPad ? 80 : 57)
                 
                 LoginInputField(

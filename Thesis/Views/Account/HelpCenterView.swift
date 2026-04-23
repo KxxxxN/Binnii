@@ -27,7 +27,7 @@ struct HelpCenterView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.bottomTitlePadding)
                 
                 // MARK: - Menu List

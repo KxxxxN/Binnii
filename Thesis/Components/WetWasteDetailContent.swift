@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+private func formatCurrentDate() -> String {
+    let f = DateFormatter()
+    f.dateFormat = "d/M/yyyy - HH:mm"
+    f.locale     = Locale(identifier: "en_US_POSIX")
+    f.calendar   = Calendar(identifier: .buddhist)
+    return f.string(from: Date())
+}
+
 // MARK: - Shared Component
 struct WetWasteDetailContent: View {
     let config: ResponsiveConfig
@@ -17,6 +25,7 @@ struct WetWasteDetailContent: View {
     let binSteps: [WasteBinStep]
     let recyclingMethods: [String]
     var showDate: Bool = false
+    var dateString: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -28,7 +37,7 @@ struct WetWasteDetailContent: View {
                     .foregroundColor(.black)
                 
                 if showDate {
-                    Text(Date().formatted(date: .numeric, time: .shortened))
+                    Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
                         .padding(.top, config.isIPad ? 12 : 8)
@@ -160,6 +169,7 @@ struct WetWasteDetailContent: View {
 struct WetWasteDetailFoodscraps: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -178,7 +188,8 @@ struct WetWasteDetailFoodscraps: View {
                 "นำไปหมักเป็นปุ๋ยน้ำสำหรับต้นไม้",
                 "ใช้เป็นอาหารปลา \n    (เฉพาะเศษผัก ผลไม้ และเศษอาหารชิ้นเล็กๆ)"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -187,6 +198,7 @@ struct WetWasteDetailFoodscraps: View {
 struct WetWasteDetailFruitPeel: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -204,7 +216,8 @@ struct WetWasteDetailFruitPeel: View {
                 "ทำปุ๋ยน้ำหมักชีวภาพ",
                 "ใช้เป็นน้ำหมักไล่แมลงอ่อน ๆ"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -213,6 +226,7 @@ struct WetWasteDetailFruitPeel: View {
 struct WetWasteDetailCrumbs: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -231,7 +245,8 @@ struct WetWasteDetailCrumbs: View {
                 "นำไปหมักเป็นปุ๋ยน้ำสำหรับต้นไม้",
                 "ใช้เลี้ยงสัตว์เล็กบางชนิด \n    (เฉพาะเศษขนมที่เหมาะสม)"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -240,6 +255,7 @@ struct WetWasteDetailCrumbs: View {
 struct WetWasteDetailEggshell: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -257,7 +273,8 @@ struct WetWasteDetailEggshell: View {
                 "ใส่กระถางช่วยบำรุงดิน",
                 "นำไปใช้เป็นปุ๋ยธรรมชาติ"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -266,6 +283,7 @@ struct WetWasteDetailEggshell: View {
 struct WetWasteDetailLeftoverDrinks: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -282,7 +300,8 @@ struct WetWasteDetailLeftoverDrinks: View {
                 "นำไปหมักเป็นปุ๋ยน้ำหมัก",
                 "นำไปเจือจางแล้วใช้รดต้นไม้ \n    (เฉพาะเครื่องดื่มที่ไม่หวานจัด ไม่เค็ม และไม่มีก๊าซ)"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -291,6 +310,7 @@ struct WetWasteDetailLeftoverDrinks: View {
 struct WetWasteDetailLeftoverIce: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         WetWasteDetailContent(
             config: config,
@@ -307,7 +327,8 @@ struct WetWasteDetailLeftoverIce: View {
                 "นำมาใช้รดน้ำต้นไม้",
                 "เทลงอ่างเพื่อล้างทำความสะอาด"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }

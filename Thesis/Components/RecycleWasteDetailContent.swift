@@ -19,6 +19,14 @@ struct WasteBinStep {
     let imageSize: CGSize = CGSize(width: 40, height: 40)
 }
 
+private func formatCurrentDate() -> String {
+    let f = DateFormatter()
+    f.dateFormat = "d/M/yyyy - HH:mm"
+    f.locale     = Locale(identifier: "en_US_POSIX")
+    f.calendar   = Calendar(identifier: .buddhist)
+    return f.string(from: Date())
+}
+
 // MARK: - Shared Component
 struct RecycleWasteDetailContent: View {
     let config: ResponsiveConfig
@@ -28,6 +36,7 @@ struct RecycleWasteDetailContent: View {
     let binSteps: [WasteBinStep]
     let recyclingMethods: [String]
     var showDate: Bool = false
+    var dateString: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -38,7 +47,7 @@ struct RecycleWasteDetailContent: View {
                     .font(.noto(config.titleFontSize, weight: .bold))
                 
                 if showDate {
-                    Text(Date().formatted(date: .numeric, time: .shortened))
+                    Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
                         .padding(.top, 8)
@@ -153,6 +162,7 @@ struct RecycleWasteDetailContent: View {
 struct RecycleWasteDetailPlasticBottle: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     
     private let recyclingMethods: [String] = [
         "ทำเป็นกระถางปลูกต้นไม้เล็กๆ",
@@ -168,7 +178,7 @@ struct RecycleWasteDetailPlasticBottle: View {
                 Text("ขวดพลาสติก")
                     .font(.noto(config.titleFontSize, weight: .bold))
                 if showDate {
-                    Text(Date().formatted(date: .numeric, time: .shortened))
+                    Text(dateString ?? Date().formatted(date: .numeric, time: .shortened))
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
                         .padding(.top, 8)
@@ -344,6 +354,7 @@ struct RecycleWasteDetailPlasticBottle: View {
 struct RecycleWasteDetailPlasticCup: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
@@ -363,7 +374,8 @@ struct RecycleWasteDetailPlasticCup: View {
                 "ทำเป็นที่ใส่เครื่องเขียน",
                 "ใช้เป็นที่เพาะต้นอ่อน"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -372,6 +384,7 @@ struct RecycleWasteDetailPlasticCup: View {
 struct RecycleWasteDetailCan: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
@@ -392,7 +405,8 @@ struct RecycleWasteDetailCan: View {
                 "ประดิษฐ์เป็นโคมไฟตกแต่ง",
                 "ทำเป็นโมบายหรือกระดิ่งลมแขวน"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -401,6 +415,7 @@ struct RecycleWasteDetailCan: View {
 struct RecycleWasteDetailCardboardBox: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
@@ -418,7 +433,8 @@ struct RecycleWasteDetailCardboardBox: View {
                 "ทำกล่องจัดระเบียบและเก็บของ",
                 "ตัดเป็นแผ่นรองพัสดุหรือกันกระแทก"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -427,6 +443,7 @@ struct RecycleWasteDetailCardboardBox: View {
 struct RecycleWasteDetailPaper: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
@@ -446,7 +463,8 @@ struct RecycleWasteDetailPaper: View {
                 "ทำเป็นงานประดิษฐ์หรือของเล่น",
                 "ใช้ห่อกันกระแทก"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -455,6 +473,7 @@ struct RecycleWasteDetailPaper: View {
 struct RecycleWasteDetailPlasticBag: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
@@ -474,7 +493,8 @@ struct RecycleWasteDetailPlasticBag: View {
                 "ใช้เป็นถุงใส่ขยะ",
                 "ถักเป็นพรมหรือกระเป๋า"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }

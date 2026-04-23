@@ -67,6 +67,11 @@ final class QRScanViewModel: ObservableObject {
         showResultAlert = false
         resetCamera()
     }
+    
+    func navigateToAIScan(hideTabBar: inout Bool) {
+        hideTabBar = true
+        showAiScanView = true
+    }
 
     func confirmResult(hideTabBar: inout Bool) {
         hideTabBar = true

@@ -46,7 +46,7 @@ struct ResponsiveConfig {
     // MARK: - Account View
     var groupSpacing: CGFloat { isIPad ? 30 : 22 }
     var topPadding: CGFloat { screenHeight * 0.07 }
-    var bottomTitlePadding: CGFloat { paddingStandard }
+    var bottomTitlePadding: CGFloat { isIPad ? 20 : 27 }
     
     // MARK: - Main App View
     var mainHorizontalPadding: CGFloat { paddingStandard }
@@ -87,7 +87,7 @@ struct ResponsiveConfig {
     var qrContentMaxWidth: CGFloat {
         isIPad ? 500 : (screenWidth > screenHeight ? 400 : 343)
     }
-    var headerTopPadding: CGFloat { isIPad ? 80 : 65 }
+    var headerTopPadding: CGFloat { isIPad ? 30 : 65 }
     var headerSidePadding: CGFloat { isIPad ? 30 : 10 }
     var headerIconSize: CGFloat { isIPad ? 45 : 35 }
     

@@ -27,7 +27,7 @@ struct ContactUsView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.bottomTitlePadding)
                 
                 // Menu List

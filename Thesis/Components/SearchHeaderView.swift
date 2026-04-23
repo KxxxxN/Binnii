@@ -19,13 +19,20 @@ struct SearchHeaderView: View {
                 .font(.noto(config.titleFontSize, weight: .bold))
                 .foregroundColor(.black)
             Spacer()
-            Color.clear.frame(width: config.isIPad ? 40 : 25)
         }
         .padding(.trailing, config.isIPad ? 30 : 18)
-        .padding(.top, config.searchHeaderTopPadding)
-        .padding(.bottom, config.isIPad ? 40 : 27)
+        .padding(.top, config.headerTopPadding)
+        .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-        .frame(height: config.searchHeaderHeight)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+    }
+}
+
+#Preview {
+    NavigationStack {
+        SearchView(
+            hideTabBar: .constant(false),
+            currentTab: .constant(.search),
+            slideDirection: .constant(0)
+        )
     }
 }

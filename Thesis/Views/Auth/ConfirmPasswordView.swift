@@ -26,6 +26,7 @@ struct ConfirmPasswordView: View {
                         Spacer()
                     }
                 }
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Input Field
@@ -56,7 +57,8 @@ struct ConfirmPasswordView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundColor.ignoresSafeArea())
+            .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .navigationDestination(isPresented: $viewModel.navigateToNextStep) {
                 ChangeEmailView()
             }

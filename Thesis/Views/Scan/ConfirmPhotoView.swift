@@ -46,12 +46,9 @@ struct ConfirmPhotoView: View {
                             .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
-                            .frame(maxWidth: config.qrContentMaxWidth,
-                                   minHeight: config.confirmBannerHeight)
+                            .frame(width: config.qrContentMaxWidth, height: config.confirmBannerHeight)
                             .background(Color.textFieldColor)
                             .cornerRadius(config.bannerCornerRadius)
-                            .padding(.top, config.confirmBannerTopPadding)
-                            .padding(.horizontal, config.paddingMedium)
                         
                         Spacer()
                         

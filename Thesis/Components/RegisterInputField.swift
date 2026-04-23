@@ -47,12 +47,11 @@ struct RegisterInputField: View {
                 }
             }
             .padding()
-            .frame(maxWidth: config.isIPad ? .infinity : 345, maxHeight: config.isIPad ? 60 : 49)
+            .frame(maxWidth: config.isIPad ? 445 : 345, maxHeight: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
             .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
                   
-            // ข้อความแสดงข้อผิดพลาด
             Group {
                 Text(errorMessage)
                     .font(.noto(config.isIPad ? 18 : 15, weight: .medium))

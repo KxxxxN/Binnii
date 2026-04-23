@@ -1,5 +1,6 @@
 // Models.swift
 import Foundation
+import SwiftUI
 
 struct HistoryItem: Identifiable {
     let id = UUID()
@@ -51,6 +52,7 @@ struct WasteTypeItem: Identifiable {
     let id       = UUID()
     let title    : String
     let date     : String
+    let dateOnly : String
     let imageUrl : String?
 }
 
@@ -64,4 +66,19 @@ struct ScanRow: Decodable {
         case imageUrl  = "image_url"
         case scannedAt = "scanned_at"
     }
+}
+
+struct WasteExample: Identifiable {
+    let id = UUID()
+    let image: String
+    let label: String
+}
+
+struct WasteCategory {
+    let name: String
+    let colorName: String
+    let color: Color
+    let description: String
+    let binImage: String
+    let examples: [WasteExample]
 }

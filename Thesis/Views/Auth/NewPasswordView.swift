@@ -28,6 +28,7 @@ struct NewPasswordView: View {
                             Spacer()
                         }
                     }
+                    .padding(.top, config.headerTopPadding)
                     .padding(.bottom, config.bottomTitlePadding)
                     
                     // MARK: - Old Password
@@ -65,9 +66,9 @@ struct NewPasswordView: View {
                     
                     if !ValidationHelper.isPasswordValid(viewModel.password) {
                         PasswordValidationCheckView(password: viewModel.password, config: config)
+                            .frame(maxWidth: config.isIPad ? 520 : 400, alignment: .leading)
                             .padding(.top, 1)
                             .padding(.bottom, 7)
-                            .padding(.horizontal)
                     }
 
                     // MARK: - Confirm Password
@@ -109,6 +110,8 @@ struct NewPasswordView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
                 .blur(radius: (viewModel.showSuccessAlert || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessAlert || viewModel.showErrorPopup)
                 
@@ -128,7 +131,6 @@ struct NewPasswordView: View {
                     }
                 }
             }
-            .background(Color.backgroundColor.ignoresSafeArea())
             .navigationDestination(isPresented: $viewModel.navigateToProfile) {
                 ProfileView()
             }

@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+private func formatCurrentDate() -> String {
+    let f = DateFormatter()
+    f.dateFormat = "d/M/yyyy - HH:mm"
+    f.locale     = Locale(identifier: "en_US_POSIX")
+    f.calendar   = Calendar(identifier: .buddhist)
+    return f.string(from: Date())
+}
+
 struct GeneralWasteDetailContent: View {
     let config: ResponsiveConfig
     
@@ -16,6 +24,7 @@ struct GeneralWasteDetailContent: View {
     let binSteps: [WasteBinStep]
     let recyclingMethods: [String]
     var showDate: Bool = false
+    var dateString: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -27,7 +36,7 @@ struct GeneralWasteDetailContent: View {
                     .foregroundColor(.black)
                 
                 if showDate {
-                    Text(Date().formatted(date: .numeric, time: .shortened))
+                    Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
                         .padding(.top, config.isIPad ? 12 : 8)
@@ -148,6 +157,7 @@ struct GeneralWasteDetailContent: View {
 struct GeneralWasteDetailSnackBag: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -165,7 +175,8 @@ struct GeneralWasteDetailSnackBag: View {
                 "นำมาสานเป็นกระเป๋า",
                 "ประดิษฐ์เป็นของตกแต่ง"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -174,6 +185,7 @@ struct GeneralWasteDetailSnackBag: View {
 struct GeneralWasteDetailFoodContainer: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -192,7 +204,8 @@ struct GeneralWasteDetailFoodContainer: View {
                 "ใช้เป็นที่เพาะต้นอ่อน",
                 "ทำเป็นที่ใส่อุปกรณ์งานฝีมือ"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -201,6 +214,7 @@ struct GeneralWasteDetailFoodContainer: View {
 struct GeneralWasteDetailStraw: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -217,7 +231,8 @@ struct GeneralWasteDetailStraw: View {
                 "นำไปร้อยทำโมบายตกแต่ง",
                 "ทำเป็นงานประดิษฐ์หรือของเล่น"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -226,6 +241,7 @@ struct GeneralWasteDetailStraw: View {
 struct GeneralWasteDetailTissue: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -243,7 +259,8 @@ struct GeneralWasteDetailTissue: View {
                 "ใช้รองของเปียก",
                 "ใช้ห่อของแตกง่าย"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -252,6 +269,7 @@ struct GeneralWasteDetailTissue: View {
 struct GeneralWasteDetailChopsticks: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -269,7 +287,8 @@ struct GeneralWasteDetailChopsticks: View {
                 "นำไปทำเป็นไม้ค้ำต้นไม้เล็ก ๆ",
                 "นำไปทำป้ายชื่อกระถางต้นไม้"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }
@@ -278,6 +297,7 @@ struct GeneralWasteDetailChopsticks: View {
 struct GeneralWasteDetailSpoon: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
+    var dateString: String? = nil
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
@@ -295,7 +315,8 @@ struct GeneralWasteDetailSpoon: View {
                 "ใช้ทำงานประดิษฐ์ตกแต่ง",
                 "ทำเป็นที่แขวนของเล็ก ๆ"
             ],
-            showDate: showDate
+            showDate: showDate,
+            dateString: dateString
         )
     }
 }

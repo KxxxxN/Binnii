@@ -55,6 +55,8 @@ struct BarcodeScanView: View {
                         Spacer()
                             .frame(height: config.barcodeShutterSpacerHeight)
                         
+                        Spacer()
+                        
                         ScanBottomControls(
                             selectedItem: $viewModel.selectedItem,
                             captureImageName: "Barcode",

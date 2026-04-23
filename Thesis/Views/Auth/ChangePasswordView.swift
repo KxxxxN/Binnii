@@ -26,8 +26,8 @@ struct ChangePasswordView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
-                .padding(.bottom, config.isIPad ? 100 : 21)
+                .padding(.top, config.headerTopPadding)
+                .padding(.bottom, config.isIPad ? 50 : 21)
                 
                 
                 // MARK: - New Password
@@ -47,9 +47,9 @@ struct ChangePasswordView: View {
                 
                 if !ValidationHelper.isPasswordValid(viewModel.password) {
                     PasswordValidationCheckView(password: viewModel.password, config: config)
+                        .frame(maxWidth: config.isIPad ? 520 : 400, alignment: .leading)
                         .padding(.top, -7)
                         .padding(.bottom, 5)
-                        .padding(.horizontal)
                 }
                 
                 // MARK: - Confirm Password

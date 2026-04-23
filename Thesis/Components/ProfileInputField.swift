@@ -46,7 +46,7 @@ struct ProfileInputField: View {
                             .foregroundColor(.black)
                     }
                 }
-                .padding(.leading, config.paddingMedium) // 24 สำหรับ iPad, 16 สำหรับ iPhone
+                .padding(.leading, config.paddingMedium)
                 
                 Spacer()
                 
@@ -57,7 +57,7 @@ struct ProfileInputField: View {
                         .padding(.trailing, config.paddingMedium)
                 }
             }
-            .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
+            .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
             .background(Color.textFieldColor)
             .cornerRadius(config.bannerCornerRadius)
             .modifier(ValidationBorder(isValid: isEditing ? !(isSubmitted && isInvalid) : true))
@@ -70,7 +70,7 @@ struct ProfileInputField: View {
                     .padding(.top, -1)
                     .opacity(isEditing && isSubmitted && isInvalid ? 1 : 0)
             }
-            .frame(height: config.isIPad ? 26 : 20, alignment: .top) // ขยายพื้นที่ Error เล็กน้อยบน iPad
+            .frame(height: config.isIPad ? 26 : 20, alignment: .top)
             .clipped()
             .padding(.leading, 6)
         }
@@ -91,43 +91,47 @@ struct ProfileEmailField: View {
             Title(title: title)
                 .padding(.leading, 6)
             
-            Group {
-                if isEditing {
-                    NavigationLink(destination: ConfirmPasswordView()) {
+            HStack {
+                ZStack(alignment: .leading) {
+                    if isEditing {
+                        NavigationLink(destination: ConfirmPasswordView()) {
+                            HStack {
+                                Text(email)
+                                    .font(.noto(config.accountRowFontSize, weight: .medium))
+                                    .foregroundColor(.black)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: config.isIPad ? 24 : 18))
+                                    .foregroundColor(.black)
+                            }
+                            .padding(.horizontal, config.paddingMedium)
+                            .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: config.bannerCornerRadius)
+                                    .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
+                            )
+                            .background(Color.backgroundColor)
+                        }
+                    } else {
                         HStack {
                             Text(email)
                                 .font(.noto(config.accountRowFontSize, weight: .medium))
                                 .foregroundColor(.black)
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: config.isIPad ? 24 : 18))
-                                .foregroundColor(.black)
                         }
                         .padding(.horizontal, config.paddingMedium)
-                        .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: config.bannerCornerRadius)
-                                .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
-                        )
-                        .background(Color.backgroundColor)
+                        .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
+                        .background(Color.textFieldColor)
+                        .cornerRadius(config.bannerCornerRadius)
                     }
-                } else {
-                    HStack {
-                        Text(email)
-                            .font(.noto(config.accountRowFontSize, weight: .medium))
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .padding(.horizontal, config.paddingMedium)
-                    .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
-                    .background(Color.textFieldColor)
-                    .cornerRadius(config.bannerCornerRadius)
                 }
+//                .padding(.horizontal, config.paddingMedium)
             }
             
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
+        .padding(.horizontal, config.paddingMedium)
         .frame(maxWidth: .infinity)
     }
 }
@@ -146,45 +150,48 @@ struct ProfilePasswordField: View {
             Title(title: title)
                 .padding(.leading, 6)
             
-            Group {
-                if isEditing {
-                    NavigationLink(destination: ConfirmEmailView(currentEmail: currentEmail)) {
+            HStack {
+                ZStack(alignment: .leading) {
+                    if isEditing {
+                        NavigationLink(destination: ConfirmEmailView(currentEmail: currentEmail)) {
+                            HStack {
+                                Text(String(repeating: "•", count: 8))
+                                    .font(.noto(config.accountRowFontSize, weight: .medium))
+                                    .foregroundColor(.black)
+                                    .padding(.top, 5) // ช่วยให้จุดไข่ปลาอยู่กึ่งกลางขึ้น
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: config.isIPad ? 24 : 18))
+                                    .foregroundColor(Color.mainColor)
+                            }
+                            .padding(.horizontal, config.paddingMedium)
+                            .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: config.bannerCornerRadius)
+                                    .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
+                            )
+                            .background(Color.backgroundColor)
+                        }
+                    } else {
                         HStack {
                             Text(String(repeating: "•", count: 8))
                                 .font(.noto(config.accountRowFontSize, weight: .medium))
                                 .foregroundColor(.black)
-                                .padding(.top, 5) // ช่วยให้จุดไข่ปลาอยู่กึ่งกลางขึ้น
+                                .padding(.top, 5)
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: config.isIPad ? 24 : 18))
-                                .foregroundColor(Color.mainColor)
                         }
                         .padding(.horizontal, config.paddingMedium)
-                        .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: config.bannerCornerRadius)
-                                .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
-                        )
-                        .background(Color.backgroundColor)
+                        .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
+                        .background(Color.textFieldColor)
+                        .cornerRadius(config.bannerCornerRadius)
                     }
-                } else {
-                    HStack {
-                        Text(String(repeating: "•", count: 8))
-                            .font(.noto(config.accountRowFontSize, weight: .medium))
-                            .foregroundColor(.black)
-                            .padding(.top, 5)
-                        Spacer()
-                    }
-                    .padding(.horizontal, config.paddingMedium)
-                    .frame(width: config.isIPad ? .infinity : 345, height: config.isIPad ? 60 : 49)
-                    .background(Color.textFieldColor)
-                    .cornerRadius(config.bannerCornerRadius)
                 }
             }
             
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
+        .padding(.horizontal, config.paddingMedium)
         .frame(maxWidth: .infinity)
     }
 }

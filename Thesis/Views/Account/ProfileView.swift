@@ -28,7 +28,7 @@ struct ProfileView: View {
                     Text("แก้ไขโปรไฟล์")
                         .font(.noto(config.titleFontSize, weight: .bold))
                         .foregroundColor(Color.black)
-                        .padding(.top, config.topPadding)
+                        .padding(.top, config.headerTopPadding)
                         .padding(.bottom, config.bottomTitlePadding)
 
 
@@ -49,7 +49,7 @@ struct ProfileView: View {
                             }
                         }
                     }
-                    .padding(.top, config.topPadding)
+                    .padding(.top, config.headerTopPadding)
                     .padding(.bottom, config.bottomTitlePadding)
                 }
                 
@@ -148,9 +148,9 @@ struct ProfileView: View {
                             
                             ProfilePasswordField(title: "รหัสผ่าน", password: viewModel.password, isEditing: $viewModel.isEditing, currentEmail: viewModel.email, config: config)
                         }
-                        .frame(maxWidth: config.profileMaxWidth)
-                        .padding(.horizontal, config.paddingStandard)
-                        
+                        .frame(maxWidth: config.profileMaxWidth, alignment: .leading)
+                        .padding(.leading, config.paddingStandard)
+
                         Spacer(minLength: 40)
                         
                         if viewModel.isEditing {

@@ -25,8 +25,6 @@ struct WasteDetailView: View {
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-            ZStack {
-                Color.backgroundColor.ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     headerView(config: config)
@@ -35,13 +33,14 @@ struct WasteDetailView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             photoView
-                            WasteDetailContentView(category: category, config: config)
+                            WasteDetailContentView(category: category, config: config, showDate: true)
                         }
                         .frame(minHeight: 750)
                     }
                     .edgesIgnoringSafeArea(.bottom)
                 }
-            }
+                .background(Color.backgroundColor)
+                .ignoresSafeArea()
             .navigationBarHidden(true)
             .onAppear { hideTabBar = true }
             .overlay {
@@ -83,10 +82,9 @@ struct WasteDetailView: View {
                 .disabled(viewModel.isSaving)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, config.isIPad ? 40 : 27)
+        .padding(.top, config.headerTopPadding)
+        .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
     private var photoView: some View {
         Group {

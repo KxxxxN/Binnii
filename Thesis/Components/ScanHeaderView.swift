@@ -40,9 +40,9 @@ struct ScanHeaderView: View {
             }
         }
         .padding(.top, config.headerTopPadding)
-        .padding(.bottom, config.paddingMedium)
+        .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+        .background(Color.backgroundColor)
         .edgesIgnoringSafeArea(.all)
     }
 }

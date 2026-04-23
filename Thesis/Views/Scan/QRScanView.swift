@@ -34,14 +34,16 @@ struct QRScanView: View {
                     
                     headerView(config: config)
 
-                        Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")
-                            .font(.noto(config.fontHeader, weight: .medium))
+                    Button {
+                        viewModel.navigateToAIScan(hideTabBar: &hideTabBar)
+                    } label: {
+                        Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")                            .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: config.qrContentMaxWidth, height: config.isIPad ? 155 : 115)
                             .background(Color.textFieldColor)
                             .cornerRadius(config.bannerCornerRadius)
-                    
+                    }
                     .padding(.top, config.qrBannerTopPadding)
                     
                     ZStack {
@@ -107,9 +109,10 @@ struct QRScanView: View {
             }
         }
         .padding(.top, config.headerTopPadding)
-        .padding(.bottom, config.paddingMedium)
+        .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+        .background(Color.backgroundColor)
+        .ignoresSafeArea()
     }
     
     // MARK: - Result Alert Overlay

@@ -27,12 +27,20 @@ final class WasteTypeViewModel: ObservableObject {
 
     private let displayFormatter: DateFormatter = {
         let f        = DateFormatter()
+        f.dateFormat = "d/M/yyyy - HH:mm"
+        f.locale     = Locale(identifier: "en_US_POSIX")
+        f.calendar   = Calendar(identifier: .buddhist)
+        return f
+    }()
+    
+    private let dateOnlyFormatter: DateFormatter = {
+        let f        = DateFormatter()
         f.dateFormat = "d/M/yyyy"
         f.locale     = Locale(identifier: "en_US_POSIX")
         f.calendar   = Calendar(identifier: .buddhist)
         return f
     }()
-
+    
     // MARK: - Fetch
     func fetchItems(category: String) async {
         guard !isLoading else { return }
@@ -73,14 +81,14 @@ final class WasteTypeViewModel: ObservableObject {
         max(1, Int(ceil(Double(items.count) / Double(perPage))))
     }
 
-    // MARK: - Private
     private func mapToItem(_ row: ScanRow) -> WasteTypeItem {
-        let cleaned = String(row.scannedAt.prefix(19))
-        let dateStr = inputFormatter.date(from: cleaned)
-                        .map { displayFormatter.string(from: $0) }
-                      ?? row.scannedAt
+        let cleaned  = String(row.scannedAt.prefix(19))
+        let date     = inputFormatter.date(from: cleaned)
+        let dateStr  = date.map { displayFormatter.string(from: $0) } ?? row.scannedAt
+        let dateOnly = date.map { dateOnlyFormatter.string(from: $0) } ?? row.scannedAt
         return WasteTypeItem(title: row.category,
                              date: dateStr,
+                             dateOnly: dateOnly,
                              imageUrl: row.imageUrl)
     }
 }

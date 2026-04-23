@@ -24,9 +24,9 @@ struct DetailWasteHeader: View {
                 Spacer()
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, config.isIPad ? 40 : 27)
+        .padding(.top, config.headerTopPadding)
+        .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
+//        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
 }

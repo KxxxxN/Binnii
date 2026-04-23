@@ -28,7 +28,7 @@ struct TranslateView: View {
                         Spacer()
                     }
                 }
-                .padding(.top, config.topPadding)
+                .padding(.top, config.headerTopPadding)
                 .padding(.bottom, config.bottomTitlePadding)
                 
                 // MARK: - Language List
