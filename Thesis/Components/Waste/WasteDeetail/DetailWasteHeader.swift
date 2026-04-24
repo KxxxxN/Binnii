@@ -27,6 +27,5 @@ struct DetailWasteHeader: View {
         .padding(.top, config.headerTopPadding)
         .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
-//        .background(Color.backgroundColor.ignoresSafeArea(edges: .top))
     }
 }

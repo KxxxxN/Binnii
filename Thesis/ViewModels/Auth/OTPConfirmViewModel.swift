@@ -32,12 +32,10 @@ class OTPConfirmViewModel: ObservableObject {
     
     @AppStorage("emailChangeSuccess") var emailChangeSuccess = false
     
-    // Computed Property: รหัส OTP ทั้งหมดที่กรอก
     var fullOTP: String {
         otpFields.joined()
     }
     
-    // Computed Property: ข้อความ Error ที่ควรแสดง
     var errorMessage: String {
         if showIncompleteError {
             return "กรุณากรอกรหัส OTP ให้ครบถ้วน"
@@ -47,27 +45,22 @@ class OTPConfirmViewModel: ObservableObject {
         return ""
     }
     
-    // Computed Property: ควรแสดง Error หรือไม่
     var shouldShowError: Bool {
-        // ✅ แสดง Error ต่อเมื่อกด Submit แล้วเท่านั้น
         return isSubmitted && (showIncompleteError || showIncorrectError)
     }
 
     func handleOTPChange(index: Int, newValue: String) -> Int? {
         if isSubmitted { isSubmitted = false }
         
-        // 1. ถ้าเป็นการลบ (newValue ว่าง)
         if newValue.isEmpty {
             return index > 0 ? index - 1 : 0
         }
         
-        // 2. ถ้ามีการพิมพ์ (เอาเฉพาะตัวเลขตัวล่าสุด)
         let filtered = newValue.filter { $0.isNumber }
         if let lastDigit = filtered.last {
-            otpFields[index] = String(lastDigit) // บังคับให้มีแค่ตัวเดียว
+            otpFields[index] = String(lastDigit)
             isFieldInvalid[index] = false
             
-            // ส่ง Index ถัดไปกลับไปให้ View จัดการ Focus
             return index < 5 ? index + 1 : nil
         }
         
@@ -88,7 +81,7 @@ class OTPConfirmViewModel: ObservableObject {
     
     func handlePaste(_ value: String, focusedField: inout Int?) {
         let digits = value.filter { $0.isNumber }
-        let limited = String(digits.prefix(6)) // จำกัดสูงสุด 6 ตัว
+        let limited = String(digits.prefix(6))
         
         for i in 0..<6 {
             if i < limited.count {
@@ -98,10 +91,8 @@ class OTPConfirmViewModel: ObservableObject {
             }
         }
         
-        // ตั้งค่า focus ไปยังช่องถัดไป หรือซ่อนคีย์บอร์ด
         focusedField = limited.count < 6 ? limited.count : nil
         
-        // ล้างสถานะ Error ทันทีที่ผู้ใช้มีการวาง
         showIncompleteError = false
         showIncorrectError = false
     }
@@ -111,7 +102,7 @@ class OTPConfirmViewModel: ObservableObject {
         isFieldInvalid = Array(repeating: false, count: 6)
         showIncorrectError = false
         showIncompleteError = false
-        isSubmitted = false // ✅ รีเซ็ตสถานะ Submit ด้วย
+        isSubmitted = false
     }
     
     func startCooldown() {
@@ -145,7 +136,7 @@ class OTPConfirmViewModel: ObservableObject {
             // แสดง error ให้ user รู้ว่าส่งไม่ได้
             print("Resend Failed: \(error.localizedDescription)")
             self.showIncorrectError = true
-            self.resendCooldown = 0  // ← reset cooldown ถ้าส่งไม่สำเร็จ
+            self.resendCooldown = 0 
         }
     }
     

@@ -37,7 +37,6 @@ struct KnowledgeView: View {
                                        height: config.knowledgeBinImageSize)
                                 .padding(.bottom, config.knowledgeBinPaddingBottom)
                             
-                            // ปุ่มลูกศร
                             HStack {
                                 if vm.canGoPrevious {
                                     Button(action: { vm.previous() }) {

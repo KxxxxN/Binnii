@@ -39,7 +39,6 @@ class UserProfileViewModel: ObservableObject{
     }
     
     func clearProfile() {
-        print("🧹 clearProfile called")
         fullName = "ชื่อ - นามสกุล"
         totalPoints = 0
         profileImage = nil
@@ -116,7 +115,7 @@ class UserProfileViewModel: ObservableObject{
                 formatter.locale = Locale(identifier: "en_US_POSIX")
 
                 let displayDate: String
-                let cleanedDate = String(latest.scannedAt.prefix(19)) // "2026-03-12T10:46:18"
+                let cleanedDate = String(latest.scannedAt.prefix(19))
 
                 let parser = DateFormatter()
                 parser.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"

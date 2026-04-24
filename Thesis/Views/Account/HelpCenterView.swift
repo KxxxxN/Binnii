@@ -56,7 +56,6 @@ struct HelpCenterView: View {
         }
     }
 }
-//}
 
 #Preview {
     HelpCenterView()

@@ -17,7 +17,6 @@ final class WasteTypeViewModel: ObservableObject {
     @Published private(set) var isLoading    : Bool            = false
     @Published private(set) var errorMessage : String?         = nil
 
-    // สร้าง formatter ครั้งเดียว
     private let inputFormatter: DateFormatter = {
         let f        = DateFormatter()
         f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"

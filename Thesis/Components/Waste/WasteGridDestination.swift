@@ -17,6 +17,7 @@ struct WasteExamplesGrid: View {
     @Binding var hideTabBar: Bool
     let wasteExamples: [WasteExample]
     var destination: WasteGridDestination = .wasteType
+    var onSaveSuccess: (() -> Void)? = nil
 
     private var columns: [GridItem] {
         config.isIPad

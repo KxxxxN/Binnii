@@ -12,15 +12,15 @@ struct SearchHeaderView: View {
     let config: ResponsiveConfig
 
     var body: some View {
-        HStack {
-            BackButton()
-            Spacer()
+        ZStack {
             Text("ค้นหา")
-                .font(.noto(config.titleFontSize, weight: .bold))
+                .font(.noto(config.fontTitle, weight: .bold))
                 .foregroundColor(.black)
-            Spacer()
+            HStack {
+                BackButton()
+                Spacer()
+            }
         }
-        .padding(.trailing, config.isIPad ? 30 : 18)
         .padding(.top, config.headerTopPadding)
         .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)

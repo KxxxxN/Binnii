@@ -26,80 +26,77 @@ struct SearchView: View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
-            if isSearchFocused {
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isSearchFocused = false
-                    }
-                    .zIndex(0)
-            }
-            
-            
-            VStack(spacing: 0) {
-                SearchHeaderView(config: config)
+            ZStack(alignment: .bottom) {
                 
-                ZStack(alignment: .top) {
-                    ScrollView {
-                        WasteExamplesGrid(
+                VStack(spacing: 0) {
+                    SearchHeaderView(config: config)
+                    
+                    ZStack(alignment: .top) {
+                        ScrollView {
+                            WasteExamplesGrid(
+                                config: config,
+                                hideTabBar: $hideTabBar,
+                                wasteExamples: WasteData.allExamples,
+                                destination: .search
+                            )
+                            .padding(.horizontal, config.isIPad ? 60 : 35)
+                            .padding(.top, 90)
+                        }
+                        .scrollDismissesKeyboard(.immediately)
+                        .safeAreaInset(edge: .bottom) {
+                            Color.clear.frame(height: config.isIPad ? 100 : 80)
+                        }
+                        .opacity((isSearchFocused || !vm.searchText.isEmpty) ? 0.3 : 1.0)
+                        SearchSection(
                             config: config,
                             hideTabBar: $hideTabBar,
-                            wasteExamples: WasteData.allExamples,
-                            destination: .search
+                            searchText: $vm.searchText,
+                            searchItems: vm.filteredItems,
+                            onSelectItem: { _ in },
+                            isFocused: $isSearchFocused
                         )
-                        .padding(.horizontal, config.isIPad ? 60 : 35)
-                        .padding(.top, 90)
+                        .padding(.horizontal, 35)
+                        .padding(.top, 18)
+                        .padding(.bottom, 10)
+                        .zIndex(1)
                     }
-                    .scrollDismissesKeyboard(.immediately)
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear.frame(height: config.isIPad ? 100 : 80)
-                    }
-                    .opacity((isSearchFocused || !vm.searchText.isEmpty) ? 0.3 : 1.0)
-                    .overlay(alignment: .bottom) {
-                        AiScanBottomNavigationBar(
-                            selectedTab: $selectedTabnavigationItem
-                        ) { index in
-                            switch index {
-                            case 0: switchTab(to: .barcode)
-                            case 1: switchTab(to: .ai)
-                            default: break
+                    if isSearchFocused {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                isSearchFocused = false
                             }
-                        }
-                        .padding(.bottom, config.paddingStandard)
-                        .opacity(isSearchFocused ? 0 : 1)
+                            .zIndex(2)
                     }
-                    SearchSection(
-                        config: config,
-                        hideTabBar: $hideTabBar,
-                        searchText: $vm.searchText,
-                        searchItems: vm.filteredItems,
-                        onSelectItem: { _ in },
-                        isFocused: $isSearchFocused
-                    )
-                    .padding(.horizontal, 35)
-                    .padding(.top, 18)
-                    .padding(.bottom, 10)
-                    .zIndex(1)
                 }
+                
+                AiScanBottomNavigationBar(
+                    selectedTab: $selectedTabnavigationItem
+                ) { index in
+                    switch index {
+                    case 0: switchTab(to: .barcode)
+                    case 1: switchTab(to: .ai)
+                    default: break
+                    }
+                }
+                .padding(.top, config.spacingSmall)
+                .padding(.bottom, config.paddingStandard)
+                .zIndex(3)
             }
             .background(Color.backgroundColor)
-            .ignoresSafeArea()
             .navigationBarHidden(true)
-            .edgesIgnoringSafeArea(.top)
+            .ignoresSafeArea(edges: .top)
             .onAppear {
                 selectedTabnavigationItem = 2
             }
-            
         }
     }
 }
 
 #Preview {
-    NavigationStack {
-        SearchView(
-            hideTabBar: .constant(false),
-            currentTab: .constant(.search),
-            slideDirection: .constant(0)
-        )
-    }
+    SearchView(
+        hideTabBar: .constant(false),
+        currentTab: .constant(.search),
+        slideDirection: .constant(0)
+    )
 }

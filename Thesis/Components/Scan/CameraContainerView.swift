@@ -47,5 +47,11 @@ struct CameraContainerView: View {
             .ignoresSafeArea()
         }
         .ignoresSafeArea()
+        .onDisappear {
+            isCameraActive = false
+        }
+        .onAppear {
+            isCameraActive = true
+        }
     }
 }

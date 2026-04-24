@@ -6,9 +6,8 @@ struct AccountMenuRow<Destination: View>: View {
     let imageName: String
     let destination: Destination?
     let action: (() -> Void)?
-    let config: ResponsiveConfig // เพิ่ม Config เข้ามา
+    let config: ResponsiveConfig
     
-    // Initializer สำหรับ NavigationLink (มีปลายทาง)
     init(title: String, imageName: String, config: ResponsiveConfig, destination: Destination) {
         self.title = title
         self.imageName = imageName
@@ -17,7 +16,6 @@ struct AccountMenuRow<Destination: View>: View {
         self.action = nil
     }
     
-    // Initializer สำหรับ Button (ไม่มีปลายทาง)
     init(title: String, imageName: String, config: ResponsiveConfig, action: @escaping () -> Void) where Destination == EmptyView {
         self.title = title
         self.imageName = imageName
@@ -39,15 +37,14 @@ struct AccountMenuRow<Destination: View>: View {
             
             Spacer()
             
-            // แสดง Chevron ถ้ามีปลายทาง (destination หรือ action ที่ไม่ใช่ Logout/Delete)
             if destination != nil || title == "แก้ไขโปรไฟล์" || title == "เปลี่ยนภาษา" || title == "ช่วยเหลือ" || title == "ติดต่อเรา" {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.black)
-                    .font(.system(size: config.accountRowChevronSize, weight: .bold)) // ใช้ขนาด Chevron จาก config
+                    .font(.system(size: config.accountRowChevronSize, weight: .bold))
             }
         }
         .padding(.trailing)
-        .frame(height: config.accountRowHeight) // ความสูงแถวจาก config
+        .frame(height: config.accountRowHeight)
         .background(Color.accountSecColor)
     }
     
@@ -94,12 +91,10 @@ struct AccountToggleRow: View {
                     .labelsHidden()
                     .tint(.mainColor)
                     .fixedSize()
-                    // หมายเหตุ: Toggle ของระบบ iOS ไม่สามารถใช้ .frame เพื่อขยายขนาดตรงๆ ได้
-                    // หากต้องการให้ Toggle ใหญ่ขึ้นบน iPad อาจต้องใช้ .scaleEffect(config.isIPad ? 1.3 : 1.0) ช่วยครับ
                     .scaleEffect(config.isIPad ? 1.2 : 1.0)
             }
             .padding(.trailing)
-            .frame(height: config.accountRowHeight) // ความสูงแถวจาก config
+            .frame(height: config.accountRowHeight)
             .background(Color.accountSecColor)
         }
     }

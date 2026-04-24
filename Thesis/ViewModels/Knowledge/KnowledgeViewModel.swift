@@ -13,7 +13,6 @@ final class KnowledgeViewModel: ObservableObject {
 
     @Published var currentIndex: Int = 0
 
-    // ✅ ดึงจาก WasteData แทน
     let wasteCategories: [WasteCategory] = WasteData.categories
 
     var current: WasteCategory { wasteCategories[currentIndex] }

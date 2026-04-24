@@ -42,7 +42,6 @@ class LoginViewModel: ObservableObject {
         passwordError = nil
         var allFieldsValid = true
         
-        // 2. ตรวจสอบอีเมล
         if ValidationHelper.isEmpty(email) {
             emailError = "กรุณากรอกอีเมล"
             allFieldsValid = false
@@ -50,8 +49,7 @@ class LoginViewModel: ObservableObject {
             emailError = "รูปแบบอีเมลไม่ถูกต้อง"
             allFieldsValid = false
         }
-        
-        // 3. ตรวจสอบรหัสผ่าน
+
         if ValidationHelper.isEmpty(password) {
             passwordError = "กรุณากรอกรหัสผ่าน"
             allFieldsValid = false
@@ -66,7 +64,6 @@ class LoginViewModel: ObservableObject {
         
         if validateFormLogin() {
             do {
-                // เชื่อมต่อ Supabase
                 _ = try await supabase.auth.signIn(email: email, password: password)
                 self.isLoggedIn = true
                 print("Sign in Success!")

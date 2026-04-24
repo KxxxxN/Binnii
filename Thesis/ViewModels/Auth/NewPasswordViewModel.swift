@@ -36,19 +36,13 @@ class NewPasswordViewModel: ObservableObject {
     @Published var showConfirmError = false
     @Published var navigateToProfile: Bool = false
     
-    // MARK: - Navigation
-//    @Published var navigateToLogin: Bool = false
-//    @AppStorage("isLoggedIn") var isLoggedIn = false
-    
-    // MARK: - Password Checklist Helpers (ดึงจาก ValidationHelper)
-    // ใช้สำหรับแสดง Checklist 5 ข้อในหน้า View
+    // MARK: - Password Checklist Helpers
     var passwordHasLength: Bool { ValidationHelper.hasMinimumLength(password) }
     var passwordHasUpper: Bool { ValidationHelper.hasUppercase(password) }
     var passwordHasLower: Bool { ValidationHelper.hasLowercase(password) }
     var passwordHasDigit: Bool { ValidationHelper.hasDigit(password) }
     var passwordHasSpecial: Bool { ValidationHelper.hasSpecialCharacter(password) }
     
-    // ตรวจสอบว่ารหัสผ่านใหม่ถูกต้องตามกฎ และรหัสผ่านใหม่ต้องตรงกับยืนยัน
     var isNewPasswordFormValid: Bool {
         return ValidationHelper.isPasswordValid(password) && (password == confirmPassword) && !password.isEmpty
     }
@@ -70,7 +64,6 @@ class NewPasswordViewModel: ObservableObject {
         isPasswordValid = ValidationHelper.isPasswordValid(password)
         isConfirmPasswordValid = !confirmPassword.isEmpty && (password == confirmPassword)
         
-        // เช็คว่ารหัสผ่านใหม่ซ้ำกับเก่าไหม
         if password == oldPassword {
             isPasswordValid = false
             return
@@ -87,7 +80,6 @@ class NewPasswordViewModel: ObservableObject {
         do {
             let session = try await supabase.auth.session
             
-            // ขั้นที่ 1: ตรวจสอบรหัสผ่านเก่า
             do {
                 try await supabase.auth.signIn(
                     email: session.user.email ?? "",
@@ -95,13 +87,11 @@ class NewPasswordViewModel: ObservableObject {
                 )
                 print("✅ Re-authenticate สำเร็จ")
             } catch {
-                // ✅ รหัสผ่านเก่าผิด → แสดงแค่ขอบแดง
                 print("❌ Re-authenticate Failed: \(error.localizedDescription)")
                 isOldPasswordValid = false
                 return
             }
             
-            // ขั้นที่ 2: บันทึกรหัสผ่านใหม่ลง server
             do {
                 try await supabase.auth.update(user: UserAttributes(password: password))
                 print("✅ เปลี่ยนรหัสผ่านสำเร็จ")

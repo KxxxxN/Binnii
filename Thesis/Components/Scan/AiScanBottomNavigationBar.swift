@@ -17,12 +17,10 @@ struct AiScanBottomNavigationBar: View {
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
             
             ZStack {
-                // Background Capsule
                 Capsule()
                     .fill(Color.secondColor)
                     .frame(width: config.aiBarWidth, height: config.aiBarHeight)
 
-                // Selection Indicator (ตัวที่เลื่อนไปมา)
                 Capsule()
                     .fill(Color.mainColor)
                     .frame(width: config.aiBarTabWidth, height: config.aiBarTabHeight)

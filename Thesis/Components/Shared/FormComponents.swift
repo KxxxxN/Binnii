@@ -60,7 +60,6 @@ struct ValidationBorder: ViewModifier {
         content
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    // สมมติว่า Color.errorColor มีอยู่จริงในโครงการ
                     .stroke(isValid ? Color.clear : Color.errorColor, lineWidth: isValid ? 0 : 2)
             )
     }

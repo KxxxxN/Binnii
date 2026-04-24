@@ -20,7 +20,6 @@ struct LoginPopupView: View {
             
             VStack(spacing: 0) {
                 
-                // รูป Profile
                 Circle()
                     .fill(Color.mainColor)
                     .frame(width: 85, height: 85)
@@ -30,20 +29,17 @@ struct LoginPopupView: View {
                             .aspectRatio(contentMode: .fill)
                     )
                     .padding(.top, 30)
-                
-                // หัวข้อ
+
                 Text("เริ่มใช้งาน")
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top,20)
-                
-                // คำอธิบาย
+
                 Text("กรุณาเข้าสู่ระบบเพื่อใช้งานได้ทันที")
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .padding(.bottom, 40)
-                
-                // ปุ่ม
+
                 HStack(spacing: 21) {
                     SecondButton(
                         title: "ภายหลัง",

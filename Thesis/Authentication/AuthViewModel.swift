@@ -20,14 +20,12 @@ class AuthViewModel: ObservableObject {
     // MARK: - Session
     func getInitialSession() async {
         do {
-            // ใน SDK บางเวอร์ชัน .session จะ throw error ถ้าไม่มี session
             let current = try await supabase.auth.session
             
             self.session = current
             self.isAuthenticated = true
             
         } catch {
-            // ถ้าเข้ามาใน catch แสดงว่าไม่มี session หรือเกิดข้อผิดพลาด
             self.session = nil
             self.isAuthenticated = false
             print("No active session or error: \(error.localizedDescription)")

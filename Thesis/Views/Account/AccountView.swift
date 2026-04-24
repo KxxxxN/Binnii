@@ -69,7 +69,6 @@ struct AccountView: View {
                                             config: config,
                                             action: { viewModel.navigate(to: .helpCenter)
                                             }
-//                                            action: {viewModel.navigate(to: .deleteAccountSuccess)}
                                         )
                                         AccountMenuRow(
                                             title: "ติดต่อเรา",

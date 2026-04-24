@@ -36,7 +36,6 @@ struct PasswordValidationCheckView: View {
         let defaultColor: Color = Color.placeholderColor
         
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 3) {
-            // เรียกใช้ ValidationHelper ตรงๆ เลย
             ValidationRow(
                 title: "อย่างน้อย 8 ตัวอักษร",
                 passed: ValidationHelper.hasMinimumLength(password),

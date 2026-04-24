@@ -17,18 +17,20 @@ struct SocialLoginButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: config.isIPad ? 20 : 15) {
+            HStack(spacing: 0) {
                 Image(iconName)
                     .resizable()
                     .frame(width: config.isIPad ? 40 : 30, height: config.isIPad ? 40 : 30)
+                    .padding(.leading, config.isIPad ? 70 : 54)
+                    .padding(.trailing, config.isIPad ? 20 : 15)
                 
                 Text(title)
                     .font(.noto(config.isIPad ? 22 : 18, weight: .medium))
                     .foregroundColor(.mainColor)
+                
+                Spacer()
             }
-//            .padding(.leading, config.isIPad ? 80 : 54)
             .frame(width: config.isIPad ? 445 : 345, height: config.isIPad ? 60 : 49)
-            .frame(alignment: .leading)
             .overlay(
                 RoundedRectangle(cornerRadius: config.isIPad ? 25 : 20)
                     .stroke(Color.mainColor, lineWidth: 2)
@@ -36,4 +38,9 @@ struct SocialLoginButton: View {
         }
         .padding(.horizontal, config.paddingStandard)
     }
+}
+
+#Preview {
+    LoginView()
+            .environmentObject(AuthViewModel())
 }

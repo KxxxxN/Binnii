@@ -6,9 +6,6 @@
 //
 
 
-// ScanCaptureButton.swift
-// Thesis
-
 import SwiftUI
 
 struct ScanCaptureButton: View {

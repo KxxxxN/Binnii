@@ -37,25 +37,18 @@ struct OTPInputView: View {
                     .font(.noto(config.isIPad ? 40 : 30, weight: .medium))
                     .overlay(
                         RoundedRectangle(cornerRadius: config.isIPad ? 25 : 20)
-                            // ใช้สถานะ isFieldInvalid จาก ViewModel
                             .stroke(borderColor(for: index), lineWidth: 2)
                     )
-                    // ผูก focus state กับ index
                     .focused($focusedField, equals: index)
-                    // ใช้ .onChange เพื่อจัดการ Logic ผ่าน ViewModel
                     .onChange(of: viewModel.otpFields[index]) { oldValue, newValue in
-                        // ป้องกัน Logic ทำงานตอนที่เราสั่งล้างค่า หรือค่าไม่ได้เปลี่ยนจริง
                         guard newValue != oldValue else { return }
-                        
-                        // ถ้าพิมพ์เกิน 1 ตัว (เช่น พิมพ์ทับตัวเดิม) ให้ตัดเหลือตัวเดียวทันที
+
                         if newValue.count > 1 {
                             viewModel.otpFields[index] = String(newValue.last!)
                         }
-                        
-                        // หา Index ที่ต้อง Focus ต่อ
+
                         let nextIndex = viewModel.handleOTPChange(index: index, newValue: newValue)
-                        
-                        // ใช้ DispatchQueue เพื่อให้ UI คืนค่า TextField ให้เสร็จก่อนเปลี่ยน Focus
+
                         DispatchQueue.main.async {
                             focusedField = nextIndex
                         }

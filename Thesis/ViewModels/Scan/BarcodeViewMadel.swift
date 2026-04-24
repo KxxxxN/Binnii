@@ -26,11 +26,11 @@ class BarcodeViewModel: ObservableObject {
                 .from("products")
                 .select()
                 .eq("barcode", value: barcode)
-                .execute() // ✅ เอา .single() ออก
+                .execute()
             
             let data = result.data
             if let jsonArray = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]],
-               let json = jsonArray.first { // ✅ เอาอันแรกออกมา
+               let json = jsonArray.first {
                 print("✅ Supabase found: \(json)")
                 self.category = json["category"] as? String ?? ""
                 self.wasteType = json["waste_type"] as? String ?? ""
@@ -41,12 +41,11 @@ class BarcodeViewModel: ObservableObject {
         } catch {
             print("❌ Supabase error: \(error)")
         }
-        // 2. Open Food Facts
         if let url = URL(string: "https://world.openfoodfacts.org/api/v0/product/\(barcode).json") {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                    print("✅ API response: \(json)") // ✅ debug ดู response ทั้งหมด
+                    print("✅ API response: \(json)")
                     
                     let status = json["status"] as? Int
                     print("✅ status: \(status ?? -1)")
@@ -62,8 +61,8 @@ class BarcodeViewModel: ObservableObject {
                         let packaging = product["packaging"] as? String ?? ""
                         let productName = product["product_name"] as? String ?? ""
                         let keywords = product["_keywords"] as? [String] ?? []
-                        let categoriesTags = product["categories_tags"] as? [String] ?? [] // ✅ เพิ่ม
-                        let packagingTags = product["packaging_tags"] as? [String] ?? []   // ✅ เพิ่ม
+                        let categoriesTags = product["categories_tags"] as? [String] ?? []
+                        let packagingTags = product["packaging_tags"] as? [String] ?? []
                         
                         print("✅ packaging: \(packaging)")
                         print("✅ productName: \(productName)")
@@ -128,7 +127,6 @@ class BarcodeViewModel: ObservableObject {
             wasteType = "ขยะรีไซเคิล"
             category = "แก้วพลาสติก"
         } else if isWater || isBeverage {
-            // ✅ น้ำดื่ม/เครื่องดื่มที่ไม่รู้ packaging → default ขวดพลาสติก
             wasteType = "ขยะรีไซเคิล"
             category = "ขวดพลาสติก"
         } else {

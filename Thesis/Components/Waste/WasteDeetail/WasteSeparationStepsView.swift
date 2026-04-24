@@ -19,16 +19,13 @@ struct WasteSeparationStepsView: View {
             let availableWidth          = geo.size.width - (hPadding * 2)
             let stepCount               = CGFloat(separationSteps.count)
             let arrowCount              = stepCount - 1
-            // ความกว้างลูกศร = ขนาด icon + horizontal padding (2+2)
             let arrowSlotWidth: CGFloat = config.detailArrowSize + 6
             let stepWidth               = (availableWidth - arrowSlotWidth * arrowCount) / stepCount
-            // รูปภาพ: ไม่เกิน config แต่ shrink ได้เมื่อจอแคบ
             let imageSize               = min(stepWidth * 0.80, config.detailStepImageSize)
 
             HStack(alignment: .top, spacing: 0) {
                 ForEach(separationSteps.indices, id: \.self) { index in
 
-                    // ลูกศร (ยกเว้น step แรก)
                     if index > 0 {
                         Image(systemName: "arrow.right")
                             .foregroundColor(.black)
@@ -38,7 +35,6 @@ struct WasteSeparationStepsView: View {
                             .frame(width: arrowSlotWidth)
                     }
 
-                    // แต่ละ step
                     VStack(spacing: 0) {
                         Image(separationSteps[index].imageName)
                             .resizable()
@@ -77,7 +73,6 @@ struct WasteSeparationStepsView: View {
             }
             .padding(.horizontal, hPadding)
         }
-        // ความสูงคงที่ให้ GeometryReader ทำงานถูกต้อง
         .frame(height: config.detailStepImageSize
                      + (config.isIPad ? 60 : 45)
                      + config.detailBinIconSize

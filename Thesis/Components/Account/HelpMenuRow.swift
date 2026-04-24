@@ -12,7 +12,7 @@ struct HelpMenuRow<Destination: View>: View {
     let title: String
     let imageName: String
     let destination: Destination
-    let config: ResponsiveConfig // 1. เพิ่ม Config เข้ามา
+    let config: ResponsiveConfig
 
     var body: some View {
         NavigationLink(destination: destination) {

@@ -31,7 +31,7 @@ class RegisterViewModel: ObservableObject {
     @Published var showErrorPopup: Bool = false
     @Published var isRegisterSubmitted: Bool = false
     
-    // MARK: - Validation States (สำหรับแสดงสีแดง/ข้อความเตือนใน UI)
+    // MARK: - Validation States
     @Published var isFirstNameValid: Bool = true
     @Published var isLastNameValid: Bool = true
     @Published var isEmailValid: Bool = true
@@ -41,7 +41,6 @@ class RegisterViewModel: ObservableObject {
     @Published var authErrorMessage: String? = nil
     
     // MARK: - Password Checklist Helpers
-    // เรียกใช้ ValidationHelper เพื่อเช็คเงื่อนไขแต่ละข้อสำหรับแสดงใน UI
     var passwordHasLength: Bool { ValidationHelper.hasMinimumLength(password) }
     var passwordHasUpper: Bool { ValidationHelper.hasUppercase(password) }
     var passwordHasLower: Bool { ValidationHelper.hasLowercase(password) }
@@ -49,7 +48,7 @@ class RegisterViewModel: ObservableObject {
     var passwordHasSpecial: Bool { ValidationHelper.hasSpecialCharacter(password) }
     
     func clearError(for field: String) {
-        authErrorMessage = nil // ล้าง error กลางเมื่อมีการพิมพ์ใหม่
+        authErrorMessage = nil
         switch field {
         case "firstName": isFirstNameValid = true
         case "lastName": isLastNameValid = true
@@ -76,27 +75,13 @@ class RegisterViewModel: ObservableObject {
         return isDataValid && isPrivacyAccepted
     }
     
-    //    func register() {
-    //        // 1. สั่งเปิดสถานะ Submit เพื่อให้ขอบแดงทำงาน
-    //        self.isRegisterSubmitted = true
-    //
-    //        // 2. ตรวจสอบความถูกต้องของข้อมูลทั้งหมด
-    //        if validateFormRegister() {
-    //            // ✅ กรณีข้อมูลถูกต้องทั้งหมด
-    //            self.showSuccessPopup = true
-    //        }
-    //    }
-    //}
     func register() async {
         self.isRegisterSubmitted = true
         
         if validateFormRegister() {
-//            self.isLoading = true
             self.authErrorMessage = nil
             
             do {
-                // 5. เรียกใช้ Supabase Auth SignUp
-                // ส่งชื่อ นามสกุล และเบอร์โทรเข้าไปใน user_metadata
                 let _ = try await supabase.auth.signUp(
                     email: email,
                     password: password,
@@ -109,10 +94,8 @@ class RegisterViewModel: ObservableObject {
                 self.showSuccessPopup = true
                 
             } catch {
-                // ❌ กรณีผิดพลาด (เช่น อีเมลซ้ำ หรือปัญหา Network)
                 print("Register Failed: \(error.localizedDescription)")
-//                self.authErrorMessage = error.localizedDescription
-//                self.showErrorPopup = true
+
             }
         }
     }

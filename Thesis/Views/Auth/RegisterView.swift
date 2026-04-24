@@ -97,7 +97,6 @@ struct RegisterView: View {
                                 )
                                 .onChange(of: viewModel.password) { _, _ in
                                     viewModel.clearError(for: "password")
-                                    // ตรวจสอบ Confirm Password ใหม่ด้วยถ้ามีข้อมูลอยู่แล้ว
                                     if !viewModel.confirmPassword.isEmpty {
                                         viewModel.isConfirmPasswordValid = (viewModel.password == viewModel.confirmPassword)
                                     }
@@ -193,7 +192,6 @@ struct RegisterView: View {
                 
                 if viewModel.showSuccessPopup {
                     SuccessPopupView(message: "สร้างบัญชีสำเร็จ") {
-                        // action เมื่อกดปิด popup เอง (ถ้ามีปุ่มหรือการเคาะพื้นหลัง)
                         withAnimation {
                             viewModel.showSuccessPopup = false
                             dismiss()

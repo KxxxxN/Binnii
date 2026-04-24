@@ -17,8 +17,7 @@ enum ScanTab: Int, CaseIterable {
 struct ScanContainerView: View {
     @Binding var hideTabBar: Bool
     @State private var currentTab: ScanTab = .ai
-    @State private var slideDirection: Int = 0  // -1 = slide left, 1 = slide right
-
+    @State private var slideDirection: Int = 0
     var body: some View {
         ZStack {
             switch currentTab {

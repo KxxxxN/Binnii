@@ -55,7 +55,6 @@ struct TranslateView: View {
         }
     }
 }
-//}
 
 #Preview {
     TranslateView()

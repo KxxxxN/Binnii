@@ -18,23 +18,20 @@ struct ProfileInputField: View {
     var keyboardType: UIKeyboardType = .default
     var onEditingChanged: () -> Void = {}
     
-    // 1. รับ config เข้ามาใช้งาน
     let config: ResponsiveConfig
 
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
-            // 1. หัวข้อ
             Title(title: title)
                 .padding(.leading, 6)
-            
-            // 2. ส่วนของ Input / Text
+
             HStack {
                 ZStack(alignment: .leading) {
                     if isEditing {
                         PlaceholderView(text: text, placeholder: placeholder)
                         
                         TextField("", text: $text)
-                            .font(.noto(config.accountRowFontSize, weight: .medium)) // 26 สำหรับ iPad, 20 สำหรับ iPhone
+                            .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
                             .keyboardType(keyboardType)
                             .onChange(of: text) { oldValue, newValue in
@@ -52,7 +49,7 @@ struct ProfileInputField: View {
                 
                 if isEditing {
                     Image(systemName: "pencil")
-                        .font(.system(size: config.isIPad ? 24 : 18)) // ขยายไอคอนใน iPad
+                        .font(.system(size: config.isIPad ? 24 : 18))
                         .foregroundColor(.black)
                         .padding(.trailing, config.paddingMedium)
                 }
@@ -62,10 +59,9 @@ struct ProfileInputField: View {
             .cornerRadius(config.bannerCornerRadius)
             .modifier(ValidationBorder(isValid: isEditing ? !(isSubmitted && isInvalid) : true))
             
-            // 3. ส่วนแสดงข้อความ Error
             Group {
                 Text(isEditing && isSubmitted && isInvalid ? errorMessage : "")
-                    .font(.noto(config.fontSubBody, weight: .medium)) // 20 สำหรับ iPad, 15 สำหรับ iPhone
+                    .font(.noto(config.fontSubBody, weight: .medium))
                     .foregroundColor(Color.errorColor)
                     .padding(.top, -1)
                     .opacity(isEditing && isSubmitted && isInvalid ? 1 : 0)
@@ -83,7 +79,6 @@ struct ProfileEmailField: View {
     let email: String
     @Binding var isEditing: Bool
     
-    // รับ config
     let config: ResponsiveConfig
     
     var body: some View {
@@ -125,7 +120,6 @@ struct ProfileEmailField: View {
                         .cornerRadius(config.bannerCornerRadius)
                     }
                 }
-//                .padding(.horizontal, config.paddingMedium)
             }
             
             Color.clear
@@ -141,8 +135,6 @@ struct ProfilePasswordField: View {
     let password: String
     @Binding var isEditing: Bool
     let currentEmail: String
-    
-    // รับ config
     let config: ResponsiveConfig
     
     var body: some View {
@@ -158,7 +150,7 @@ struct ProfilePasswordField: View {
                                 Text(String(repeating: "•", count: 8))
                                     .font(.noto(config.accountRowFontSize, weight: .medium))
                                     .foregroundColor(.black)
-                                    .padding(.top, 5) // ช่วยให้จุดไข่ปลาอยู่กึ่งกลางขึ้น
+                                    .padding(.top, 5)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: config.isIPad ? 24 : 18))
@@ -187,7 +179,6 @@ struct ProfilePasswordField: View {
                     }
                 }
             }
-            
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }

@@ -55,7 +55,6 @@ class ProfileViewModel: ObservableObject {
             self.lastName = meta["last_name"]?.stringValue ?? ""
             self.phoneNumber = meta["phone"]?.stringValue ?? ""
             
-            // ✅ โหลดรูปจาก URL
             if let avatarURLString = meta["avatar_url"]?.stringValue,
                let url = URL(string: avatarURLString) {
                 let (data, _) = try await URLSession.shared.data(from: url)

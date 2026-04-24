@@ -7,12 +7,12 @@
 import SwiftUI
 
 struct HistorySection: View {
-    let config: ResponsiveConfig // 1. รับ config เข้ามาจากหน้าหลัก
+    let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
     let items: [HistoryItem]
     
     var body: some View {
-        VStack(spacing: config.rewardVStackSpacing) { // ใช้ 12:7 ร่วมกับ Reward
+        VStack(spacing: config.rewardVStackSpacing) {
             SectionHeader(
                 config: config,
                 title: "ประวัติคะแนน",
@@ -20,16 +20,15 @@ struct HistorySection: View {
             )
             
             if items.isEmpty {
-                // ✅ Empty state card
                 NavigationLink(destination: ScoreHistoryView(hideTabBar: $hideTabBar)) {
                     HStack {
-                        VStack(alignment: .leading, spacing: config.rewardTextSpacing) { // ใช้ 6:3 ร่วมกับ Reward
+                        VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
                             Text("ยังไม่มีคะแนน?")
-                                .font(.noto(config.historyTitleFontSize, weight: .bold)) // ค่าใหม่ 24:20
+                                .font(.noto(config.historyTitleFontSize, weight: .bold))
                                 .foregroundColor(.white)
                             
                             Text("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!")
-                                .font(.noto(config.rewardSubtitleFontSize, weight: .medium)) // ใช้ 18:14 ร่วมกับ Reward
+                                .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
                                 .foregroundColor(.white)
                         }
                         
@@ -37,19 +36,19 @@ struct HistorySection: View {
                         
                         VStack(alignment: .trailing, spacing: 0) {
                             Text("0")
-                                .font(.system(size: config.titleFontSize, weight: .bold)) // ใช้ 36:25 จาก Shared
+                                .font(.system(size: config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
                             
                             Text("คะแนน")
-                                .font(.noto(config.mainPointsLabelFontSize, weight: .bold)) // ใช้ 20:15
+                                .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                 .foregroundColor(.white)
                         }
                     }
-                    .padding(.horizontal, config.rewardCardPadding) // ใช้ 24:16 ร่วมกับ Reward
+                    .padding(.horizontal, config.rewardCardPadding)
                     .frame(maxWidth: .infinity)
-                    .frame(height: config.rewardCardHeight) // ใช้ 110:75 ร่วมกับ Reward
+                    .frame(height: config.rewardCardHeight)
                     .background(Color.secondColor)
-                    .cornerRadius(config.bannerCornerRadius) // ใช้ 25:20
+                    .cornerRadius(config.bannerCornerRadius) 
                 }
             } else {
                 ForEach(items) { item in

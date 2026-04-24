@@ -20,16 +20,15 @@ struct CameraPreview: UIViewRepresentable {
     
     class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate, AVCapturePhotoCaptureDelegate {
         let session = AVCaptureSession()
-        let photoOutput = AVCapturePhotoOutput()  // ✅ เพิ่ม
+        let photoOutput = AVCapturePhotoOutput()
         var onScan: ((String) -> Void)?
         var isScanning = true
-        var onCapture: ((UIImage) -> Void)?       // ✅ เพิ่ม
+        var onCapture: ((UIImage) -> Void)?
         
         init(onScan: ((String) -> Void)?) {
             self.onScan = onScan
         }
         
-        // ✅ delegate รับภาพที่ถ่าย
         func photoOutput(_ output: AVCapturePhotoOutput,
                          didFinishProcessingPhoto photo: AVCapturePhoto,
                          error: Error?) {
@@ -49,7 +48,6 @@ struct CameraPreview: UIViewRepresentable {
                    let stringValue = metadataObject.stringValue else { return }
              isScanning = false
              
-             // ✅ capture ภาพทันทีที่สแกนได้
              let settings = AVCapturePhotoSettings()
              photoOutput.capturePhoto(with: settings, delegate: self)
              
@@ -82,12 +80,6 @@ struct CameraPreview: UIViewRepresentable {
         
         session.addInput(input)
         
-        // ✅ เพิ่ม photoOutput เสมอ (ยกเว้น scanMode)
-//        if !scanMode {
-//            if session.canAddOutput(context.coordinator.photoOutput) {
-//                session.addOutput(context.coordinator.photoOutput)
-//            }
-//        }
         if session.canAddOutput(context.coordinator.photoOutput) {
             session.addOutput(context.coordinator.photoOutput)
         }
@@ -99,21 +91,19 @@ struct CameraPreview: UIViewRepresentable {
                 metadataOutput.setMetadataObjectsDelegate(context.coordinator, queue: .main)
                 
                 if onScan != nil && !barcodeMode {
-                    metadataOutput.metadataObjectTypes = [.qr]  // ✅ QR only
+                    metadataOutput.metadataObjectTypes = [.qr]
                 } else {
-                    metadataOutput.metadataObjectTypes = [.ean13, .ean8, .code128, .code39, .upce]  // ✅ Barcode only
+                    metadataOutput.metadataObjectTypes = [.ean13, .ean8, .code128, .code39, .upce]
                 }
             }
         }
         
-        // ✅ รับภาพแล้วใส่ binding
         context.coordinator.onCapture = { image in
             capturedImage = image
         }
         
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
-//        previewLayer.frame = UIScreen.main.bounds
         view.layer.addSublayer(previewLayer)
         
         return view
@@ -127,7 +117,6 @@ struct CameraPreview: UIViewRepresentable {
         
         let session = context.coordinator.session
         
-        // Flash control
         if let device = AVCaptureDevice.default(for: .video), device.hasTorch {
             try? device.lockForConfiguration()
             device.torchMode = isFlashOn ? .on : .off
@@ -144,7 +133,7 @@ struct CameraPreview: UIViewRepresentable {
             if !session.isRunning {
                 DispatchQueue.global(qos: .userInitiated).async {
                     session.startRunning()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {  // ✅ เพิ่ม delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
                         context.coordinator.isScanning = isScanning
                     }
                 }

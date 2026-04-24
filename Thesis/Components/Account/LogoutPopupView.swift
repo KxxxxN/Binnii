@@ -20,26 +20,22 @@ struct LogoutPopupView: View {
 
             VStack(spacing: 0) {
 
-                // รูป Logout
                 Image("PopupLogout")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 100,height: 100)
                     .padding(.top, 30)
 
-                // หัวข้อ
                 Text("ออกจากระบบ?")
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 20)
 
-                // คำอธิบาย
                 Text("คุณสามารถเข้าสู่ระบบใหม่ได้ทุกเมื่อ")
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .padding(.bottom, 40)
 
-                // ปุ่ม
                 HStack(spacing: 21) {
                     Button {
                         isPresented = false
@@ -53,7 +49,6 @@ struct LogoutPopupView: View {
                                     .stroke(Color.mainColor, lineWidth: 1.5)
                             )
                     }
-
 
                     Button {
                         isPresented = false

@@ -27,7 +27,7 @@ enum WasteImageMapper {
         case "หลอด":              return "TypeStraw"
         case "กระดาษทิชชู่":      return "TypeTissue"
         case "ตะเกียบไม้":        return "TypeChopstick"
-        case "ช้อน-ส้อมพลาสติก":  return "TypeSpoon"
+        case "ช้อน-ส้อม พลาสติก":  return "TypeSpoon"
         default:                  return "TypeBottle1"
         }
     }
@@ -38,7 +38,7 @@ enum WasteImageMapper {
              "กล่องกระดาษ", "กระดาษทั่วไป", "ถุงพลาสติก":
             return "ถังขยะรีไซเคิล"
         case "ซองขนม", "กระดาษทิชชู่", "ภาชนะใส่อาหาร",
-             "ตะเกียบไม้", "หลอด", "ช้อน-ส้อมพลาสติก":
+             "ตะเกียบไม้", "หลอด", "ช้อน-ส้อม พลาสติก":
             return "ถังขยะทั่วไป"
         case "เศษอาหาร", "เปลือกไข่", "เปลือกผลไม้",
              "เครื่องดื่มเหลือ", "เศษขนม", "น้ำแข็งเหลือ":

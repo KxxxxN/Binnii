@@ -19,6 +19,7 @@ struct WasteDetailView: View {
     var showBarcodeImage: Bool = false
     var title: String = "ยืนยันภาพถ่าย"
     var scanMethod: String = "search"
+    var onSaveSuccess: (() -> Void)? = nil
     
     @StateObject private var viewModel = WasteDetailViewModel()
     
@@ -46,8 +47,18 @@ struct WasteDetailView: View {
             .overlay {
                 if viewModel.showSaveSuccess {
                     SuccessPopupView(message: "บันทึกสำเร็จ") {
-                        viewModel.showSaveSuccess = false
-                        dismiss()
+                        if let onSaveSuccess {
+                            var transaction = Transaction()
+                            transaction.disablesAnimations = true
+                            withTransaction(transaction) {
+                                dismiss()
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                onSaveSuccess()
+                            }
+                        } else {
+                            dismiss()
+                        }
                     }
                 }
                 if viewModel.showSaveError {

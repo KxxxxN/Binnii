@@ -22,7 +22,6 @@ struct MainAppView: View {
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
             
             VStack(spacing: 0) {
-                // --- Header Section ---
                 VStack(alignment: .leading, spacing: 4) {
                     Image("logo_white")
                         .resizable()
@@ -79,9 +78,7 @@ struct MainAppView: View {
                 .padding(.leading, config.mainHorizontalPadding)
                 .background(Color.mainColor)
                 .clipShape(RoundedCorner(radius: 20, corners: [.bottomLeft, .bottomRight]))
-//                .padding(.bottom,12)
                 
-                // --- Scrollable Content ---
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: config.mainContentSpacing) {
                         HistorySection(
@@ -148,10 +145,7 @@ struct MainAppView: View {
             }
         }
     }
-    //        .ignoresSafeArea(.keyboard)
 }
-    
-    // --- Helper Views ---
     
 struct SectionHeader<Destination: View>: View {
     let config: ResponsiveConfig
@@ -194,26 +188,26 @@ struct SectionHeader<Destination: View>: View {
     }
 }
     
-    struct FrequentWasteSection: View {
-        let config: ResponsiveConfig
-        @Binding var hideTabBar: Bool
-        let items: [RecyclableItem]
-        
-        var body: some View {
-            VStack(spacing: 7) {
-                SectionHeader(config: config, title: "ขยะที่แยกบ่อย", destinationView: FrequentWasteView())
-                
-                HStack(spacing: 8) {
-                    ForEach(items) { item in
-                        NavigationLink(destination: WasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
-                            RecyclableItemCard(config: config, item: item)
-                                .foregroundColor(.primary)
-                        }
+struct FrequentWasteSection: View {
+    let config: ResponsiveConfig
+    @Binding var hideTabBar: Bool
+    let items: [RecyclableItem]
+    
+    var body: some View {
+        VStack(spacing: 7) {
+            SectionHeader(config: config, title: "ขยะที่แยกบ่อย", destinationView: FrequentWasteView())
+            
+            HStack(spacing: 8) {
+                ForEach(items) { item in
+                    NavigationLink(destination: WasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
+                        RecyclableItemCard(config: config, item: item)
+                            .foregroundColor(.primary)
                     }
                 }
             }
         }
     }
+}
     
 struct RecyclableItemCard: View {
     let config: ResponsiveConfig
@@ -256,7 +250,7 @@ struct WasteSeparationGuideSection: View {
     @Binding var tabIndex: Int
     
     let totalPages = 3
-    let virtualPages = 300  // infinite scroll
+    let virtualPages = 300
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -304,26 +298,6 @@ struct WasteSeparationGuideSection: View {
         .onAppear {
             currentIndex = 0
         }
-    }
-}
-
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = 20
-    var corners: UIRectCorner = [.bottomLeft, .bottomRight]
-    
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 

@@ -131,22 +131,6 @@ struct ScoreHistoryView: View {
     }
 }
 
-// MARK: - PageIndicator
-//struct PageIndicator: View {
-//    let count: Int
-//    let current: Int
-//
-//    var body: some View {
-//        HStack(spacing: 8) {
-//            ForEach(0..<count, id: \.self) { index in
-//                Circle()
-//                    .fill(index == current ? Color.mainColor : Color.thirdColor)
-//                    .frame(width: 8, height: 8)
-//            }
-//        }
-//    }
-//}
-
 // MARK: - ScoreSortMenu
 struct ScoreSortMenu: View {
     @Binding var items: [ScoreItem]

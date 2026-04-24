@@ -17,7 +17,6 @@ struct ContactUsView: View {
             
             VStack(spacing: 0) {
                 
-                // Header 
                 ZStack {
                     Text("ติดต่อเรา")
                         .font(.noto(config.titleFontSize, weight: .bold))

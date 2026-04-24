@@ -19,6 +19,7 @@ struct KnowledgeWasteCard: View {
                 .frame(width: config.wasteCardImageSize, height: config.wasteCardImageSize)
                 .frame(width: config.wasteCardImageSize)
                 .padding(10)
+                .padding(.leading, config.isIPad ? 25 : 0)
 
             Text(example.label)
                 .font(.noto(config.wasteCardTextFont, weight: .medium))
@@ -31,3 +32,8 @@ struct KnowledgeWasteCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
+
+#Preview {
+    KnowledgeView(hideTabBar: .constant(false))
+}
+

@@ -33,7 +33,7 @@ struct WasteDetailContentView: View {
         case "หลอด":             GeneralWasteDetailStraw(config: config, showDate: showDate, dateString: dateString)
         case "กระดาษทิชชู่":     GeneralWasteDetailTissue(config: config, showDate: showDate, dateString: dateString)
         case "ตะเกียบไม้":       GeneralWasteDetailChopsticks(config: config, showDate: showDate, dateString: dateString)
-        case "ช้อน-ส้อมพลาสติก": GeneralWasteDetailSpoon(config: config, showDate: showDate, dateString: dateString)
+        case "ช้อน-ส้อม พลาสติก": GeneralWasteDetailSpoon(config: config, showDate: showDate, dateString: dateString)
         default:
             Text("ไม่พบข้อมูลประเภทขยะนี้")
                 .font(.noto(config.fontSubHeader, weight: .medium))

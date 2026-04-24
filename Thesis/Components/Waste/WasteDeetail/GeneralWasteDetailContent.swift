@@ -28,8 +28,7 @@ struct GeneralWasteDetailContent: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
-            // ชื่อขยะและวันที่
+
             HStack(spacing: 12) {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
@@ -44,18 +43,16 @@ struct GeneralWasteDetailContent: View {
             }
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
-            
-            // รายละเอียดตัวอย่างขยะ
+
             if let wasteDetail = wasteDetail {
                 Text(wasteDetail)
                     .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
                     .foregroundColor(.gray)
                     .padding(.horizontal, config.detailContentPaddingH)
             }
-            
-            // ประเภทถังขยะ
+
             HStack(spacing: 13) {
-                Image("Bin2") // เปลี่ยนเป็น Bin2 สำหรับขยะทั่วไป
+                Image("Bin2")
                     .resizable()
                     .scaledToFit()
                     .frame(height: config.detailMainBinHeight)
@@ -74,8 +71,7 @@ struct GeneralWasteDetailContent: View {
             }
             .padding(.top, 25)
             .padding(.horizontal, config.detailContentPaddingH)
-            
-            // วิธีการแยกขยะ
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("วิธีการแยกขยะ")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -128,8 +124,7 @@ struct GeneralWasteDetailContent: View {
                 .padding(.horizontal, config.isIPad ? 20 : 10)
             }
             .padding(.top, 30)
-            
-            // การรีไซเคิล
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("การรีไซเคิล")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -301,7 +296,7 @@ struct GeneralWasteDetailSpoon: View {
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "ช้อน-ส้อมพลาสติก",
+            category: "ช้อน-ส้อม พลาสติก",
             separationSteps: [
                 WasteSeparationStep(imageName: "step_spoon_1", text: "เช็ดคราบอาหารออก"),
                 WasteSeparationStep(imageName: "step_spoon_2", text: "ทิ้งลงถังขยะทั่วไป")

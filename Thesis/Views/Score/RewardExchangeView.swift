@@ -159,7 +159,6 @@ struct ConditionsAndExchangeSection: View {
             .cornerRadius(config.bannerCornerRadius)
             .frame(maxWidth: config.mainContentMaxWidth)
 
-            // ปุ่มยืนยัน
             Button(action: { onConfirm() }) {
                 Text("ยืนยันแลกคะแนน")
                     .font(.noto(config.fontSubHeader, weight: .bold))

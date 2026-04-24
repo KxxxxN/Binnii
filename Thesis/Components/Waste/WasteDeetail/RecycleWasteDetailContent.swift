@@ -41,7 +41,6 @@ struct RecycleWasteDetailContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
-            // ชื่อขยะและวันที่
             HStack(spacing: 12) {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
@@ -55,8 +54,7 @@ struct RecycleWasteDetailContent: View {
             }
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
-            
-            // ประเภทถังขยะ
+
             HStack(spacing: 13) {
                 Image("Bin3")
                     .resizable()
@@ -77,8 +75,7 @@ struct RecycleWasteDetailContent: View {
             }
             .padding(.top, 25)
             .padding(.horizontal, config.detailContentPaddingH)
-            
-            // วิธีการแยกขยะ
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("วิธีการแยกขยะ")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -128,13 +125,12 @@ struct RecycleWasteDetailContent: View {
                         .frame(maxWidth: .infinity)
                     }
                 }
-                .frame(maxWidth: .infinity)  // ✅ แก้: บังคับ HStack ขยายเต็มความกว้าง
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, config.isIPad ? config.detailContentPaddingH : 10)
             }
-            .frame(maxWidth: .infinity)      // ✅ แก้: บังคับ VStack ขยายเต็มความกว้าง
+            .frame(maxWidth: .infinity)
             .padding(.top, 30)
             
-            // การรีไซเคิล
             VStack(alignment: .leading, spacing: 10) {
                 Text("การรีไซเคิล")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -173,7 +169,6 @@ struct RecycleWasteDetailPlasticBottle: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
-            // ชื่อขยะและวันที่
             HStack(spacing: 12) {
                 Text("ขวดพลาสติก")
                     .font(.noto(config.titleFontSize, weight: .bold))
@@ -187,7 +182,6 @@ struct RecycleWasteDetailPlasticBottle: View {
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
             
-            // ประเภทถังขยะ
             HStack(spacing: 13) {
                 Image("Bin3")
                     .resizable()
@@ -209,7 +203,6 @@ struct RecycleWasteDetailPlasticBottle: View {
             .padding(.top, 25)
             .padding(.horizontal, config.detailContentPaddingH)
             
-            // วิธีการแยกขยะ
             VStack(alignment: .leading, spacing: 10) {
                 Text("วิธีการแยกขยะ")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -217,7 +210,6 @@ struct RecycleWasteDetailPlasticBottle: View {
                     .padding(.horizontal, config.detailContentPaddingH)
                 
                 HStack(alignment: .top, spacing: 0) {
-                    // ขั้นตอน 1
                     VStack(spacing: 0) {
                         Image("DetailRecycle1")
                             .resizable()
@@ -242,15 +234,13 @@ struct RecycleWasteDetailPlasticBottle: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    
-                    // ลูกศร 1
+
                     Image(systemName: "arrow.right")
                         .foregroundColor(.black)
                         .font(.system(size: config.detailArrowSize))
                         .padding(.horizontal, 2)
                         .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
                     
-                    // ขั้นตอน 2
                     VStack(spacing: 0) {
                         Image("DetailRecycle2")
                             .resizable()
@@ -288,14 +278,12 @@ struct RecycleWasteDetailPlasticBottle: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // ลูกศร 2
                     Image(systemName: "arrow.right")
                         .foregroundColor(.black)
                         .font(.system(size: config.detailArrowSize))
                         .padding(.horizontal, 2)
                         .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
                     
-                    // ขั้นตอน 3
                     VStack(spacing: 0) {
                         Image("DetailRecycle3")
                             .resizable()
@@ -321,13 +309,12 @@ struct RecycleWasteDetailPlasticBottle: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)  // ✅ แก้: บังคับ HStack ขยายเต็มความกว้าง
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, config.isIPad ? config.detailContentPaddingH : 5)
             }
-            .frame(maxWidth: .infinity)      // ✅ แก้: บังคับ VStack ขยายเต็มความกว้าง
+            .frame(maxWidth: .infinity)
             .padding(.top, 30)
             
-            // การรีไซเคิล
             VStack(alignment: .leading, spacing: 10) {
                 Text("การรีไซเคิล")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))

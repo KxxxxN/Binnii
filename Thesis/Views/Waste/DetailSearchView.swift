@@ -11,16 +11,14 @@ struct DetailSearchView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Binding var hideTabBar: Bool
     @State private var showConfirmPhotoView = false
+    var onSaveSuccess: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
     
     let category: String
 
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
-            
-//            ZStack {
-//                Color.backgroundColor
-//                    .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     
@@ -64,12 +62,22 @@ struct DetailSearchView: View {
                     }
                     .edgesIgnoringSafeArea(.bottom)
                 }
-//            }
         }
         .background(Color.backgroundColor)
         .ignoresSafeArea()
         .navigationDestination(isPresented: $showConfirmPhotoView) {
-            ConfirmPhotoView(hideTabBar: $hideTabBar, category: category)
+            ConfirmPhotoView(
+                hideTabBar: $hideTabBar,
+                category: category,
+                onSaveSuccess: {
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        dismiss()
+                    }
+                    onSaveSuccess?()
+                }
+            )
         }
         .navigationBarHidden(true)
         .onAppear { hideTabBar = true }

@@ -14,7 +14,6 @@ class FrequentWasteViewModel: ObservableObject {
     @Published var wasteItems: [FrequentWasteItem] = []
     @Published var isLoading: Bool = false
     
-    // map category name → image name
     let imageMap: [String: String] = [
         "ขวดพลาสติก": "Bottle",
         "แก้วพลาสติก": "Plasticcup",
@@ -24,7 +23,7 @@ class FrequentWasteViewModel: ObservableObject {
         "ถุงพลาสติก": "Plasticbag",
         "เปลือกไข่": "Egg",
         "หลอด": "Straw",
-        "ช้อนส้อมพลาสติก": "Plasticcutlery",
+        "ช้อน-ส้อม พลาสติก": "Plasticcutlery",
         "กระดาษทิชชู่": "Tissue",
         "เปลือกผลไม้": "Fruit",
         "ภาชนะใส่อาหาร": "FoodContainers",
@@ -54,10 +53,8 @@ class FrequentWasteViewModel: ObservableObject {
                 .execute()
                 .value
             
-            // ✅ แปลงผลลัพธ์เป็น dict เพื่อ lookup ง่าย
             let countDict = Dictionary(uniqueKeysWithValues: rows.map { ($0.category, $0.count) })
             
-            // ✅ วน imageMap ทุกรายการ ถ้าไม่มีใน Supabase ให้ count = 0
             wasteItems = imageMap
                 .map { (title, imageName) in
                     FrequentWasteItem(
@@ -69,14 +66,12 @@ class FrequentWasteViewModel: ObservableObject {
                 .sorted { extractNumber($0.count) > extractNumber($1.count) } // เรียงมาก→น้อย
         } catch {
             print("❌ fetchWasteCounts error: \(error)")
-            // ✅ แสดง default items ทั้งหมดเป็น 0 ครั้ง แทนที่จะว่างเปล่า
             wasteItems = imageMap.map { (title, imageName) in
                 FrequentWasteItem(imageName: imageName, title: title, count: "0 ครั้ง")
             }
             .sorted { $0.title < $1.title }
         }
     }
-    // ✅ เพิ่ม helper function
     private func extractNumber(_ text: String) -> Int {
         Int(text.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
     }

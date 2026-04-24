@@ -41,26 +41,19 @@ class ChangePasswordViewModel: ObservableObject {
     }
     
     func clearError(for field: String) {
-        // เมื่อเริ่มพิมพ์ใหม่ ให้สถานะ Submit เป็น false เพื่อให้ระบบคำนวณ Error ใหม่
-        // หรือจะเลือกคงค่าไว้แล้วเปลี่ยนแค่ Valid ของช่องนั้นๆ ก็ได้
         if field == "password" {
             isPasswordValid = true
         } else if field == "confirmPassword" {
             isConfirmPasswordValid = true
         }
-        
-        // หากต้องการให้พฤติกรรมเหมือน RegisterView ที่กรอบแดงหายทันทีที่พิมพ์
-        // อาจจะต้องใช้ตัวแปรควบคุมแยก หรือเช็คผ่าน isChangePasswordSubmitted
     }
     
     // MARK: - Action & Confirmation Validation
     func validateFormChangePassword() -> Bool {
         isChangePasswordSubmitted = true
-        
-        // 1. ตรวจสอบรูปแบบรหัสผ่าน
+
         isPasswordValid = !ValidationHelper.isEmpty(password) && ValidationHelper.isPasswordValid(password)
-        
-        // 2. ตรวจสอบการตรงกัน
+
         if ValidationHelper.isEmpty(confirmPassword) {
             isConfirmPasswordValid = false
         } else {

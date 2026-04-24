@@ -20,20 +20,17 @@ struct DeleteAccountSuccessView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // รูป
                 Image("Passmark")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: config.isIPad ? 160 : 120, height: config.isIPad ? 160 : 120)
                     .padding(.bottom, config.isIPad ? 40 : 29)
 
-                // หัวข้อ
                 Text("ลบบัญชีสำเร็จ")
                     .font(.noto(config.fontTitle, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.bottom, config.isIPad ? 16 : 12)
 
-                // คำอธิบาย
                 VStack(spacing: config.isIPad ? 6 : 4) {
                     Text("บัญชีของคุณถูกลบเรียบร้อยแล้ว")
                     Text("ขอบคุณที่ร่วมใช้งานกับเรา")
@@ -45,7 +42,6 @@ struct DeleteAccountSuccessView: View {
 
                 Spacer()
 
-                // ปุ่มกลับสู่หน้าหลัก
                 Button {
                     dismiss()
                     authViewModel.session = nil

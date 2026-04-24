@@ -13,6 +13,8 @@ struct ConfirmPhotoView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     var category: String
+    var onSaveSuccess: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
     
     @StateObject private var viewModel = ConfirmPhotoViewModel()
     
@@ -77,7 +79,17 @@ struct ConfirmPhotoView: View {
                         category: category,
                         capturedImage: uiImage,
                         title: "ค้นหา",
-                        scanMethod: "search"
+                        scanMethod: "search",
+                        onSaveSuccess: {
+                            var transaction = Transaction()
+                            transaction.disablesAnimations = true
+                            withTransaction(transaction) {
+                                dismiss()
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                onSaveSuccess?()
+                            }
+                        }
                     )
                 }
             }

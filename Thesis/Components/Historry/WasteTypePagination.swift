@@ -20,7 +20,6 @@ struct WasteTypePagination: View {
     var body: some View {
         HStack(spacing: 19) {
 
-            // ◀️ Prev
             Button {
                 if currentPage > 1 {
                     currentPage -= 1
@@ -34,7 +33,6 @@ struct WasteTypePagination: View {
             }
             .disabled(currentPage == 1)
 
-            // 🔢 Pages
             ForEach(1...totalPages, id: \.self) { page in
                 Button {
                     currentPage = page
@@ -54,7 +52,6 @@ struct WasteTypePagination: View {
                 }
             }
 
-            // ▶️ Next
             Button {
                 if currentPage < totalPages {
                     currentPage += 1

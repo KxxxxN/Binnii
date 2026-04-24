@@ -138,11 +138,11 @@ struct LoginView: View {
                                 .padding(.top, 21)
                                 
                                 SocialLoginButton(
-                                    iconName: "XIcon",
-                                    title: "ดำเนินการต่อด้วย X (Twitter)",
+                                    iconName: "FacebookIcon",
+                                    title: "ดำเนินการต่อด้วย Facebook",
                                     config: config
                                 ) {
-                                    Task { await authViewModel.signInWithOAuth(provider: .twitter) }
+                                    Task { await authViewModel.signInWithOAuth(provider: .facebook) }
                                 }
                             }
                             Spacer()

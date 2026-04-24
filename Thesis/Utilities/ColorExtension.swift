@@ -60,8 +60,8 @@ extension Font {
             return .custom("Inter-Medium", size: size)
         case .semibold:
             return .custom("Inter-SemiBold", size: size)
-//        case .bold:
-//            return .custom("Inter-Bold", size: size)
+        case .bold:
+            return .custom("Inter-Bold", size: size)
         default:
             return .custom("Inter-Regular", size: size)
         }
@@ -79,3 +79,24 @@ extension UIImage {
         return normalized
     }
 }
+
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = 20
+    var corners: UIRectCorner = [.bottomLeft, .bottomRight]
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+

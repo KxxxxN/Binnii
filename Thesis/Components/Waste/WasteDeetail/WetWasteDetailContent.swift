@@ -30,7 +30,6 @@ struct WetWasteDetailContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
-            // ชื่อขยะและวันที่
             HStack(spacing: 12) {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
@@ -46,22 +45,19 @@ struct WetWasteDetailContent: View {
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
             
-            // รายละเอียดตัวอย่างขยะ
             if let wasteDetail = wasteDetail {
                 Text(wasteDetail)
                     .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
                     .foregroundColor(.gray)
-                    .fixedSize(horizontal: false, vertical: true) // ✅ ป้องกันข้อความโดนตัด
-                    .frame(maxWidth: .infinity, alignment: .leading) // ✅ บังคับไม่ให้ดันขอบจอ
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, config.detailContentPaddingH)
             }
             
-            // ประเภทถังขยะ
             HStack(spacing: 13) {
                 Image("Bin1")
                     .resizable()
                     .scaledToFit()
-                    // ✅ แก้อาการรูปกว้างเกินด้วยการคุมทั้งความกว้างและความสูง
                     .frame(width: config.detailMainBinHeight, height: config.detailMainBinHeight)
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -79,7 +75,6 @@ struct WetWasteDetailContent: View {
             .padding(.top, 25)
             .padding(.horizontal, config.detailContentPaddingH)
             
-            // วิธีการแยกขยะ
             VStack(alignment: .leading, spacing: 10) {
                 Text("วิธีการแยกขยะ")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -123,12 +118,10 @@ struct WetWasteDetailContent: View {
                                         .font(.noto(config.detailBinTextFontSize, weight: .medium))
                                         .foregroundColor(.black)
                                         .multilineTextAlignment(.center)
-                                        // ✅ ป้องกันข้อความถังขยะดันขอบ
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
-                        // ✅ เพิ่ม minWidth: 0 เพื่อให้การ์ดยอมบีบตัวลงตามขนาดจอไอโฟน ไม่ดันไปทางขวา
                         .frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }
@@ -137,8 +130,7 @@ struct WetWasteDetailContent: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 30)
-            
-            // การรีไซเคิล
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("การรีไซเคิล")
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
@@ -146,8 +138,8 @@ struct WetWasteDetailContent: View {
                     ForEach(recyclingMethods, id: \.self) { method in
                         Text("•   \(method)")
                             .font(.noto(config.detailBodyFontSize, weight: .medium))
-                            .fixedSize(horizontal: false, vertical: true) // ✅ ให้คำยาวๆ ยอมขึ้นบรรทัดใหม่
-                            .frame(maxWidth: .infinity, alignment: .leading) // ✅ บังคับไม่ให้กว้างเกินจอ
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }

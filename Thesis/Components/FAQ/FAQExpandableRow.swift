@@ -16,8 +16,7 @@ struct FAQExpandableRow: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            // ปุ่มหลัก (คำถาม)
+
             Button(action: {
                 withAnimation(.easeOut(duration: 0.3)) {
                     isExpanded.toggle()

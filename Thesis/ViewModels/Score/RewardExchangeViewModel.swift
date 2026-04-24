@@ -22,7 +22,6 @@ class RewardExchangeViewModel: ObservableObject {
     }
 
     func loadData() {
-        // จำลองข้อมูล — แทนที่ด้วย Supabase call ได้เลย
         pointsData = [
             ("คะแนนทั้งหมด :", "333", false),
             ("ต้องการแลกคะแนน :", "300", true),
@@ -41,7 +40,6 @@ class RewardExchangeViewModel: ObservableObject {
     }
 
     func confirmExchange() {
-        // ใส่ logic แลกคะแนนกับ Supabase ที่นี่
         showConfirmAlert = true
     }
 }

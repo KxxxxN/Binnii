@@ -16,7 +16,7 @@ struct PaginationSection: View {
         guard totalPages > 0 else { return [] }
 
         let windowSize = 5
-        var start = currentPage - 2          // current อยู่กลาง window 5 หน้า
+        var start = currentPage - 2       
         var end   = start + windowSize - 1
 
         if start < 1 {
