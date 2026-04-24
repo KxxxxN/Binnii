@@ -6,26 +6,31 @@
 //
 
 
-// RewardExchangeViewModel.swift
-
 import Foundation
 
 class RewardExchangeViewModel: ObservableObject {
     
     @Published var pointsData: [(label: String, value: String, isBold: Bool)] = []
     @Published var conditionsList: [String] = []
-    @Published var isLoading = false
     @Published var showConfirmAlert = false
-
-    init() {
+    @Published var showSuccessPopup = false
+    
+//    private let exchangeCost = 500
+    private let exchangeCost = 10
+    private(set) var currentPoints: Int
+    
+    init(totalPoints: Int) {
+        self.currentPoints = totalPoints
         loadData()
     }
 
     func loadData() {
+        let remaining = currentPoints - exchangeCost
+        
         pointsData = [
-            ("คะแนนทั้งหมด :", "333", false),
-            ("ต้องการแลกคะแนน :", "300", true),
-            ("คะแนนคงเหลือ :", "33", false)
+            ("คะแนนทั้งหมด :",    "\(currentPoints)",      false),
+            ("ต้องการแลกคะแนน :", "\(exchangeCost)",        true),
+            ("คะแนนคงเหลือ :",    "\(max(remaining, 0))",  false)
         ]
 
         conditionsList = [
@@ -38,8 +43,15 @@ class RewardExchangeViewModel: ObservableObject {
             "มหาวิทยาลัยขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไขโดยไม่ต้องแจ้งล่วงหน้า"
         ]
     }
-
+    
     func confirmExchange() {
         showConfirmAlert = true
+    }
+    
+    func performExchange() {
+        guard currentPoints >= exchangeCost else { return }
+        currentPoints -= exchangeCost
+        loadData()
+        showSuccessPopup = true
     }
 }

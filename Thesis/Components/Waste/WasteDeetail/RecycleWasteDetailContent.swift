@@ -310,7 +310,7 @@ struct RecycleWasteDetailPlasticBottle: View {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, config.isIPad ? config.detailContentPaddingH : 5)
+                .padding(.horizontal, config.isIPad ? config.detailContentPaddingH : 0)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 30)

@@ -89,7 +89,8 @@ struct MainAppView: View {
                         
                         RewardExchangeSection(config: config,
                                               hideTabBar: $hideTabBar,
-                                              totalPoints: profileVM.totalPoints
+                                              totalPoints: profileVM.totalPoints,
+                                              profileVM: profileVM
                                               )
                         
                         FrequentWasteSection(

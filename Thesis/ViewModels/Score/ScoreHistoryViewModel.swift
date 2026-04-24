@@ -6,11 +6,6 @@
 //
 
 
-//
-//  ScoreHistoryViewModel.swift
-//  Thesis
-//
-
 import SwiftUI
 import Supabase
 
@@ -60,8 +55,8 @@ class ScoreHistoryViewModel: ObservableObject {
                 return ScoreItem(
                     title: row.category,
                     date: dateStr,
-                    points: "+\(row.points)",
-                    color: .secondColor
+                    points: row.points < 0 ? "\(row.points)" : "+\(row.points)",
+                    color: row.points < 0 ? Color.dangerColor : Color.secondColor
                 )
             }
         } catch {

@@ -129,7 +129,7 @@ struct ResponsiveConfig {
     var detailMainBinHeight: CGFloat { isIPad ? 150 : 108 }
     var detailStepImageSize: CGFloat { isIPad ? 120 : 80 }
     var detailBinIconSize: CGFloat { isIPad ? 60 : 40 }
-    var detailArrowSize: CGFloat { spacingMedium } // 30:20 เท่ากัน
+    var detailArrowSize: CGFloat { spacingMedium } 
     var detailWasteImgWidth: CGFloat { isIPad ? 585 : 350 }
     var detailWasteImgHeight: CGFloat { isIPad ? 435 : 290 }
     
@@ -205,10 +205,14 @@ struct ResponsiveConfig {
      
     // MARK: - Score History View 
  
-    /// padding top ของ sort menu (ต่างจาก paddingStandard 28/40)
     var sortMenuTopPadding: CGFloat       { isIPad ? 32 : 24 }
-    /// ขนาดรูป empty state
     var emptyStateImageSize: CGFloat      { isIPad ? 420 : 300 }
+    var scoreCardTitleFont: CGFloat       { isIPad ? 32 : 20 }
+    var scoreCardDateFont: CGFloat        { isIPad ? 22 : 14 }
+    var scoreCardPointsFont: CGFloat      { isIPad ? 38 : 25 }
+    var scoreCardLabelFont: CGFloat       { isIPad ? 24 : 15 }
+    var scoreCardWidth: CGFloat           { isIPad ? 700 : 410 }
+    var scoreCardHeight: CGFloat          { isIPad ? 110 : 75 }
     
     // MARK: - Waste Type View
     var wasteListBottomPadding: CGFloat   { isIPad ? 160 : 125 }

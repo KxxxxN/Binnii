@@ -134,12 +134,52 @@ class UserProfileViewModel: ObservableObject{
                 latestHistory = HistoryItem(
                     title: latest.category,
                     date: displayDate,
-                    points: "+\(latest.points)",
+                    points: latest.points < 0 ? "\(latest.points)" : "+\(latest.points)",
                     pointsLabel: "คะแนน"
                 )
+                print("📋 latestHistory updated: \(latest.category) | \(latest.points)")
             }
         } catch {
             print("❌ fetchLatestHistory error: \(error)")
+        }
+    }
+    
+    func deductPoints(amount: Int) async {
+        guard let session = try? await supabase.auth.session else {
+            print("❌ deductPoints: no session")
+            return
+        }
+
+        do {
+            struct InsertRow: Encodable {
+                let user_id: String
+                let category: String
+                let bin_type: String
+                let points: Int
+                let scanned_at: String
+            }
+
+            let now = ISO8601DateFormatter().string(from: Date())
+
+            try await supabase
+                .from("scan_history")
+                .insert(InsertRow(
+                    user_id: session.user.id.uuidString,
+                    category: "แลกคะแนน",
+                    bin_type: "แลกคะแนน",
+                    points: -amount,
+                    scanned_at: now
+                ))
+                .execute()
+
+            print("✅ deductPoints success: -\(amount)")
+
+            totalPoints -= amount
+            
+            await fetchLatestHistory(userId: session.user.id)
+
+        } catch {
+            print("❌ deductPoints error: \(error)")
         }
     }
 }

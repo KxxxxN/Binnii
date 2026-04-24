@@ -180,6 +180,33 @@ struct PageView: View {
         self.config = config
         self.availableHeight = availableHeight
     }
+    
+    private func applySortIfNeeded() {
+        switch selectedSort {
+        case "เก่าที่สุด":
+            items.sort { dateFrom($0.date) < dateFrom($1.date) }
+        case "คะแนนมาก → น้อย":
+            items.sort { cleanPoints($0.points) > cleanPoints($1.points) }
+        case "คะแนนน้อย → มาก":
+            items.sort { cleanPoints($0.points) < cleanPoints($1.points) }
+        default: // ใหม่ที่สุด
+            items.sort { dateFrom($0.date) > dateFrom($1.date) }
+        }
+    }
+
+    private func dateFrom(_ str: String) -> Date {
+        let f = DateFormatter()
+        f.dateFormat = "d/M/yyyy"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f.date(from: str) ?? Date.distantPast
+    }
+
+    private func cleanPoints(_ points: String) -> Int {
+        let isNegative = points.hasPrefix("-")
+        let clean = points.replacingOccurrences(of: "+", with: "").replacingOccurrences(of: "-", with: "")
+        let value = Int(clean) ?? 0
+        return isNegative ? -value : value
+    }
 
     var body: some View {
         let totalPages = max(1, Int(ceil(Double(items.count) / Double(itemsPerPage))))
@@ -227,7 +254,8 @@ struct PageView: View {
                                     title: item.title,
                                     date: item.date,
                                     points: item.points,
-                                    backgroundColor: item.color
+                                    backgroundColor: item.color,
+                                    config: config
                                 )
                             }
                         }
@@ -237,9 +265,9 @@ struct PageView: View {
                     .onTapGesture {
                         if isDropdownOpen {
                             withAnimation { isDropdownOpen = false }
+                            applySortIfNeeded()
                         }
                     }
-
                     if isDropdownOpen {
                         DropdownOverlay(
                             items: $items,

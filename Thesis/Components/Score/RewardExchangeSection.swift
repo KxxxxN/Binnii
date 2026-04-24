@@ -10,9 +10,10 @@ struct RewardExchangeSection: View {
     let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
     let totalPoints: Int
+    @ObservedObject var profileVM: UserProfileViewModel
     @AppStorage("isLoggedIn") var isLoggedIn = false
     
-    private var displayPoints: Int { isLoggedIn ? 500 : 0 }
+    private var displayPoints: Int { isLoggedIn ? totalPoints : 0 }
     private var canRedeem: Bool { isLoggedIn && totalPoints >= 500 }
     
     var body: some View {
@@ -26,7 +27,8 @@ struct RewardExchangeSection: View {
             }
 
             NavigationLink {
-                RewardExchangeView(hideTabBar: $hideTabBar)
+                RewardExchangeView(hideTabBar: $hideTabBar, totalPoints: totalPoints,
+                                   profileVM: profileVM)
                     .navigationBarBackButtonHidden(true)
             } label: {
                 HStack {

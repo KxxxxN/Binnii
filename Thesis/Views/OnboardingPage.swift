@@ -108,7 +108,7 @@ struct OnboardingView: View {
                             )
                         }
                     }
-                    .padding(.bottom, config.isIPad ? 22 : 22)
+                    .padding(.bottom, config.isIPad ? 5 : 22)
                 }
 
 

@@ -12,62 +12,90 @@ struct RewardExchangeView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
-    @StateObject private var vm = RewardExchangeViewModel()
+    let totalPoints: Int
+    let profileVM: UserProfileViewModel
 
+    @StateObject private var vm: RewardExchangeViewModel
+    
+    init(hideTabBar: Binding<Bool>, totalPoints: Int, profileVM: UserProfileViewModel) {
+        _hideTabBar = hideTabBar
+        self.totalPoints = totalPoints
+        self.profileVM = profileVM
+        _vm = StateObject(wrappedValue: RewardExchangeViewModel(totalPoints: totalPoints))
+    }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-
-            VStack(spacing: 0) {
-
-                // MARK: - Top Bar
-                ZStack {
-                    Color.mainColor
-
-                    HStack {
-                        XBackButtonWhite()
-
-                        Spacer()
-
-                        Text("แลกคะแนน")
-                            .font(.noto(config.titleFontSize, weight: .bold))
-                            .foregroundColor(.white)
-
-                        Spacer()
-
-                        Color.clear.frame(width: config.headerIconSize,
-                                          height: config.headerIconSize)
+            ZStack{
+                VStack(spacing: 0) {
+                    
+                    // MARK: - Top Bar
+                    ZStack {
+                        Color.mainColor
+                        
+                        HStack {
+                            XBackButtonWhite()
+                            
+                            Spacer()
+                            
+                            Text("แลกคะแนน")
+                                .font(.noto(config.titleFontSize, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Color.clear.frame(width: config.headerIconSize,
+                                              height: config.headerIconSize)
+                        }
+                        .padding(.top, config.headerTopPadding)
+                        .padding(.trailing, config.paddingMedium)
+                        .padding(.bottom, config.paddingMedium)
                     }
-                    .padding(.top, config.headerTopPadding)
-                    .padding(.trailing, config.paddingMedium)
-                    .padding(.bottom, config.paddingMedium)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: config.searchHeaderHeight)
+                    .clipShape(RoundedCorner(radius: config.bannerCornerRadius,
+                                             corners: [.bottomLeft, .bottomRight]))
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            
+                            PointsSummaryCard(pointsData: vm.pointsData, config: config)
+                                .padding(.top, config.rewardScrollTopPadding)
+                            
+                            ConditionsAndExchangeSection(
+                                conditionsList: vm.conditionsList,
+                                config: config,
+                                onConfirm: {
+                                    vm.confirmExchange()
+                                }
+                            )
+                            
+                        }
+                        .padding(.horizontal, config.paddingMedium)
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: config.searchHeaderHeight)
-                .clipShape(RoundedCorner(radius: config.bannerCornerRadius,
-                                         corners: [.bottomLeft, .bottomRight]))
-
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-
-                        PointsSummaryCard(pointsData: vm.pointsData, config: config)
-                                                    .padding(.top, config.rewardScrollTopPadding)
-
-                        ConditionsAndExchangeSection(
-                            conditionsList: vm.conditionsList,
-                            config: config,
-                            onConfirm: {
-                                vm.confirmExchange()
+                .edgesIgnoringSafeArea(.top)
+                .onAppear { hideTabBar = true }
+                .onDisappear { hideTabBar = false }
+                if vm.showConfirmAlert {
+                    ExchangeConfirmPopupView(
+                        isPresented: $vm.showConfirmAlert,
+                        onConfirm: {
+                            Task {
+                                await profileVM.deductPoints(amount: 10)
+                                vm.performExchange()
                             }
-                        )
-
+                        }
+                    )
+                }
+                if vm.showSuccessPopup {
+                    SuccessPopupView(message: "แลกคะแนนสำเร็จ") {
+                        vm.showSuccessPopup = false
+                        dismiss()
                     }
-                    .padding(.horizontal, config.paddingMedium)
                 }
             }
-            .edgesIgnoringSafeArea(.top)
-            .onAppear { hideTabBar = true }
-            .onDisappear { hideTabBar = false }
         }
     }
 }
@@ -117,14 +145,13 @@ struct ConditionsAndExchangeSection: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            Text("แลกรับชั่วโมงจิตอาสา 1 ชั่วโมง")
+            Text("แลกรับชั่วโมงจิตอาสา 5 ชั่วโมง")
                 .font(.noto(config.fontHeader, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, config.conditionsTitlePaddingH)
                 .padding(.vertical, config.conditionsTitlePaddingV)
 
-            // ส่วนของกรอบเงื่อนไข
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 5) {
                     Text("รายละเอียด และเงื่อนไข")

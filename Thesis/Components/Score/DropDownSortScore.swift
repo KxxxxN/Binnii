@@ -51,6 +51,9 @@ struct DropdownOverlay: View {
         .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
         .offset(y: 45)
         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .top)))
+//        .onAppear {
+//            sortItems()
+//        }
     }
     
     private func date(from dateString: String) -> Date? {

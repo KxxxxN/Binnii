@@ -11,6 +11,10 @@ struct HistorySection: View {
     @Binding var hideTabBar: Bool
     let items: [HistoryItem]
     
+    private func cardColor(for points: String) -> Color {
+        points.hasPrefix("-") ? Color.dangerColor : Color.secondColor
+    }
+    
     var body: some View {
         VStack(spacing: config.rewardVStackSpacing) {
             SectionHeader(
@@ -79,7 +83,8 @@ struct HistorySection: View {
                         .padding(.horizontal, config.rewardCardPadding)
                         .frame(maxWidth: .infinity)
                         .frame(height: config.rewardCardHeight)
-                        .background(Color.secondColor)
+//                        .background(Color.secondColor)
+                        .background(cardColor(for: item.points))
                         .cornerRadius(config.bannerCornerRadius)
                     }
                 }
