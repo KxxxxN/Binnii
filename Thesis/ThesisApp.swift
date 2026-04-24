@@ -18,7 +18,7 @@ struct ThesisApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(authViewModel)
-                .onOpenURL { url in          // ✅ เพิ่มตรงนี้
+                .onOpenURL { url in 
                     Task {
                         await authViewModel.handleOAuthCallback(url: url)
                     }

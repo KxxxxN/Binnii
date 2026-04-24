@@ -13,15 +13,15 @@ struct MainAppView: View {
     @Binding var tabIndex: Int
     @StateObject private var profileVM = UserProfileViewModel()
     @StateObject private var wasteVM = FrequentWasteViewModel()
-
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
-
+            
             VStack(spacing: 0) {
-                // --- Header Section ---
                 VStack(alignment: .leading, spacing: 4) {
                     Image("logo_white")
                         .resizable()
@@ -78,9 +78,7 @@ struct MainAppView: View {
                 .padding(.leading, config.mainHorizontalPadding)
                 .background(Color.mainColor)
                 .clipShape(RoundedCorner(radius: 20, corners: [.bottomLeft, .bottomRight]))
-
                 
-                // --- Scrollable Content ---
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: config.mainContentSpacing) {
                         HistorySection(
@@ -89,24 +87,28 @@ struct MainAppView: View {
                             items: profileVM.latestHistory.map { [$0] } ?? []
                         )
                         
-                        RewardExchangeSection(config: config,hideTabBar: $hideTabBar)
+                        RewardExchangeSection(config: config,
+                                              hideTabBar: $hideTabBar,
+                                              totalPoints: profileVM.totalPoints,
+                                              profileVM: profileVM
+                                              )
                         
                         FrequentWasteSection(
                             config: config,
                             hideTabBar: $hideTabBar,
                             items: wasteVM.wasteItems.isEmpty
-                                ? [
-                                    RecyclableItem(imageName: "Bottle",     title: "ขวดพลาสติก", countNumber: 0),
-                                    RecyclableItem(imageName: "Plasticcup", title: "แก้วพลาสติก",  countNumber: 0),
-                                    RecyclableItem(imageName: "Can",        title: "กระป๋อง",    countNumber: 0)
-                                  ]
-                                : wasteVM.wasteItems.prefix(3).map {
-                                    RecyclableItem(
-                                        imageName: $0.imageName,
-                                        title: $0.title,
-                                        countNumber: Int($0.count.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
-                                    )
-                                  }
+                            ? [
+                                RecyclableItem(imageName: "Bottle",     title: "ขวดพลาสติก", countNumber: 0),
+                                RecyclableItem(imageName: "Plasticcup", title: "แก้วพลาสติก",  countNumber: 0),
+                                RecyclableItem(imageName: "Can",        title: "กระป๋อง",    countNumber: 0)
+                            ]
+                            :wasteVM.wasteItems.prefix(3).map {
+                                RecyclableItem(
+                                    imageName: $0.imageName,
+                                    title: $0.title,
+                                    countNumber: Int($0.count.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
+                                )
+                            }
                         )
                         
                         WasteSeparationGuideSection(
@@ -126,7 +128,9 @@ struct MainAppView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
-            .task {
+            .task(id: isLoggedIn) {
+                profileVM.clearProfile()
+                guard isLoggedIn else { return }
                 do {
                     let session = try await supabase.auth.session
                     await profileVM.fetchProfile(userId: session.user.id)
@@ -135,15 +139,17 @@ struct MainAppView: View {
                     print("❌ No session: \(error)")
                 }
             }
+            .onChange(of: isLoggedIn) {
+                if !isLoggedIn {
+                    profileVM.clearProfile()
+                }
+            }
         }
-        .ignoresSafeArea(.keyboard)
     }
 }
-
-// --- Helper Views ---
-
+    
 struct SectionHeader<Destination: View>: View {
-    let config: ResponsiveConfig // รับ Config เข้ามา
+    let config: ResponsiveConfig
     let title: String
     let destinationView: Destination
     var onTapSeeAll: (() -> Void)? = nil
@@ -153,9 +159,9 @@ struct SectionHeader<Destination: View>: View {
             Text(title)
                 .font(.noto(config.sectionHeaderTitleFont, weight: .bold))
                 .foregroundColor(.black)
-
+            
             Spacer()
-
+            
             if let action = onTapSeeAll {
                 Button(action: action) {
                     HStack(spacing: 4) {
@@ -182,7 +188,7 @@ struct SectionHeader<Destination: View>: View {
         }
     }
 }
-
+    
 struct FrequentWasteSection: View {
     let config: ResponsiveConfig
     @Binding var hideTabBar: Bool
@@ -203,7 +209,7 @@ struct FrequentWasteSection: View {
         }
     }
 }
-
+    
 struct RecyclableItemCard: View {
     let config: ResponsiveConfig
     let item: RecyclableItem
@@ -215,7 +221,7 @@ struct RecyclableItemCard: View {
             Image(item.imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(height: config.itemCardImageHeight)
+                .frame(height: config.mainItemCardImageHeight)
             
             VStack(spacing: 2) {
                 Text(item.title)
@@ -237,7 +243,7 @@ struct RecyclableItemCard: View {
         .cornerRadius(20)
     }
 }
-
+    
 struct WasteSeparationGuideSection: View {
     let config: ResponsiveConfig
     @Binding var currentIndex: Int
@@ -245,9 +251,9 @@ struct WasteSeparationGuideSection: View {
     @Binding var tabIndex: Int
     
     let totalPages = 3
-    let virtualPages = 300  // infinite scroll
+    let virtualPages = 300
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
-
+    
     var body: some View {
         VStack(spacing: 7) {
             SectionHeader(
@@ -278,7 +284,7 @@ struct WasteSeparationGuideSection: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .aspectRatio(config.bannerAspectRatio, contentMode: .fit)
-
+                
                 HStack(spacing: 6) {
                     ForEach(0..<totalPages, id: \.self) { index in
                         Circle()
@@ -293,26 +299,6 @@ struct WasteSeparationGuideSection: View {
         .onAppear {
             currentIndex = 0
         }
-    }
-}
-
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = 20
-    var corners: UIRectCorner = [.bottomLeft, .bottomRight]
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 

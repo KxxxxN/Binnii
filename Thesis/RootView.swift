@@ -9,15 +9,20 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage("isLoggedIn") var isLoggedIn = false
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding = false
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var shouldHideTabBar = false
-
+    @StateObject private var userProfileViewModel = UserProfileViewModel()
+    
     var body: some View {
-        if isLoggedIn || authViewModel.isAuthenticated {  // ✅ เช็คทั้งคู่
-            ContentView(hideTabBar: $shouldHideTabBar)
+        if !hasSeenOnboarding {
+            OnboardingView()
         } else {
-            LoginView()
-                .environmentObject(authViewModel)  // ✅ ส่งต่อให้ LoginView
+            ContentView(hideTabBar: $shouldHideTabBar)
+                .environmentObject(authViewModel)
+                .environmentObject(userProfileViewModel)
         }
     }
 }
+
+

@@ -15,15 +15,12 @@ struct ValidationHelper {
     }
     
     // MARK: - Name & Lastname Validation
-    /// ตรวจสอบว่าเป็นภาษาไทยล้วน หรือ ภาษาอังกฤษล้วน (ห้ามผสม)
     static func isNameValid(name: String) -> Bool {
         if name.isEmpty { return true }
         
-        // ตรวจสอบภาษาไทย (รวมช่องว่างและขีดกลาง)
         let thaiRegex = "^[\\p{Thai}\\s\\-]+$"
         let isThaiOnly = NSPredicate(format: "SELF MATCHES %@", thaiRegex).evaluate(with: name)
-        
-        // ตรวจสอบภาษาอังกฤษ (รวมช่องว่างและขีดกลาง)
+
         let englishRegex = "^[a-zA-Z\\s\\-]+$"
         let isEnglishOnly = NSPredicate(format: "SELF MATCHES %@", englishRegex).evaluate(with: name)
         
@@ -43,13 +40,11 @@ struct ValidationHelper {
     }
     
     // MARK: - Password Validation
-    /// ตรวจสอบความแข็งแรงของรหัสผ่าน (8 ตัวอักษรขึ้นไป, พิมพ์ใหญ่, พิมพ์เล็ก, ตัวเลข, อักขระพิเศษ)
     static func isPasswordValid(_ password: String) -> Bool {
         let regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%&*_-]).{8,}$"
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: password)
     }
     
-    // ฟังก์ชันย่อยสำหรับเช็คเงื่อนไขแต่ละข้อ (เผื่อใช้แสดงหน้าจอ Checklist)
     static func hasMinimumLength(_ password: String) -> Bool {
         return password.count >= 8
     }
