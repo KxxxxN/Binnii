@@ -113,6 +113,7 @@ struct CameraPreview: UIViewRepresentable {
         
         if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
             previewLayer.frame = uiView.bounds
+            
         }
         
         let session = context.coordinator.session
@@ -139,8 +140,13 @@ struct CameraPreview: UIViewRepresentable {
                 }
             }
         } else {
-            if session.isRunning { session.stopRunning() }
+            if session.isRunning {
+                DispatchQueue.global(qos: .userInitiated).async {
+                    session.stopRunning()
+                }
+            }
         }
+
         
         if shouldCapture && session.isRunning {
             let settings = AVCapturePhotoSettings()

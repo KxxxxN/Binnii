@@ -24,7 +24,7 @@ struct MainTabView: View {
             HStack {
                 tabButton(image: "Home2", selectedImage: "Home1", label: "หน้าหลัก", indexValue: 0)
                 Spacer(minLength: 15)
-                tabButton(image: "Scan2", selectedImage: "Scan1", label: "แสกน", indexValue: 1)
+                tabButton(image: "Scan2", selectedImage: "Scan1", label: "สแกน", indexValue: 1)
                 Spacer(minLength: 15)
                 tabButton(image: "Book2", selectedImage: "Book1", label: "ความรู้ทั่วไป", indexValue: 2)
                 Spacer(minLength: 15)

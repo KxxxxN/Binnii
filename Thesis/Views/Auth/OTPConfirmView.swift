@@ -103,10 +103,7 @@ struct OTPConfirmView: View {
                     viewModel.startCooldown()
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToChangePW) {
-                    ChangePasswordView()
-                }
-                .navigationDestination(isPresented: $viewModel.navigateToNewPW) {
-                    NewPasswordView()
+                    ChangePasswordView(source: source == .confirmEmail ? .profile : .forgotPassword)
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToProfile) {
                     ProfileView()

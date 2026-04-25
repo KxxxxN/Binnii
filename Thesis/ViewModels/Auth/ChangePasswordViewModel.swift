@@ -10,23 +10,29 @@ import Foundation
 import SwiftUI
 import Supabase
 
+enum ChangePasswordSource {
+    case forgotPassword
+    case profile
+}
+
 @MainActor
 class ChangePasswordViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
-        
+    
     @Published var isPasswordVisible: Bool = false
     @Published var isConfirmPasswordVisible: Bool = false
     @Published var isChangePasswordSubmitted: Bool = false
-        
+    
     @Published var isPasswordValid: Bool = true
     @Published var isConfirmPasswordValid: Bool = true
     
     @Published var showSuccessPopup: Bool = false
     @Published var showErrorPopup: Bool = false
     @Published var passwordErrorMessage: String = ""
-        
+    
     @Published var navigateToLogin: Bool = false
+    @Published var navigateToProfile: Bool = false
     @AppStorage("isLoggedIn") var isLoggedIn = false
     
     // MARK: - Password Checklist Helpers (เรียกใช้จาก Helper)
@@ -51,9 +57,9 @@ class ChangePasswordViewModel: ObservableObject {
     // MARK: - Action & Confirmation Validation
     func validateFormChangePassword() -> Bool {
         isChangePasswordSubmitted = true
-
+        
         isPasswordValid = !ValidationHelper.isEmpty(password) && ValidationHelper.isPasswordValid(password)
-
+        
         if ValidationHelper.isEmpty(confirmPassword) {
             isConfirmPasswordValid = false
         } else {
@@ -70,15 +76,23 @@ class ChangePasswordViewModel: ObservableObject {
         }
     }
     
-    func changePassword() async {
+    func changePassword(source: ChangePasswordSource) async {
         if validateFormChangePassword() {
             do {
                 try await supabase.auth.update(
-                    user: UserAttributes(password: password)
+                    user: UserAttributes(
+                        password: password,
+                        data: ["has_password": .bool(true)]
+                    )
                 )
                 
-                try await supabase.auth.signOut()
-                self.isLoggedIn = false
+                switch source {
+                case .forgotPassword:
+                    try await supabase.auth.signOut()
+                    isLoggedIn = false
+                case .profile:
+                    break
+                }
                 
                 withAnimation {
                     self.showSuccessPopup = true
@@ -88,13 +102,11 @@ class ChangePasswordViewModel: ObservableObject {
                 confirmPassword = ""
                 isChangePasswordSubmitted = false
                 
-            } catch {
-                print("Change Password Error: \(error.localizedDescription)")
-                    
-                    if error.localizedDescription.contains("New password should be different from the old password") {
-                        self.isPasswordValid = false
-                        self.isConfirmPasswordValid = false
-                    } else {
+            } catch  {
+                if error.localizedDescription.contains("New password should be different") {
+                    self.isPasswordValid = false
+                    self.isConfirmPasswordValid = false
+                } else {
                     self.showErrorPopup = true
                 }
             }

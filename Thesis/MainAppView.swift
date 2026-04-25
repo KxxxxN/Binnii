@@ -91,7 +91,7 @@ struct MainAppView: View {
                                               hideTabBar: $hideTabBar,
                                               totalPoints: profileVM.totalPoints,
                                               profileVM: profileVM
-                                              )
+                        )
                         
                         FrequentWasteSection(
                             config: config,
@@ -129,19 +129,30 @@ struct MainAppView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
             .task(id: isLoggedIn) {
-                profileVM.clearProfile()
                 guard isLoggedIn else { return }
+                
                 do {
                     let session = try await supabase.auth.session
-                    await profileVM.fetchProfile(userId: session.user.id)
-                    await wasteVM.fetchWasteCounts()
+                    
+                    async let profile: Void = profileVM.fetchProfile(userId: session.user.id)
+                    async let waste: Void = wasteVM.fetchWasteCounts()
+                    
+                    _ = await (profile, waste)
                 } catch {
                     print("❌ No session: \(error)")
                 }
             }
-            .onChange(of: isLoggedIn) {
-                if !isLoggedIn {
-                    profileVM.clearProfile()
+            .onReceive(NotificationCenter.default.publisher(for: .didFinishScan)) { _ in
+                guard isLoggedIn else { return }
+                Task {
+                    do {
+                        let session = try await supabase.auth.session
+                        async let profile: Void = profileVM.fetchProfile(userId: session.user.id)
+                        async let waste: Void = wasteVM.fetchWasteCounts()
+                        _ = await (profile, waste)
+                    } catch {
+                        print("❌ No session: \(error)")
+                    }
                 }
             }
         }
