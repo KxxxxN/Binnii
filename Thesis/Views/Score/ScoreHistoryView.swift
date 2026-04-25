@@ -122,11 +122,11 @@ struct ScoreHistoryView: View {
                 }
                 await historyVM.fetchHistory()
             }
-            .onChange(of: isLoggedIn) {
-                if !isLoggedIn {
-                    profileVM.clearProfile()
-                }
-            }
+//            .onChange(of: isLoggedIn) {
+//                if !isLoggedIn {
+//                    profileVM.clearProfile()
+//                }
+//            }
         }
     }
 }
