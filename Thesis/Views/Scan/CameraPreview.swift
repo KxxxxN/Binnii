@@ -113,6 +113,11 @@ struct CameraPreview: UIViewRepresentable {
         
         if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
             previewLayer.frame = uiView.bounds
+            
+            if let connection = previewLayer.connection,
+               connection.isVideoRotationAngleSupported(0) {
+                connection.videoRotationAngle = 0
+            }
         }
         
         let session = context.coordinator.session

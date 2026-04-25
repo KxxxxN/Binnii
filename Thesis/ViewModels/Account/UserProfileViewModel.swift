@@ -53,8 +53,10 @@ class UserProfileViewModel: ObservableObject{
             let lastName  = meta["last_name"]?.stringValue ?? ""
             fullName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
 
-            if let avatarURLString = meta["avatar_url"]?.stringValue,
-               let url = URL(string: avatarURLString) {
+            let fileName = "\(user.id).jpg"
+            if let url = try? supabase.storage
+                .from("avatars")
+                .getPublicURL(path: fileName) {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let image = UIImage(data: data) {
                     self.profileImage = image
