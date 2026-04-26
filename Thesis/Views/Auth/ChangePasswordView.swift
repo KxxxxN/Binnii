@@ -11,6 +11,7 @@ import SwiftUI
 struct ChangePasswordView: View {
     @StateObject private var viewModel = ChangePasswordViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    var source: ChangePasswordSource = .forgotPassword
     
     var body: some View {
         GeometryReader { geo in
@@ -72,7 +73,7 @@ struct ChangePasswordView: View {
                         title: "ยืนยัน",
                         action: {
                             Task {
-                                await viewModel.changePassword()
+                                await viewModel.changePassword(source: source)
                             }
                         },
                         width: config.isIPad ? 220 : 155,
@@ -89,9 +90,10 @@ struct ChangePasswordView: View {
                 // MARK: - Popups
                 if viewModel.showSuccessPopup {
                     SuccessPopupView(message: "เปลี่ยนรหัสผ่านสำเร็จ") {
-                        withAnimation {
-                            viewModel.showSuccessPopup = false
-                            viewModel.navigateToLogin = true
+                        viewModel.showSuccessPopup = false
+                        switch source {
+                        case .forgotPassword: viewModel.navigateToLogin = true
+                        case .profile:        viewModel.navigateToProfile = true
                         }
                     }
                 }
@@ -112,6 +114,9 @@ struct ChangePasswordView: View {
             .navigationBarBackButtonHidden(true)
             .navigationDestination(isPresented: $viewModel.navigateToLogin) {
                 LoginView()
+            }
+            .navigationDestination(isPresented: $viewModel.navigateToProfile) {
+                ProfileView()
             }
         }
     }

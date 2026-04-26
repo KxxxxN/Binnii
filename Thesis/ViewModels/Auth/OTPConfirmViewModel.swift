@@ -23,7 +23,6 @@ class OTPConfirmViewModel: ObservableObject {
     @Published var showIncorrectError: Bool = false
     
     @Published var navigateToChangePW: Bool = false
-    @Published var navigateToNewPW: Bool = false
     
     @Published var navigateToProfile: Bool = false
     
@@ -173,8 +172,7 @@ class OTPConfirmViewModel: ObservableObject {
             // ✅ ถ้าสำเร็จ
             switch source {
             case .forgotPassword:  navigateToChangePW = true
-            case .confirmEmail:  navigateToNewPW = true
-//            case .confirmEmail:    NotificationCenter.default.post(name: .navigateToNewPassword, object: nil)
+            case .confirmEmail:  navigateToChangePW = true
             case .changeEmail:
                 showSuccessPopup = true
                 emailChangeSuccess = true

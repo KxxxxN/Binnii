@@ -38,6 +38,7 @@ class ProfileViewModel: ObservableObject {
     
     @Published var profileImage: UIImage? = nil
     @Published var navigateToAccount: Bool = false
+    @Published var isOAuthUser: Bool = false
     
     init() {
         Task { await loadProfile() }
@@ -48,15 +49,18 @@ class ProfileViewModel: ObservableObject {
             let user = try await supabase.auth.session.user
             let meta = user.userMetadata
             
-            print("avatar_url: \(meta["avatar_url"]?.stringValue ?? "nil")")
-            
             self.email = user.email ?? ""
             self.name = meta["first_name"]?.stringValue ?? ""
             self.lastName = meta["last_name"]?.stringValue ?? ""
             self.phoneNumber = meta["phone"]?.stringValue ?? ""
             
-            if let avatarURLString = meta["avatar_url"]?.stringValue,
-               let url = URL(string: avatarURLString) {
+            let identities = user.identities ?? []
+            let hasEmailIdentity = identities.contains { $0.provider == "email" }
+            let hasPassword = meta["has_password"]?.boolValue ?? false
+            self.isOAuthUser = !hasEmailIdentity && !hasPassword
+            
+            let fileName = "\(user.id).jpg"
+            if let url = try? supabase.storage.from("avatars").getPublicURL(path: fileName) {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let image = UIImage(data: data) {
                     self.profileImage = image

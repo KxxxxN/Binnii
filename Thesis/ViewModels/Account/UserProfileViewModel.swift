@@ -33,17 +33,12 @@ class UserProfileViewModel: ObservableObject{
         isLoading = true
         defer { isLoading = false }
         
-        await fetchName()
-        await fetchTotalPoints(userId: userId)
-        await fetchLatestHistory(userId: userId)
+        async let name: Void = fetchName()
+        async let points: Void = fetchTotalPoints(userId: userId)
+        async let history: Void = fetchLatestHistory(userId: userId)
+        _ = await (name, points, history)
     }
     
-    func clearProfile() {
-        fullName = "ชื่อ - นามสกุล"
-        totalPoints = 0
-        profileImage = nil
-        latestHistory = nil
-    }
     private func fetchName() async {
         do {
             let user = try await supabase.auth.session.user
@@ -53,8 +48,10 @@ class UserProfileViewModel: ObservableObject{
             let lastName  = meta["last_name"]?.stringValue ?? ""
             fullName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
 
-            if let avatarURLString = meta["avatar_url"]?.stringValue,
-               let url = URL(string: avatarURLString) {
+            let fileName = "\(user.id).jpg"
+            if let url = try? supabase.storage
+                .from("avatars")
+                .getPublicURL(path: fileName) {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let image = UIImage(data: data) {
                     self.profileImage = image

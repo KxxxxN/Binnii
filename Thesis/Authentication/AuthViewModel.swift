@@ -17,6 +17,8 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
+    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+    
     // MARK: - Session
     func getInitialSession() async {
         do {
@@ -99,7 +101,36 @@ class AuthViewModel: ObservableObject {
             let session = try await supabase.auth.session(from: url)
             self.session = session
             self.isAuthenticated = true
-            print("X Sign in Success! Email: \(session.user.email ?? "-")")
+            self.isLoggedIn = false
+            
+            let meta = session.user.userMetadata
+            
+            // เช็คว่าเคยตั้งชื่อเองไว้แล้วไหม
+            let existingFirstName = meta["first_name"]?.stringValue ?? ""
+            let existingLastName  = meta["last_name"]?.stringValue ?? ""
+            
+            if existingFirstName.isEmpty && existingLastName.isEmpty {
+                // ยังไม่มีชื่อ → เอาจาก Google
+                let fullName = meta["full_name"]?.stringValue ?? ""
+                let parts = fullName.split(separator: " ", maxSplits: 1)
+                let firstName = parts.first.map(String.init) ?? ""
+                let lastName  = parts.last.map(String.init) ?? ""
+                
+                try await supabase.auth.update(
+                    user: UserAttributes(data: [
+                        "first_name": .string(firstName),
+                        "last_name":  .string(lastName)
+                    ])
+                )
+                print("✅ Name saved from Google: \(firstName) \(lastName)")
+            } else {
+                // มีชื่อที่แก้ไขแล้ว → ไม่ต้อง overwrite
+                print("✅ Keep existing name: \(existingFirstName) \(existingLastName)")
+            }
+            
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            self.isLoggedIn = true
+            
         } catch {
             print("OAuth Callback Failed: \(error.localizedDescription)")
         }

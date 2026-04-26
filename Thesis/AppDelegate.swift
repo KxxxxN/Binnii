@@ -11,6 +11,7 @@ import UserNotifications
 class AppDelegate: NSObject, UIApplicationDelegate {
 
     static var orientationLock = UIInterfaceOrientationMask.all
+//    static var orientationLock = UIInterfaceOrientationMask.portrait
 
     func application(
         _ application: UIApplication,

@@ -94,6 +94,14 @@ struct QRScanView: View {
     private func headerView(config: ResponsiveConfig) -> some View {
         HStack {
             XBackButtonBlack(index: $index)
+                .simultaneousGesture(TapGesture().onEnded {
+                    viewModel.isCameraActive = false
+                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.8) {
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: .didFinishScan, object: nil)
+                        }
+                    }
+                })
             Color.clear.frame(width: 10, height: 10)
             Spacer()
             Text("สแกนคิวอาร์โค้ดถังขยะ")

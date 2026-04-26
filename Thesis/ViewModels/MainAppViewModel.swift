@@ -37,19 +37,19 @@ final class MainAppViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-    func onLoginStateChanged(isLoggedIn: Bool) async {
-        profileVM.clearProfile()
-        guard isLoggedIn else { return }
-        do {
-            let session = try await supabase.auth.session
-            await profileVM.fetchProfile(userId: session.user.id)
-            await wasteVM.fetchWasteCounts()
-        } catch {
-            print("❌ No session: \(error)")
-        }
-    }
-
-    func onLogout() {
-        profileVM.clearProfile()
-    }
+//    func onLoginStateChanged(isLoggedIn: Bool) async {
+//        profileVM.clearProfile()
+//        guard isLoggedIn else { return }
+//        do {
+//            let session = try await supabase.auth.session
+//            await profileVM.fetchProfile(userId: session.user.id)
+//            await wasteVM.fetchWasteCounts()
+//        } catch {
+//            print("❌ No session: \(error)")
+//        }
+//    }
+//
+//    func onLogout() {
+//        profileVM.clearProfile()
+//    }
 }

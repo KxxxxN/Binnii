@@ -12,4 +12,5 @@ extension Notification.Name {
     static let navigateToNewPassword = Notification.Name("navigateToNewPassword")
     static let popToProfile = Notification.Name("popToProfile")
     static let popToLogin = Notification.Name("popToLogin")
+    static let didFinishScan = Notification.Name("didFinishScan")
 }

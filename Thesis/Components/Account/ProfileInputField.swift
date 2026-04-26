@@ -38,7 +38,7 @@ struct ProfileInputField: View {
                                 onEditingChanged()
                             }
                     } else {
-                        Text(text.isEmpty ? "ไม่ได้ระบุ" : text)
+                        Text(text.isEmpty ? "กรุณาเพิ่มข้อมูล" : text)
                             .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
                     }
@@ -121,11 +121,11 @@ struct ProfileEmailField: View {
                     }
                 }
             }
-            
+            .frame(maxWidth: .infinity, alignment: .center)
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
-        .padding(.horizontal, config.paddingMedium)
+        .frame(width: config.isIPad ? 545 : 345)
         .frame(maxWidth: .infinity)
     }
 }
@@ -182,7 +182,7 @@ struct ProfilePasswordField: View {
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
         }
-        .padding(.horizontal, config.paddingMedium)
+        .frame(width: config.isIPad ? 545 : 345)
         .frame(maxWidth: .infinity)
     }
 }

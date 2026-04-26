@@ -146,10 +146,49 @@ struct ProfileView: View {
                                 )
                                 .onChange(of: viewModel.phoneNumber) { _, _ in viewModel.clearError(for: "phone") }
                                 
-                                ProfilePasswordField(title: "รหัสผ่าน", password: viewModel.password, isEditing: $viewModel.isEditing, currentEmail: viewModel.email, config: config)
+                                if viewModel.isOAuthUser {
+                                    VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
+                                        Text("รหัสผ่าน")
+                                            .font(.noto(config.fontTitle, weight: .bold))
+                                            .foregroundColor(.black)
+                                            .padding(.leading, 6)
+                                        
+                                        NavigationLink(destination: ConfirmEmailView(currentEmail: viewModel.email)) {
+                                            HStack {
+                                                Text("กรุณาตั้งรหัสผ่าน")
+                                                    .font(.noto(config.accountRowFontSize, weight: .medium))
+                                                    .foregroundColor(Color.dangerColor)
+                                                Spacer()
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: config.isIPad ? 24 : 18))
+                                                    .foregroundColor(Color.mainColor)
+                                            }
+                                            .padding(.horizontal, config.paddingMedium)
+                                            .frame(width: config.isIPad ? 545 : 345, height: config.isIPad ? 60 : 49)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: config.bannerCornerRadius)
+                                                    .stroke(Color.placeholderColor, lineWidth: config.isIPad ? 3 : 2)
+                                            )
+                                            .background(Color.backgroundColor)
+                                        }
+                                        
+                                        Color.clear
+                                            .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
+                                    }
+                                    .padding(.horizontal, config.paddingMedium)
+                                    .frame(maxWidth: .infinity)
+                                } else {
+                                    ProfilePasswordField(
+                                        title: "รหัสผ่าน",
+                                        password: viewModel.password,
+                                        isEditing: $viewModel.isEditing,
+                                        currentEmail: viewModel.email,
+                                        config: config
+                                    )
+                                }
                             }
-                            .frame(maxWidth: config.profileMaxWidth, alignment: .leading)
-                            .padding(.leading, config.paddingStandard)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal)
                             
                             Spacer(minLength: 40)
                             
@@ -175,16 +214,21 @@ struct ProfileView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
+                    .scrollDismissesKeyboard(.interactively)
+                    .onTapGesture {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
                 }
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .frame(maxWidth: .infinity, alignment: .center)
+//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(Color.backgroundColor)
-                .ignoresSafeArea()
+                .ignoresSafeArea(edges: .top)
                 .blur(radius: (viewModel.showSuccessPopup || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessPopup || viewModel.showErrorPopup)
                 .onAppear {
                     emailChangeSuccess = false
                     viewModel.isEditing = false
+                    Task { await viewModel.loadProfile() }
                     NotificationCenter.default.post(name: .popToProfile, object: nil)
                 }
                 
