@@ -16,6 +16,9 @@ struct FrequentWasteView: View {
     @State private var currentPage = 1
     @StateObject private var vm = FrequentWasteViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     let itemsPerPage = 6
     
     var sortedWasteItems: [FrequentWasteItem] { vm.wasteItems }
@@ -39,7 +42,7 @@ struct FrequentWasteView: View {
                 
                 VStack(spacing: 0) {
                     
-                    WasteHeaderView(title: "ขยะที่แยกทั้งหมด", config: config)
+                    WasteHeaderView(title: L("ขยะที่แยกทั้งหมด"), config: config)
                     
                     if vm.isLoading {
                         Spacer()

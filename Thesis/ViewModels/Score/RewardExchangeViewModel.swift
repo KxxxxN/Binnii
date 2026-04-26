@@ -28,19 +28,19 @@ class RewardExchangeViewModel: ObservableObject {
         let remaining = currentPoints - exchangeCost
 
         pointsData = [
-            ("คะแนนทั้งหมด :",    "\(currentPoints)",     false),
-            ("ต้องการแลกคะแนน :", "\(exchangeCost)",       true),
-            ("คะแนนคงเหลือ :",    "\(max(remaining, 0))", false)
+            ("total_points", "\(currentPoints)", false),
+            ("redeem_points", "\(exchangeCost)", true),
+            ("remaining_points", "\(max(remaining, 0))", false)
         ]
 
         conditionsList = [
-            "ผู้ใช้จะได้รับ คะแนนจากการแยกขยะถูกประเภทผ่านระบบสแกนขยะ",
-            "คะแนนสามารถใช้ แลกเป็นชั่วโมงจิตอาสาของมหาวิทยาลัย",
-            "ระบบจะตรวจสอบข้อมูลการแยกขยะจากบัญชีผู้ใช้ก่อนยืนยันชั่วโมง",
-            "ชั่วโมงจิตอาสาที่แลกแล้ว ไม่สามารถยกเลิกหรือโอนให้ผู้อื่นได้",
-            "เฉพาะนักศึกษาของมหาวิทยาลัยเท่านั้นที่สามารถแลกได้",
-            "การโกงระบบหรือส่งข้อมูลเท็จ จะถูกตัดสิทธิ์ทันที",
-            "มหาวิทยาลัยขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไขโดยไม่ต้องแจ้งล่วงหน้า"
+            "condition_1",
+            "condition_2",
+            "condition_3",
+            "condition_4",
+            "condition_5",
+            "condition_6",
+            "condition_7"
         ]
     }
 

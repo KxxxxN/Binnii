@@ -14,6 +14,7 @@ struct WasteDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
+    
     var category: String
     var capturedImage: UIImage?
     var showBarcodeImage: Bool = false
@@ -23,30 +24,38 @@ struct WasteDetailView: View {
     
     @StateObject private var viewModel = WasteDetailViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
                 
-                VStack(spacing: 0) {
-                    headerView(config: config)
-                    
-                    // MARK: - Content
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            photoView
-                            WasteDetailContentView(category: category, config: config, showDate: true)
-                        }
-                        .frame(minHeight: 750)
+            VStack(spacing: 0) {
+                headerView(config: config)
+                
+                ScrollView {
+                    VStack(spacing: 0) {
+                        photoView
+                        
+                        WasteDetailContentView(
+                            category: category,
+                            config: config,
+                            showDate: true
+                        )
                     }
-                    .edgesIgnoringSafeArea(.bottom)
+                    .frame(minHeight: 750)
                 }
-                .background(Color.backgroundColor)
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea(.bottom)
+            }
+            .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .navigationBarHidden(true)
             .onAppear { hideTabBar = true }
+            
             .overlay {
                 if viewModel.showSaveSuccess {
-                    SuccessPopupView(message: "บันทึกสำเร็จ") {
+                    SuccessPopupView(message: L("บันทึกสำเร็จ")) {
                         if let onSaveSuccess {
                             var transaction = Transaction()
                             transaction.disablesAnimations = true
@@ -61,30 +70,40 @@ struct WasteDetailView: View {
                         }
                     }
                 }
+                
                 if viewModel.showSaveError {
-                    ErrorPopupView(title: "บันทึกไม่สำเร็จ") {
+                    ErrorPopupView(title: L("บันทึกไม่สำเร็จ")) {
                         viewModel.showSaveError = false
                     }
                 }
             }
         }
     }
+
+    // MARK: - Header
     private func headerView(config: ResponsiveConfig) -> some View {
         ZStack {
-            Text(title)
+            Text(L(title))
                 .font(.noto(25, weight: .bold))
                 .foregroundColor(.black)
 
             HStack {
                 BackButton()
                 Spacer()
+                
                 Button {
-                    Task { await viewModel.save(category: category, scanMethod: scanMethod, capturedImage: capturedImage) }
+                    Task {
+                        await viewModel.save(
+                            category: category,
+                            scanMethod: scanMethod,
+                            capturedImage: capturedImage
+                        )
+                    }
                 } label: {
                     if viewModel.isSaving {
                         ProgressView().padding(.trailing, 25)
                     } else {
-                        Text("บันทึก")
+                        Text(L("บันทึก")) 
                             .font(.noto(config.fontBody, weight: .medium))
                             .foregroundColor(.mainColor)
                             .padding(.trailing, 25)
@@ -97,6 +116,8 @@ struct WasteDetailView: View {
         .padding(.bottom, config.bottomTitlePadding)
         .frame(maxWidth: .infinity)
     }
+
+    // MARK: - Photo
     private var photoView: some View {
         Group {
             if let uiImage = capturedImage {

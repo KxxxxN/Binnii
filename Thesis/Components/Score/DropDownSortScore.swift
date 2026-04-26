@@ -11,13 +11,25 @@ struct DropdownOverlay: View {
     @Binding var items: [ScoreItem]
     @Binding var currentPage: Int
     @Binding var isOpen: Bool
-    @Binding var selectedSort: String
-    
-    let menuItems = [
-        "ใหม่ที่สุด", "เก่าที่สุด",
-        "คะแนนมาก → น้อย", "คะแนนน้อย → มาก"
-    ]
-    
+    @Binding var selectedSort: SortType
+
+    init(
+        items: Binding<[ScoreItem]>,
+        currentPage: Binding<Int>,
+        isOpen: Binding<Bool>,
+        selectedSort: Binding<SortType>
+    ) {
+        self._items = items
+        self._currentPage = currentPage
+        self._isOpen = isOpen
+        self._selectedSort = selectedSort
+    }
+
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
+    private var menuItems: [SortType] = [.newest, .oldest, .highToLow, .lowToHigh]
+
     var body: some View {
         VStack(spacing: 0) {
             ForEach(menuItems, id: \.self) { item in
@@ -27,7 +39,7 @@ struct DropdownOverlay: View {
                     withAnimation { isOpen = false }
                 } label: {
                     HStack {
-                        Text(item)
+                        Text(item.title(L))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(
                                 item == selectedSort ? .white : .mainColor
@@ -51,9 +63,6 @@ struct DropdownOverlay: View {
         .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
         .offset(y: 45)
         .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .top)))
-//        .onAppear {
-//            sortItems()
-//        }
     }
     
     private func date(from dateString: String) -> Date? {
@@ -78,11 +87,11 @@ struct DropdownOverlay: View {
 
     private func sortItems() {
         switch selectedSort {
-        case "ใหม่ที่สุด":
+        case .newest:
             items.sort { date(from: $0.date) ?? Date.distantPast > date(from: $1.date) ?? Date.distantPast }
-        case "เก่าที่สุด":
+        case .oldest:
             items.sort { date(from: $0.date) ?? Date.distantPast < date(from: $1.date) ?? Date.distantPast }
-        case "คะแนนมาก → น้อย":
+        case .highToLow:
             items.sort { item1, item2 in
                 let points1 = cleanPoints(item1.points)
                 let points2 = cleanPoints(item2.points)
@@ -92,7 +101,7 @@ struct DropdownOverlay: View {
                     return compareDatesNewestFirst(item1: item1, item2: item2)
                 }
             }
-        case "คะแนนน้อย → มาก":
+        case .lowToHigh:
             items.sort { item1, item2 in
                 let points1 = cleanPoints(item1.points)
                 let points2 = cleanPoints(item2.points)
@@ -102,8 +111,8 @@ struct DropdownOverlay: View {
                     return compareDatesNewestFirst(item1: item1, item2: item2)
                 }
             }
-        default: break
         }
         currentPage = 1
     }
 }
+

@@ -10,6 +10,10 @@ import SwiftUI
 struct FAQView: View {
     @StateObject private var viewModel = FAQViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
         
     var body: some View {
         GeometryReader { geo in
@@ -18,7 +22,7 @@ struct FAQView: View {
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
-                    Text("คำถามที่พบบ่อย")
+                    Text(L("คำถามที่พบบ่อย"))
                         .font(.noto(config.titleFontSize, weight: .bold))
                     
                     HStack {

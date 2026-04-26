@@ -14,6 +14,9 @@ struct DetailSearchView: View {
     var onSaveSuccess: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     let category: String
 
     var body: some View {
@@ -22,7 +25,7 @@ struct DetailSearchView: View {
                 
                 VStack(spacing: 0) {
                     
-                    DetailWasteHeader(title: "ค้นหา", config: config)
+                    DetailWasteHeader(title: L("ค้นหา"), config: config)
                     
                     // MARK: - Content
                     ScrollView {
@@ -46,8 +49,7 @@ struct DetailSearchView: View {
                             showConfirmPhotoView = true
                         } label: {
                             HStack {
-                                Text("ยืนยันภาพถ่าย")
-                                    .font(.noto(config.fontHeader))
+                                Text(L("ยืนยันภาพถ่าย"))                                    .font(.noto(config.fontHeader))
                                     .foregroundColor(.white)
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.white)

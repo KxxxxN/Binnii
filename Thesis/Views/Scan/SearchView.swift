@@ -14,7 +14,7 @@ struct SearchView: View {
     @Binding var slideDirection: Int
 
     @StateObject private var vm = SearchViewModel()
-    @ObservedObject private var lm = LanguageManager.shared   // ✅ เพิ่ม
+    @ObservedObject private var lm = LanguageManager.shared
     @State private var selectedTabnavigationItem = 2
     @FocusState private var isSearchFocused: Bool
 
@@ -37,7 +37,7 @@ struct SearchView: View {
                             WasteExamplesGrid(
                                 config: config,
                                 hideTabBar: $hideTabBar,
-                                wasteExamples: WasteData.allExamples(lm: lm), // ✅ ส่ง lm
+                                wasteExamples: WasteData.allExamples(lm: lm),
                                 destination: .search
                             )
                             .padding(.horizontal, config.isIPad ? 60 : 35)
@@ -87,7 +87,7 @@ struct SearchView: View {
             .background(Color.backgroundColor)
             .navigationBarHidden(true)
             .ignoresSafeArea(edges: .top)
-            .environment(\.locale, lm.locale)   // ✅ เพิ่ม
+            .environment(\.locale, lm.locale)   
             .onAppear {
                 selectedTabnavigationItem = 2
             }

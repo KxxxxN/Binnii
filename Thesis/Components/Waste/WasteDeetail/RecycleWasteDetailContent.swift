@@ -426,8 +426,8 @@ struct RecycleWasteDetailPlasticBag: View {
             config: config,
             category: lm.localized("ถุงพลาสติก"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_plastic_bag_1", text: lm.localized("เขย่าเศษ\nอาหารออก")),
-                WasteSeparationStep(imageName: "step_plastic_bag_2", text: lm.localized("ถุงสะอาด\nล้าง-ทำให้แห้ง-พับ")),
+                WasteSeparationStep(imageName: "step_plastic_bag_1", text: lm.localized("เขย่าเศษอาหารออก")),
+                WasteSeparationStep(imageName: "step_plastic_bag_2", text: lm.localized("ถุงสะอาดล้าง-ทำให้แห้ง-พับ")),
                 WasteSeparationStep(imageName: "step_plastic_bag_3", text: lm.localized("ถุงสกปรก"))
             ],
             binSteps: [

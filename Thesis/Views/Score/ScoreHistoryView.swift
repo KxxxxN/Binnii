@@ -21,6 +21,9 @@ struct ScoreHistoryView: View {
     @StateObject private var historyVM = ScoreHistoryViewModel()
     @StateObject private var profileVM = UserProfileViewModel()
     @AppStorage("isLoggedIn") var isLoggedIn = false
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         GeometryReader { geo in
@@ -31,7 +34,7 @@ struct ScoreHistoryView: View {
                 // MARK: - Header
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack {
-                        Text("ประวัติคะแนน")
+                        Text(L("ประวัติคะแนน"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .foregroundColor(.white)
 
@@ -70,7 +73,7 @@ struct ScoreHistoryView: View {
                                 Text("\(profileVM.totalPoints)")
                                     .font(.system(size: config.mainPointsFontSize, weight: .bold))
                                     .foregroundColor(.white)
-                                Text("คะแนน")
+                                Text(L("คะแนน"))
                                     .font(.noto(config.fontSubBody, weight: .regular))
                                     .foregroundColor(.white)
                             }
@@ -111,6 +114,7 @@ struct ScoreHistoryView: View {
             .navigationBarHidden(true)
             .edgesIgnoringSafeArea(.top)
             .background(Color.white)
+            .ignoresSafeArea()
             .onAppear { hideTabBar = true }
             .onDisappear { hideTabBar = false }
             .task {
@@ -131,13 +135,34 @@ struct ScoreHistoryView: View {
     }
 }
 
+// MARK: - SortType
+enum SortType: String, CaseIterable {
+    case newest
+    case oldest
+    case highToLow
+    case lowToHigh
+
+    func title(_ L: (String) -> String) -> String {
+        switch self {
+        case .newest: return L("ใหม่ที่สุด")
+        case .oldest: return L("เก่าที่สุด")
+        case .highToLow: return L("คะแนนมาก → น้อย")
+        case .lowToHigh: return L("คะแนนน้อย → มาก")
+        }
+    }
+}
+
 // MARK: - ScoreSortMenu
 struct ScoreSortMenu: View {
     @Binding var items: [ScoreItem]
-    @Binding var selectedSort: String
+    @Binding var selectedSort: SortType
     @Binding var isDropdownOpen: Bool
     @Binding var currentPage: Int
+
     let config: ResponsiveConfig
+
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -146,14 +171,16 @@ struct ScoreSortMenu: View {
                     isDropdownOpen.toggle()
                 }
             } label: {
-                HStack(spacing: 2) {
-                    Text("เรียงจาก")
+                HStack(spacing: 4) {
+                    Text(L("เรียงจาก"))
                         .font(.noto(config.fontCaption, weight: .medium))
                         .foregroundColor(.mainColor)
+
                     Image(isDropdownOpen ? "IconSort2" : "IconSort")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: config.fontCaption, height: config.fontCaption)
+                        .frame(width: config.fontCaption,
+                               height: config.fontCaption)
                 }
             }
             .buttonStyle(.plain)
@@ -163,14 +190,17 @@ struct ScoreSortMenu: View {
     }
 }
 
-// MARK: - PageView
 struct PageView: View {
     @State private var currentPage = 0
     @State private var items: [ScoreItem]
     @State private var isDropdownOpen = false
-    @State private var selectedSort = "ใหม่ที่สุด"
+    @State private var selectedSort: SortType = .newest
+
     let config: ResponsiveConfig
     let availableHeight: CGFloat
+
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     let itemsPerPage = 7
 
@@ -183,13 +213,13 @@ struct PageView: View {
     
     private func applySortIfNeeded() {
         switch selectedSort {
-        case "เก่าที่สุด":
+        case .oldest:
             items.sort { dateFrom($0.date) < dateFrom($1.date) }
-        case "คะแนนมาก → น้อย":
+        case .highToLow:
             items.sort { cleanPoints($0.points) > cleanPoints($1.points) }
-        case "คะแนนน้อย → มาก":
+        case .lowToHigh:
             items.sort { cleanPoints($0.points) < cleanPoints($1.points) }
-        default: // ใหม่ที่สุด
+        case .newest:
             items.sort { dateFrom($0.date) > dateFrom($1.date) }
         }
     }
@@ -203,7 +233,9 @@ struct PageView: View {
 
     private func cleanPoints(_ points: String) -> Int {
         let isNegative = points.hasPrefix("-")
-        let clean = points.replacingOccurrences(of: "+", with: "").replacingOccurrences(of: "-", with: "")
+        let clean = points
+            .replacingOccurrences(of: "+", with: "")
+            .replacingOccurrences(of: "-", with: "")
         let value = Int(clean) ?? 0
         return isNegative ? -value : value
     }
@@ -223,11 +255,11 @@ struct PageView: View {
                             .frame(width: config.emptyStateImageSize,
                                    height: config.emptyStateImageSize)
 
-                        Text("ยังไม่มีคะแนน?")
+                        Text(L("ยังไม่มีคะแนน?"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .foregroundColor(.textFieldColor)
 
-                        Text("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!")
+                        Text(L("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!"))
                             .font(.noto(config.fontSubHeader, weight: .bold))
                             .foregroundColor(.textFieldColor)
                     }
@@ -236,10 +268,10 @@ struct PageView: View {
 
             } else {
 
-                // MARK: - มีข้อมูล
                 ZStack(alignment: .topTrailing) {
                     ScrollView {
                         VStack(spacing: 9) {
+
                             ScoreSortMenu(
                                 items: $items,
                                 selectedSort: $selectedSort,
@@ -247,7 +279,7 @@ struct PageView: View {
                                 currentPage: $currentPage,
                                 config: config
                             )
-                            .padding(.horizontal, config.paddingMedium)
+//                            .padding(Edge.Set.horizontal, config.paddingMedium)
 
                             ForEach(currentItems, id: \.id) { item in
                                 ScoreCard(
@@ -258,6 +290,7 @@ struct PageView: View {
                                     config: config
                                 )
                             }
+                            .frame(maxWidth: config.mainContentMaxWidth, alignment: .center)
                         }
                         .padding(.bottom, config.paddingMedium)
                     }
@@ -268,6 +301,7 @@ struct PageView: View {
                             applySortIfNeeded()
                         }
                     }
+
                     if isDropdownOpen {
                         DropdownOverlay(
                             items: $items,
@@ -275,7 +309,6 @@ struct PageView: View {
                             isOpen: $isDropdownOpen,
                             selectedSort: $selectedSort
                         )
-                        .padding(.top, 0)
                         .padding(.trailing, config.paddingMedium)
                         .zIndex(999)
                     }
@@ -284,7 +317,11 @@ struct PageView: View {
                 .cornerRadius(config.bannerCornerRadius)
                 .padding(.horizontal, config.paddingMedium)
 
-                PaginationSection(config: config, currentPage: $currentPage, totalPages: totalPages)
+                PaginationSection(
+                    config: config,
+                    currentPage: $currentPage,
+                    totalPages: totalPages
+                )
             }
         }
     }
@@ -300,3 +337,4 @@ struct PageView: View {
 #Preview {
     ScoreHistoryView(hideTabBar: .constant(true))
 }
+

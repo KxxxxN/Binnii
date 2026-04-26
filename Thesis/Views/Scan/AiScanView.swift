@@ -19,6 +19,9 @@ struct AiScanView: View {
     
     @StateObject private var viewModel = AiScanViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     private func switchTab(to tab: ScanTab) {
         slideDirection = tab.rawValue > currentTab.rawValue ? -1 : 1
         currentTab = tab
@@ -41,7 +44,7 @@ struct AiScanView: View {
                 VStack(spacing: 0) {
                     
                     ScanHeaderView(
-                        title: "สแกนด้วย ",
+                        title: L("สแกนด้วย "),
                         aiSuffix: "AI",
                         isFlashOn: viewModel.isFlashOn,
                         onFlashToggle: { viewModel.toggleFlash() },
@@ -49,7 +52,7 @@ struct AiScanView: View {
                     )
                     
                     VStack {
-                        Text("กรุณาสแกนขยะทีละชิ้นเพื่อแยกประเภท")
+                        Text(L("กรุณาสแกนขยะทีละชิ้นเพื่อแยกประเภท"))
                             .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
@@ -101,14 +104,23 @@ struct AiScanView: View {
         .onChange(of: viewModel.capturedUIImage) { _, newImage in
             viewModel.onCapturedImageChanged(newImage)
         }
-        .onAppear { viewModel.onViewAppear() }
-        .onDisappear { viewModel.onViewDisappear() }
+        .onAppear {
+            viewModel.onViewAppear()
+            
+            OrientationHelper.setOrientation(.portrait)
+        }
+
+        .onDisappear {
+            viewModel.onViewDisappear()
+            
+            OrientationHelper.setOrientation(.all)
+        }
         .navigationDestination(isPresented: $viewModel.showDetailView) {
             WasteDetailView(
                 hideTabBar: $hideTabBar,
                 category: viewModel.aiResult,
                 capturedImage: viewModel.capturedUIImage,
-                title: "สแกนด้วย AI",
+                title: L("สแกนด้วย AI"),
                 scanMethod: "ai"
             )
         }

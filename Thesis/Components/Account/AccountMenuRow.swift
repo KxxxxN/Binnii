@@ -7,6 +7,9 @@ struct AccountMenuRow<Destination: View>: View {
     let destination: Destination?
     let action: (() -> Void)?
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     init(title: String, imageName: String, config: ResponsiveConfig, destination: Destination) {
         self.title = title
@@ -31,7 +34,7 @@ struct AccountMenuRow<Destination: View>: View {
                 .frame(width: config.accountRowIconSize, height: config.accountRowIconSize)
                 .padding(.leading, config.accountRowIconLeading)
 
-            Text(title)
+            Text(L(title))
                 .font(.noto(config.accountRowFontSize, weight: .medium))
                 .foregroundColor(Color.black)
 
@@ -69,6 +72,9 @@ struct AccountToggleRow: View {
     let imageName: String
     @Binding var isOn: Bool
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     // แสดง alert เมื่อ permission ถูกปฏิเสธ
     @State private var showPermissionDeniedAlert = false
@@ -80,7 +86,7 @@ struct AccountToggleRow: View {
                 .frame(width: config.accountRowIconSize, height: config.accountRowIconSize)
                 .padding(.leading, config.accountRowIconLeading)
 
-            Text(title)
+            Text(L(title))
                 .font(.noto(config.accountRowFontSize, weight: .medium))
                 .foregroundColor(Color.black)
 
@@ -99,16 +105,16 @@ struct AccountToggleRow: View {
         .frame(height: config.accountRowHeight)
         .background(Color.accountSecColor)
         // Alert เมื่อผู้ใช้ปฏิเสธ permission
-        .alert("ไม่สามารถเปิดการแจ้งเตือนได้", isPresented: $showPermissionDeniedAlert) {
-            Button("ไปที่การตั้งค่า") {
+        .alert(L("ไม่สามารถเปิดการแจ้งเตือนได้"), isPresented: $showPermissionDeniedAlert) {
+            Button(L("ไปที่การตั้งค่า")) {
                 openAppSettings()
             }
-            Button("ยกเลิก", role: .cancel) {
+            Button(L("ยกเลิก"), role: .cancel) {
                 // คืนค่า toggle กลับเป็น false เพราะไม่ได้รับ permission
                 isOn = false
             }
         } message: {
-            Text("กรุณาเปิดการแจ้งเตือนในการตั้งค่าของ iPhone\nการตั้งค่า > การแจ้งเตือน > แอปนี้")
+            Text(L("กรุณาเปิดการแจ้งเตือนในการตั้งค่าของ iPhone\nการตั้งค่า > การแจ้งเตือน > แอปนี้"))
         }
     }
 

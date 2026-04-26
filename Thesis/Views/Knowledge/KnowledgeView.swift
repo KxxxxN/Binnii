@@ -13,6 +13,9 @@ struct KnowledgeView: View {
     @Binding var hideTabBar: Bool
     @StateObject private var vm = KnowledgeViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -21,7 +24,7 @@ struct KnowledgeView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         
-                        Text("ความรู้ทั่วไป")
+                        Text(L("ความรู้ทั่วไป"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .minimumScaleFactor(0.7)
                             .foregroundColor(.black)

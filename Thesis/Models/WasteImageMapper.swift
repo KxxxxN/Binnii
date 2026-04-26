@@ -56,15 +56,15 @@ enum WasteImageMapper {
         switch category {
         // Recycle
         case "Plastic Bottle":   return "ขวดพลาสติก"
-        case "Plastic Cup":      return "แก้วพลาสติก"
-        case "Can":              return "กระป๋อง"
+        case "Plastic Cups":      return "แก้วพลาสติก"
+        case "Cans":              return "กระป๋อง"
         case "Cardboard Box":    return "กล่องกระดาษ"
         case "General Paper":    return "กระดาษทั่วไป"
         case "Plastic Bag":      return "ถุงพลาสติก"
         // Wet
         case "Food Waste", "Food waste": return "เศษอาหาร"
         case "Fruit Peel":       return "เปลือกผลไม้"
-        case "Snack Crumbs":     return "เศษขนม"
+        case "Crumbs":     return "เศษขนม"
         case "Eggshell":         return "เปลือกไข่"
         case "Leftover Drinks":  return "เครื่องดื่มเหลือ"
         case "Leftover Ice":     return "น้ำแข็งเหลือ"
@@ -72,7 +72,7 @@ enum WasteImageMapper {
         case "Snack Bag":        return "ซองขนม"
         case "Food Container":   return "ภาชนะใส่อาหาร"
         case "Straw":            return "หลอด"
-        case "Tissue Paper":     return "กระดาษทิชชู่"
+        case "Tissues":     return "กระดาษทิชชู่"
         case "Wooden Chopsticks": return "ตะเกียบไม้"
         case "Plastic Cutlery":  return "ช้อน-ส้อม พลาสติก"
         default:                 return category  // ภาษาไทยผ่านได้เลย

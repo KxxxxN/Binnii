@@ -13,6 +13,8 @@ struct DetailWasteTypeView: View {
     @Binding var hideTabBar: Bool
     let category: String
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     var body: some View {
         GeometryReader { geo in
@@ -20,8 +22,8 @@ struct DetailWasteTypeView: View {
                 
                 VStack(spacing: 0) {
                     
-                    DetailWasteHeader(title: "ประเภทขยะ", config: config)
-
+                    DetailWasteHeader(title: L("ประเภทขยะ"), config: config)
+                    
                     ScrollView(showsIndicators: false) {
                         
                         VStack(spacing: 0) {
