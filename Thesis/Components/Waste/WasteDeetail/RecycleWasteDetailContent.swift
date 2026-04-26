@@ -30,7 +30,6 @@ private func formatCurrentDate() -> String {
 // MARK: - Shared Component
 struct RecycleWasteDetailContent: View {
     let config: ResponsiveConfig
-    
     let category: String
     let separationSteps: [WasteSeparationStep]
     let binSteps: [WasteBinStep]
@@ -38,13 +37,15 @@ struct RecycleWasteDetailContent: View {
     var showDate: Bool = false
     var dateString: String? = nil
 
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
+
             HStack(spacing: 12) {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
-                
                 if showDate {
                     Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
@@ -60,14 +61,14 @@ struct RecycleWasteDetailContent: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: config.detailMainBinHeight)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("ประเภทถังขยะ")
+                    Text(L("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     HStack(spacing: 0) {
-                        Text("ถังขยะรีไซเคิล ")
+                        Text(L("ถังขยะรีไซเคิล") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
-                        Text("(สีเหลือง)")
+                        Text(L("(สีเหลือง)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.recycleWasteColor)
                     }
@@ -77,11 +78,11 @@ struct RecycleWasteDetailContent: View {
             .padding(.horizontal, config.detailContentPaddingH)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("วิธีการแยกขยะ")
+                Text(L("วิธีการแยกขยะ"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.horizontal, config.detailContentPaddingH)
-                
+
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(separationSteps.indices, id: \.self) { index in
                         if index > 0 {
@@ -91,14 +92,12 @@ struct RecycleWasteDetailContent: View {
                                 .padding(.horizontal, 2)
                                 .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
                         }
-                        
                         VStack(spacing: 0) {
                             Image(separationSteps[index].imageName)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
                                 .padding(.bottom, 10)
-                            
                             Text(separationSteps[index].text)
                                 .font(.noto(config.detailStepTextFontSize, weight: .medium))
                                 .foregroundColor(.black)
@@ -106,9 +105,7 @@ struct RecycleWasteDetailContent: View {
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
-                            
                             Spacer().frame(height: 10)
-                            
                             if index < binSteps.count {
                                 VStack(spacing: 2) {
                                     Image(binSteps[index].imageName)
@@ -130,9 +127,9 @@ struct RecycleWasteDetailContent: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 30)
-            
+
             VStack(alignment: .leading, spacing: 10) {
-                Text("การรีไซเคิล")
+                Text(L("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
@@ -154,26 +151,21 @@ struct RecycleWasteDetailContent: View {
     }
 }
 
-// MARK: - ขวดพลาสติก (Custom Layout Component)
+// MARK: - ขวดพลาสติก
 struct RecycleWasteDetailPlasticBottle: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
-    
-    private let recyclingMethods: [String] = [
-        "ทำเป็นกระถางปลูกต้นไม้เล็กๆ",
-        "ตัดครึ่งขวดทำเป็นที่ใส่เครื่องเขียน",
-        "นำไปหลอมเป็นเส้นใยพลาสติก"
-    ]
-    
+    @ObservedObject private var lm = LanguageManager.shared
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
+
             HStack(spacing: 12) {
-                Text("ขวดพลาสติก")
+                Text(lm.localized("ขวดพลาสติก"))
                     .font(.noto(config.titleFontSize, weight: .bold))
                 if showDate {
-                    Text(dateString ?? Date().formatted(date: .numeric, time: .shortened))
+                    Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
                         .foregroundColor(.black)
                         .padding(.top, 8)
@@ -181,20 +173,19 @@ struct RecycleWasteDetailPlasticBottle: View {
             }
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
-            
+
             HStack(spacing: 13) {
                 Image("Bin3")
                     .resizable()
                     .scaledToFit()
                     .frame(height: config.detailMainBinHeight)
-                
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("ประเภทถังขยะ")
+                    Text(lm.localized("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     HStack(spacing: 0) {
-                        Text("ถังขยะรีไซเคิล ")
+                        Text(lm.localized("ถังขยะรีไซเคิล") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
-                        Text("(สีเหลือง)")
+                        Text(lm.localized("(สีเหลือง)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.recycleWasteColor)
                     }
@@ -202,126 +193,97 @@ struct RecycleWasteDetailPlasticBottle: View {
             }
             .padding(.top, 25)
             .padding(.horizontal, config.detailContentPaddingH)
-            
+
             VStack(alignment: .leading, spacing: 10) {
-                Text("วิธีการแยกขยะ")
+                Text(lm.localized("วิธีการแยกขยะ"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.horizontal, config.detailContentPaddingH)
-                
+
                 HStack(alignment: .top, spacing: 0) {
+                    // Step 1
                     VStack(spacing: 0) {
-                        Image("DetailRecycle1")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
-                            .padding(.bottom, 10)
-                        Text("เทน้ำให้หมด")
-                            .font(.noto(config.detailStepTextFontSize, weight: .medium))
-                            .foregroundColor(.black)
+                        Image("DetailRecycle1").resizable().aspectRatio(contentMode: .fit)
+                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize).padding(.bottom, 10)
+                        Text(lm.localized("เทน้ำให้หมด"))
+                            .font(.noto(config.detailStepTextFontSize, weight: .medium)).foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                         Spacer().frame(height: 8)
                         VStack(spacing: 2) {
-                            Image("bin-icon1")
-                                .resizable()
-                                .scaledToFit()
+                            Image("bin-icon1").resizable().scaledToFit()
                                 .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
-                            Text("ถังขยะเปียก")
-                                .font(.noto(config.detailBinTextFontSize, weight: .medium))
-                                .foregroundColor(.black)
-                                .multilineTextAlignment(.center)
+                            Text(lm.localized("ถังขยะเปียก"))
+                                .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
                         }
-                    }
-                    .frame(maxWidth: .infinity)
+                    }.frame(maxWidth: .infinity)
 
-                    Image(systemName: "arrow.right")
-                        .foregroundColor(.black)
-                        .font(.system(size: config.detailArrowSize))
-                        .padding(.horizontal, 2)
+                    Image(systemName: "arrow.right").foregroundColor(.black)
+                        .font(.system(size: config.detailArrowSize)).padding(.horizontal, 2)
                         .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
-                    
+
+                    // Step 2
                     VStack(spacing: 0) {
-                        Image("DetailRecycle2")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
-                            .padding(.bottom, 10)
-                        Text("แยกฝาและฉลาก")
-                            .font(.noto(config.detailStepTextFontSize, weight: .medium))
-                            .foregroundColor(.black)
+                        Image("DetailRecycle2").resizable().aspectRatio(contentMode: .fit)
+                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize).padding(.bottom, 10)
+                        Text(lm.localized("แยกฝาและฉลาก"))
+                            .font(.noto(config.detailStepTextFontSize, weight: .medium)).foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                         Spacer().frame(height: 8)
                         HStack(spacing: 5) {
                             VStack(spacing: 2) {
-                                Image("bin-icon3")
-                                    .resizable()
-                                    .scaledToFit()
+                                Image("bin-icon3").resizable().scaledToFit()
                                     .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
-                                Text("ถังขยะรีไซเคิล")
-                                    .font(.noto(config.detailBinTextFontSize, weight: .medium))
-                                    .foregroundColor(.black)
-                                    .multilineTextAlignment(.center)
+                                Text(lm.localized("ถังขยะรีไซเคิล"))
+                                    .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
                             }
                             VStack(spacing: 2) {
-                                Image("bin-icon2")
-                                    .resizable()
-                                    .scaledToFit()
+                                Image("bin-icon2").resizable().scaledToFit()
                                     .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
-                                Text("ถังขยะทั่วไป")
-                                    .font(.noto(config.detailBinTextFontSize, weight: .medium))
-                                    .foregroundColor(.black)
-                                    .multilineTextAlignment(.center)
+                                Text(lm.localized("ถังขยะทั่วไป"))
+                                    .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
                             }
                         }
-                    }
-                    .frame(maxWidth: .infinity)
-                    
-                    Image(systemName: "arrow.right")
-                        .foregroundColor(.black)
-                        .font(.system(size: config.detailArrowSize))
-                        .padding(.horizontal, 2)
+                    }.frame(maxWidth: .infinity)
+
+                    Image(systemName: "arrow.right").foregroundColor(.black)
+                        .font(.system(size: config.detailArrowSize)).padding(.horizontal, 2)
                         .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
-                    
+
+                    // Step 3
                     VStack(spacing: 0) {
-                        Image("DetailRecycle3")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
-                            .padding(.bottom, 10)
-                        Text("บีบขวดให้แบน")
-                            .font(.noto(config.detailStepTextFontSize, weight: .medium))
-                            .foregroundColor(.black)
+                        Image("DetailRecycle3").resizable().aspectRatio(contentMode: .fit)
+                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize).padding(.bottom, 10)
+                        Text(lm.localized("บีบขวดให้แบน"))
+                            .font(.noto(config.detailStepTextFontSize, weight: .medium)).foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                         Spacer().frame(height: 8)
                         VStack(spacing: 2) {
-                            Image("bin-icon3")
-                                .resizable()
-                                .scaledToFit()
+                            Image("bin-icon3").resizable().scaledToFit()
                                 .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
-                            Text("ถังขยะรีไซเคิล")
-                                .font(.noto(config.detailBinTextFontSize, weight: .medium))
-                                .foregroundColor(.black)
-                                .multilineTextAlignment(.center)
+                            Text(lm.localized("ถังขยะรีไซเคิล"))
+                                .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
                         }
-                    }
-                    .frame(maxWidth: .infinity)
+                    }.frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, config.isIPad ? config.detailContentPaddingH : 0)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 30)
-            
+
             VStack(alignment: .leading, spacing: 10) {
-                Text("การรีไซเคิล")
+                Text(lm.localized("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                 VStack(alignment: .leading, spacing: 6) {
-                    ForEach(recyclingMethods, id: \.self) { method in
-                        Text("•   \(method)")
-                            .font(.noto(config.detailBodyFontSize, weight: .medium))
+                    ForEach([
+                        lm.localized("ทำเป็นกระถางปลูกต้นไม้เล็กๆ"),
+                        lm.localized("ตัดครึ่งขวดทำเป็นที่ใส่เครื่องเขียน"),
+                        lm.localized("นำไปหลอมเป็นเส้นใยพลาสติก")
+                    ], id: \.self) { method in
+                        Text("•   \(method)").font(.noto(config.detailBodyFontSize, weight: .medium))
                     }
                 }
             }
@@ -330,10 +292,7 @@ struct RecycleWasteDetailPlasticBottle: View {
             .padding(.bottom, 50)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(
-            Color.knowledgeBackground
-                .clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight]))
-        )
+        .background(Color.knowledgeBackground.clipShape(TabCorner(radius: 20, corners: [.topLeft, .topRight])))
     }
 }
 
@@ -342,27 +301,27 @@ struct RecycleWasteDetailPlasticCup: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
-            category: "แก้วพลาสติก",
+            category: lm.localized("แก้วพลาสติก"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_plastic_cup_1", text: "เทน้ำให้หมด"),
-                WasteSeparationStep(imageName: "step_plastic_cup_2", text: "ล้างแก้วเล็กน้อย"),
-                WasteSeparationStep(imageName: "step_plastic_cup_3", text: "บีบหรือซ้อนแก้ว")
+                WasteSeparationStep(imageName: "step_plastic_cup_1", text: lm.localized("เทน้ำให้หมด")),
+                WasteSeparationStep(imageName: "step_plastic_cup_2", text: lm.localized("ล้างแก้วเล็กน้อย")),
+                WasteSeparationStep(imageName: "step_plastic_cup_3", text: lm.localized("บีบหรือซ้อนแก้ว"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล")
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล"))
             ],
             recyclingMethods: [
-                "ทำเป็นกระถางปลูกต้นไม้เล็กๆ",
-                "ทำเป็นที่ใส่เครื่องเขียน",
-                "ใช้เป็นที่เพาะต้นอ่อน"
+                lm.localized("ทำเป็นกระถางปลูกต้นไม้เล็กๆ"),
+                lm.localized("ทำเป็นที่ใส่เครื่องเขียน"),
+                lm.localized("ใช้เป็นที่เพาะต้นอ่อน")
             ],
-            showDate: showDate,
-            dateString: dateString
+            showDate: showDate, dateString: dateString
         )
     }
 }
@@ -372,28 +331,28 @@ struct RecycleWasteDetailCan: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
-            category: "กระป๋อง",
+            category: lm.localized("กระป๋อง"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_can_1", text: "เทน้ำให้หมด"),
-                WasteSeparationStep(imageName: "step_can_2", text: "ล้างกระป๋อง"),
-                WasteSeparationStep(imageName: "step_can_3", text: "บีบให้แบน")
+                WasteSeparationStep(imageName: "step_can_1", text: lm.localized("เทน้ำให้หมด")),
+                WasteSeparationStep(imageName: "step_can_2", text: lm.localized("ล้างกระป๋อง")),
+                WasteSeparationStep(imageName: "step_can_3", text: lm.localized("บีบให้แบน"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล")
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล"))
             ],
             recyclingMethods: [
-                "ทำเป็นที่ใส่เครื่องเขียน",
-                "ทำเป็นกระถางปลูกต้นไม้เล็กๆ",
-                "ประดิษฐ์เป็นโคมไฟตกแต่ง",
-                "ทำเป็นโมบายหรือกระดิ่งลมแขวน"
+                lm.localized("ทำเป็นที่ใส่เครื่องเขียน"),
+                lm.localized("ทำเป็นกระถางปลูกต้นไม้เล็กๆ"),
+                lm.localized("ประดิษฐ์เป็นโคมไฟตกแต่ง"),
+                lm.localized("ทำเป็นโมบายหรือกระดิ่งลมแขวน")
             ],
-            showDate: showDate,
-            dateString: dateString
+            showDate: showDate, dateString: dateString
         )
     }
 }
@@ -403,25 +362,25 @@ struct RecycleWasteDetailCardboardBox: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
-            category: "กล่องกระดาษ",
+            category: lm.localized("กล่องกระดาษ"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_cardboard_1", text: "แกะเทปและฉลาก"),
-                WasteSeparationStep(imageName: "step_cardboard_2", text: "พับกล่องให้แบน")
+                WasteSeparationStep(imageName: "step_cardboard_1", text: lm.localized("แกะเทปและฉลาก")),
+                WasteSeparationStep(imageName: "step_cardboard_2", text: lm.localized("พับกล่องให้แบน"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล"))
             ],
             recyclingMethods: [
-                "ใช้ทำเป็นงานประดิษฐ์",
-                "ทำกล่องจัดระเบียบและเก็บของ",
-                "ตัดเป็นแผ่นรองพัสดุหรือกันกระแทก"
+                lm.localized("ใช้ทำเป็นงานประดิษฐ์"),
+                lm.localized("ทำกล่องจัดระเบียบและเก็บของ"),
+                lm.localized("ตัดเป็นแผ่นรองพัสดุหรือกันกระแทก")
             ],
-            showDate: showDate,
-            dateString: dateString
+            showDate: showDate, dateString: dateString
         )
     }
 }
@@ -431,27 +390,27 @@ struct RecycleWasteDetailPaper: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
-            category: "กระดาษทั่วไป",
+            category: lm.localized("กระดาษทั่วไป"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_paper_1", text: "แยกกระดาษแห้ง"),
-                WasteSeparationStep(imageName: "step_paper_2", text: "พับหรือมัดรวมกัน"),
-                WasteSeparationStep(imageName: "step_paper_3", text: "กระดาษเปียก")
+                WasteSeparationStep(imageName: "step_paper_1", text: lm.localized("แยกกระดาษแห้ง")),
+                WasteSeparationStep(imageName: "step_paper_2", text: lm.localized("พับหรือมัดรวมกัน")),
+                WasteSeparationStep(imageName: "step_paper_3", text: lm.localized("กระดาษเปียก"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "ใช้ซ้ำเป็นกระดาษโน้ต",
-                "ทำเป็นงานประดิษฐ์หรือของเล่น",
-                "ใช้ห่อกันกระแทก"
+                lm.localized("ใช้ซ้ำเป็นกระดาษโน้ต"),
+                lm.localized("ทำเป็นงานประดิษฐ์หรือของเล่น"),
+                lm.localized("ใช้ห่อกันกระแทก")
             ],
-            showDate: showDate,
-            dateString: dateString
+            showDate: showDate, dateString: dateString
         )
     }
 }
@@ -461,27 +420,27 @@ struct RecycleWasteDetailPlasticBag: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         RecycleWasteDetailContent(
             config: config,
-            category: "ถุงพลาสติก",
+            category: lm.localized("ถุงพลาสติก"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_plastic_bag_1", text: "เขย่าเศษ\nอาหารออก"),
-                WasteSeparationStep(imageName: "step_plastic_bag_2", text: "ถุงสะอาด\nล้าง-ทำให้แห้ง-พับ"),
-                WasteSeparationStep(imageName: "step_plastic_bag_3", text: "ถุงสกปรก"),
+                WasteSeparationStep(imageName: "step_plastic_bag_1", text: lm.localized("เขย่าเศษ\nอาหารออก")),
+                WasteSeparationStep(imageName: "step_plastic_bag_2", text: lm.localized("ถุงสะอาด\nล้าง-ทำให้แห้ง-พับ")),
+                WasteSeparationStep(imageName: "step_plastic_bag_3", text: lm.localized("ถุงสกปรก"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon3", text: "ถังขยะรีไซเคิล"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon3", text: lm.localized("ถังขยะรีไซเคิล")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "นำกลับมาใช้ซ้ำ",
-                "ใช้เป็นถุงใส่ขยะ",
-                "ถักเป็นพรมหรือกระเป๋า"
+                lm.localized("นำกลับมาใช้ซ้ำ"),
+                lm.localized("ใช้เป็นถุงใส่ขยะ"),
+                lm.localized("ถักเป็นพรมหรือกระเป๋า")
             ],
-            showDate: showDate,
-            dateString: dateString
+            showDate: showDate, dateString: dateString
         )
     }
 }

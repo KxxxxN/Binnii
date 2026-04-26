@@ -2,6 +2,9 @@
 //  LanguageManager.swift
 //  Thesis
 //
+//  Created by Penpitcha Sureepitak on 26/4/2569 BE.
+//
+
 
 import SwiftUI
 

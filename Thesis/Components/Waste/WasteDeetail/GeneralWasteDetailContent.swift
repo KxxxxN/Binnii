@@ -17,7 +17,7 @@ private func formatCurrentDate() -> String {
 
 struct GeneralWasteDetailContent: View {
     let config: ResponsiveConfig
-    
+
     let category: String
     var wasteDetail: String? = nil
     let separationSteps: [WasteSeparationStep]
@@ -26,6 +26,9 @@ struct GeneralWasteDetailContent: View {
     var showDate: Bool = false
     var dateString: String? = nil
 
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
 
@@ -33,7 +36,7 @@ struct GeneralWasteDetailContent: View {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.black)
-                
+
                 if showDate {
                     Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
@@ -44,7 +47,7 @@ struct GeneralWasteDetailContent: View {
             .padding(.top, 24)
             .padding(.horizontal, config.detailContentPaddingH)
 
-            if let wasteDetail = wasteDetail {
+            if let wasteDetail {
                 Text(wasteDetail)
                     .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
                     .foregroundColor(.gray)
@@ -56,14 +59,14 @@ struct GeneralWasteDetailContent: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: config.detailMainBinHeight)
-                
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("ประเภทถังขยะ")
+                    Text(L("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     HStack(spacing: 0) {
-                        Text("ถังขยะทั่วไป ")
+                        Text(L("ถังขยะทั่วไป") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
-                        Text("(สีน้ำเงิน)")
+                        Text(L("(สีน้ำเงิน)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.generalWasteColor)
                     }
@@ -73,11 +76,11 @@ struct GeneralWasteDetailContent: View {
             .padding(.horizontal, config.detailContentPaddingH)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("วิธีการแยกขยะ")
+                Text(L("วิธีการแยกขยะ"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.horizontal, config.detailContentPaddingH)
-                
+
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(separationSteps.indices, id: \.self) { index in
                         if index > 0 {
@@ -87,14 +90,14 @@ struct GeneralWasteDetailContent: View {
                                 .padding(.horizontal, 2)
                                 .padding(.top, config.detailStepImageSize / 2 - (config.detailArrowSize / 2))
                         }
-                        
+
                         VStack(spacing: 0) {
                             Image(separationSteps[index].imageName)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
                                 .padding(.bottom, 10)
-                            
+
                             Text(separationSteps[index].text)
                                 .font(.noto(config.detailStepTextFontSize, weight: .medium))
                                 .foregroundColor(.black)
@@ -102,9 +105,9 @@ struct GeneralWasteDetailContent: View {
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
-                            
+
                             Spacer().frame(height: 10)
-                            
+
                             if index < binSteps.count {
                                 VStack(spacing: 2) {
                                     Image(binSteps[index].imageName)
@@ -126,7 +129,7 @@ struct GeneralWasteDetailContent: View {
             .padding(.top, 30)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("การรีไซเคิล")
+                Text(L("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
@@ -153,22 +156,23 @@ struct GeneralWasteDetailSnackBag: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "ซองขนม",
+            category: lm.localized("ซองขนม"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_snackbag_1", text: "เทเศษขนมออก"),
-                WasteSeparationStep(imageName: "step_snackbag_2", text: "พับหรือม้วนให้เล็กลง")
+                WasteSeparationStep(imageName: "step_snackbag_1", text: lm.localized("เทเศษขนมออก")),
+                WasteSeparationStep(imageName: "step_snackbag_2", text: lm.localized("พับหรือม้วนให้เล็กลง"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "ทำซองใส่ของชิ้นเล็ก",
-                "นำมาสานเป็นกระเป๋า",
-                "ประดิษฐ์เป็นของตกแต่ง"
+                lm.localized("ทำซองใส่ของชิ้นเล็ก"),
+                lm.localized("นำมาสานเป็นกระเป๋า"),
+                lm.localized("ประดิษฐ์เป็นของตกแต่ง")
             ],
             showDate: showDate,
             dateString: dateString
@@ -181,23 +185,24 @@ struct GeneralWasteDetailFoodContainer: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "ภาชนะใส่อาหาร",
-            wasteDetail: "เช่น กล่องพลาสติก ถ้วยพลาสติก",
+            category: lm.localized("ภาชนะใส่อาหาร"),
+            wasteDetail: lm.localized("เช่น กล่องพลาสติก ถ้วยพลาสติก"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_container_1", text: "เทเศษอาหารออก"),
-                WasteSeparationStep(imageName: "step_container_2", text: "ซับคราบมัน")
+                WasteSeparationStep(imageName: "step_container_1", text: lm.localized("เทเศษอาหารออก")),
+                WasteSeparationStep(imageName: "step_container_2", text: lm.localized("ซับคราบมัน"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "ใช้เป็นกล่องเก็บของชิ้นเล็ก",
-                "ใช้เป็นที่เพาะต้นอ่อน",
-                "ทำเป็นที่ใส่อุปกรณ์งานฝีมือ"
+                lm.localized("ใช้เป็นกล่องเก็บของชิ้นเล็ก"),
+                lm.localized("ใช้เป็นที่เพาะต้นอ่อน"),
+                lm.localized("ทำเป็นที่ใส่อุปกรณ์งานฝีมือ")
             ],
             showDate: showDate,
             dateString: dateString
@@ -210,21 +215,22 @@ struct GeneralWasteDetailStraw: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "หลอด",
+            category: lm.localized("หลอด"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_straw_1", text: "เขย่าน้ำออกจากหลอด"),
-                WasteSeparationStep(imageName: "step_straw_2", text: "ทิ้งลงถังขยะทั่วไป")
+                WasteSeparationStep(imageName: "step_straw_1", text: lm.localized("เขย่าน้ำออกจากหลอด")),
+                WasteSeparationStep(imageName: "step_straw_2", text: lm.localized("ทิ้งลงถังขยะทั่วไป"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon1", text: "ถังขยะเปียก"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon1", text: lm.localized("ถังขยะเปียก")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "นำไปร้อยทำโมบายตกแต่ง",
-                "ทำเป็นงานประดิษฐ์หรือของเล่น"
+                lm.localized("นำไปร้อยทำโมบายตกแต่ง"),
+                lm.localized("ทำเป็นงานประดิษฐ์หรือของเล่น")
             ],
             showDate: showDate,
             dateString: dateString
@@ -237,22 +243,23 @@ struct GeneralWasteDetailTissue: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "กระดาษทิชชู่",
+            category: lm.localized("กระดาษทิชชู่"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_tissue_1", text: "พับให้เล็กลง"),
-                WasteSeparationStep(imageName: "step_tissue_2", text: "ทิ้งลงถังขยะทั่วไป")
+                WasteSeparationStep(imageName: "step_tissue_1", text: lm.localized("พับให้เล็กลง")),
+                WasteSeparationStep(imageName: "step_tissue_2", text: lm.localized("ทิ้งลงถังขยะทั่วไป"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "ใช้เช็ดทำความสะอาดซ้ำ",
-                "ใช้รองของเปียก",
-                "ใช้ห่อของแตกง่าย"
+                lm.localized("ใช้เช็ดทำความสะอาดซ้ำ"),
+                lm.localized("ใช้รองของเปียก"),
+                lm.localized("ใช้ห่อของแตกง่าย")
             ],
             showDate: showDate,
             dateString: dateString
@@ -265,22 +272,23 @@ struct GeneralWasteDetailChopsticks: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "ตะเกียบไม้",
+            category: lm.localized("ตะเกียบไม้"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_chopstick_1", text: "เช็ดคราบอาหารออก"),
-                WasteSeparationStep(imageName: "step_chopstick_2", text: "หักให้สั้นลง")
+                WasteSeparationStep(imageName: "step_chopstick_1", text: lm.localized("เช็ดคราบอาหารออก")),
+                WasteSeparationStep(imageName: "step_chopstick_2", text: lm.localized("หักให้สั้นลง"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "ใช้ทำงานประดิษฐ์",
-                "นำไปทำเป็นไม้ค้ำต้นไม้เล็ก ๆ",
-                "นำไปทำป้ายชื่อกระถางต้นไม้"
+                lm.localized("ใช้ทำงานประดิษฐ์"),
+                lm.localized("นำไปทำเป็นไม้ค้ำต้นไม้เล็ก ๆ"),
+                lm.localized("นำไปทำป้ายชื่อกระถางต้นไม้")
             ],
             showDate: showDate,
             dateString: dateString
@@ -293,22 +301,23 @@ struct GeneralWasteDetailSpoon: View {
     let config: ResponsiveConfig
     var showDate: Bool = false
     var dateString: String? = nil
+    @ObservedObject private var lm = LanguageManager.shared
     var body: some View {
         GeneralWasteDetailContent(
             config: config,
-            category: "ช้อน-ส้อม พลาสติก",
+            category: lm.localized("ช้อน-ส้อม พลาสติก"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_spoon_1", text: "เช็ดคราบอาหารออก"),
-                WasteSeparationStep(imageName: "step_spoon_2", text: "ทิ้งลงถังขยะทั่วไป")
+                WasteSeparationStep(imageName: "step_spoon_1", text: lm.localized("เช็ดคราบอาหารออก")),
+                WasteSeparationStep(imageName: "step_spoon_2", text: lm.localized("ทิ้งลงถังขยะทั่วไป"))
             ],
             binSteps: [
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป"),
-                WasteBinStep(imageName: "bin-icon2", text: "ถังขยะทั่วไป")
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป")),
+                WasteBinStep(imageName: "bin-icon2", text: lm.localized("ถังขยะทั่วไป"))
             ],
             recyclingMethods: [
-                "นำไปทำป้ายชื่อกระถางต้นไม้",
-                "ใช้ทำงานประดิษฐ์ตกแต่ง",
-                "ทำเป็นที่แขวนของเล็ก ๆ"
+                lm.localized("นำไปทำป้ายชื่อกระถางต้นไม้"),
+                lm.localized("ใช้ทำงานประดิษฐ์ตกแต่ง"),
+                lm.localized("ทำเป็นที่แขวนของเล็ก ๆ")
             ],
             showDate: showDate,
             dateString: dateString

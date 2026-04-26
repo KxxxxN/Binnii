@@ -165,7 +165,11 @@ struct AccountView: View {
                 }
             }
         }
+//        .onAppear {
+//            NotificationDebugger.runFullDiagnostic()
+//        }
     }
+
 }
 
 #Preview {

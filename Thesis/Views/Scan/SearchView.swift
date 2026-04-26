@@ -12,31 +12,32 @@ struct SearchView: View {
     @Binding var hideTabBar: Bool
     @Binding var currentTab: ScanTab
     @Binding var slideDirection: Int
-    
+
     @StateObject private var vm = SearchViewModel()
+    @ObservedObject private var lm = LanguageManager.shared   // ✅ เพิ่ม
     @State private var selectedTabnavigationItem = 2
     @FocusState private var isSearchFocused: Bool
-    
+
     private func switchTab(to tab: ScanTab) {
         slideDirection = tab.rawValue > currentTab.rawValue ? -1 : 1
         currentTab = tab
     }
-    
+
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
-            
+
             ZStack(alignment: .bottom) {
-                
+
                 VStack(spacing: 0) {
                     SearchHeaderView(config: config)
-                    
+
                     ZStack(alignment: .top) {
                         ScrollView {
                             WasteExamplesGrid(
                                 config: config,
                                 hideTabBar: $hideTabBar,
-                                wasteExamples: WasteData.allExamples,
+                                wasteExamples: WasteData.allExamples(lm: lm), // ✅ ส่ง lm
                                 destination: .search
                             )
                             .padding(.horizontal, config.isIPad ? 60 : 35)
@@ -47,6 +48,7 @@ struct SearchView: View {
                             Color.clear.frame(height: config.isIPad ? 100 : 80)
                         }
                         .opacity((isSearchFocused || !vm.searchText.isEmpty) ? 0.3 : 1.0)
+
                         SearchSection(
                             config: config,
                             hideTabBar: $hideTabBar,
@@ -60,16 +62,15 @@ struct SearchView: View {
                         .padding(.bottom, 10)
                         .zIndex(1)
                     }
+
                     if isSearchFocused {
                         Color.clear
                             .contentShape(Rectangle())
-                            .onTapGesture {
-                                isSearchFocused = false
-                            }
+                            .onTapGesture { isSearchFocused = false }
                             .zIndex(2)
                     }
                 }
-                
+
                 AiScanBottomNavigationBar(
                     selectedTab: $selectedTabnavigationItem
                 ) { index in
@@ -86,6 +87,7 @@ struct SearchView: View {
             .background(Color.backgroundColor)
             .navigationBarHidden(true)
             .ignoresSafeArea(edges: .top)
+            .environment(\.locale, lm.locale)   // ✅ เพิ่ม
             .onAppear {
                 selectedTabnavigationItem = 2
             }
