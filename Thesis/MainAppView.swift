@@ -128,6 +128,7 @@ struct MainAppView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Color.backgroundColor)
+            .ignoresSafeArea()
             .task(id: isLoggedIn) {
                 guard isLoggedIn else { return }
                 

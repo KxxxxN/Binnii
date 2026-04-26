@@ -41,6 +41,22 @@ class ForgotPasswordViewModel: ObservableObject {
         self.emailErrorForgot = nil
         
         do {
+            struct UserEmail: Decodable {
+                let email: String
+            }
+            
+            let users: [UserEmail] = try await supabase
+                .from("users")
+                .select("email")
+                .eq("email", value: email)
+                .execute()
+                .value
+            
+            guard !users.isEmpty else {
+                self.emailErrorForgot = "อีเมลนี้ยังไม่ได้ลงทะเบียน"
+                return
+            }
+            
             try await supabase.auth.resetPasswordForEmail(email)
             self.navigateToOTP = true
             print("Reset password email sent to: \(email)")
