@@ -33,6 +33,7 @@ struct MainTabView: View {
             .padding(.horizontal, 25)
         }
         .frame(height: 88)
+        .ignoresSafeArea(edges: .top)  
     }
 
     func tabButton(image: String, selectedImage: String, label: String, indexValue: Int) -> some View {
