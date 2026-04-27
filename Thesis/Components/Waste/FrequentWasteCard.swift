@@ -10,6 +10,9 @@ import SwiftUI
 struct FrequentWasteCard: View {
     let item: FrequentWasteItem
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,7 +26,7 @@ struct FrequentWasteCard: View {
             .frame(height: config.wasteCardImageZStackHeight)
 
             VStack(spacing: 4) {
-                Text(item.title)
+                Text(L(item.title))
                     .font(.noto(config.fontCaption, weight: .semibold))
                     .foregroundColor(.black)
 

@@ -11,6 +11,9 @@ import SwiftUI
 struct LogoutPopupView: View {
     @Binding var isPresented: Bool
     var onConfirm: () -> Void
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         ZStack {
@@ -23,15 +26,15 @@ struct LogoutPopupView: View {
                 Image("PopupLogout")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100,height: 100)
+                    .frame(width: 100, height: 100)
                     .padding(.top, 30)
 
-                Text("ออกจากระบบ?")
+                Text(L("ออกจากระบบ?"))
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 20)
 
-                Text("คุณสามารถเข้าสู่ระบบใหม่ได้ทุกเมื่อ")
+                Text(L("คุณสามารถเข้าสู่ระบบใหม่ได้ทุกเมื่อ"))
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .padding(.bottom, 40)
@@ -40,7 +43,7 @@ struct LogoutPopupView: View {
                     Button {
                         isPresented = false
                     } label: {
-                        Text("ยกเลิก")
+                        Text(L("ยกเลิก"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.mainColor)
                             .frame(width: 120, height: 40)
@@ -54,7 +57,7 @@ struct LogoutPopupView: View {
                         isPresented = false
                         onConfirm()
                     } label: {
-                        Text("ออกจากระบบ")
+                        Text(L("ออกจากระบบ"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.white)
                             .frame(width: 120, height: 40)

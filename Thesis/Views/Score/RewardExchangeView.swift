@@ -17,6 +17,9 @@ struct RewardExchangeView: View {
 
     @StateObject private var vm: RewardExchangeViewModel
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     init(hideTabBar: Binding<Bool>, totalPoints: Int, profileVM: UserProfileViewModel) {
         _hideTabBar = hideTabBar
         self.totalPoints = totalPoints
@@ -39,8 +42,7 @@ struct RewardExchangeView: View {
                             
                             Spacer()
                             
-                            Text("แลกคะแนน")
-                                .font(.noto(config.titleFontSize, weight: .bold))
+                            Text(L("แลกคะแนน"))                                .font(.noto(config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
                             
                             Spacer()
@@ -90,8 +92,7 @@ struct RewardExchangeView: View {
                     )
                 }
                 if vm.showSuccessPopup {
-                    SuccessPopupView(message: "แลกคะแนนสำเร็จ") {
-                        vm.showSuccessPopup = false
+                    SuccessPopupView(message: L("แลกคะแนนสำเร็จ")) {                        vm.showSuccessPopup = false
                         dismiss()
                     }
                 }
@@ -141,12 +142,14 @@ struct ConditionsAndExchangeSection: View {
     let conditionsList: [String]
     let config: ResponsiveConfig
     let onConfirm: () -> Void
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         VStack(spacing: 0) {
 
-            Text("แลกรับชั่วโมงจิตอาสา 5 ชั่วโมง")
-                .font(.noto(config.fontHeader, weight: .bold))
+            Text(L("แลกรับชั่วโมงจิตอาสา 5 ชั่วโมง"))                .font(.noto(config.fontHeader, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, config.conditionsTitlePaddingH)
@@ -154,10 +157,10 @@ struct ConditionsAndExchangeSection: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 5) {
-                    Text("รายละเอียด และเงื่อนไข")
+                    Text(L("รายละเอียด และเงื่อนไข"))
                         .font(.noto(config.fontBody, weight: .bold))
                         .foregroundColor(.black)
-                    Text("(จำลอง)")
+                    Text(L("(จำลอง)"))
                         .font(.noto(config.fontBody, weight: .bold))
                         .foregroundColor(.placeholderColor)
                 }
@@ -187,7 +190,7 @@ struct ConditionsAndExchangeSection: View {
             .frame(maxWidth: config.mainContentMaxWidth)
 
             Button(action: { onConfirm() }) {
-                Text("ยืนยันแลกคะแนน")
+                Text(L("ยืนยันแลกคะแนน"))
                     .font(.noto(config.fontSubHeader, weight: .bold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

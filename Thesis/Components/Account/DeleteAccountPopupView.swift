@@ -11,6 +11,9 @@ import SwiftUI
 struct DeleteAccountPopupView: View {
     @Binding var isPresented: Bool
     var onConfirm: () -> Void
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         ZStack {
@@ -25,14 +28,14 @@ struct DeleteAccountPopupView: View {
                     .frame(width: 110, height: 110)
                     .padding(.top, 30)
 
-                Text("ลบบัญชี?")
+                Text(L("ลบบัญชี?"))
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 10)
 
                 VStack(spacing: 2) {
-                    Text("ข้อมูลทั้งหมดของคุณจะถูกลบถาวร")
-                    Text("และไม่สามารถกู้คืนได้")
+                    Text(L("ข้อมูลทั้งหมดของคุณจะถูกลบถาวร"))
+                    Text(L("และไม่สามารถกู้คืนได้"))
                 }
                 .font(.noto(16, weight: .medium))
                 .foregroundColor(.gray)
@@ -43,7 +46,7 @@ struct DeleteAccountPopupView: View {
                     Button {
                         isPresented = false
                     } label: {
-                        Text("ยกเลิก")
+                        Text(L("ยกเลิก"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.gray)
                             .frame(width: 120, height: 40)
@@ -57,7 +60,7 @@ struct DeleteAccountPopupView: View {
                         isPresented = false
                         onConfirm()
                     } label: {
-                        Text("ลบบัญชี")
+                        Text(L("ลบบัญชี"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.white)
                             .frame(width: 120, height: 40)

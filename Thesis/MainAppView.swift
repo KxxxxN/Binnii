@@ -17,6 +17,9 @@ struct MainAppView: View {
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -62,8 +65,7 @@ struct MainAppView: View {
                                     .font(.system(size: config.mainPointsFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
-                                Text("คะแนน")
-                                    .font(.noto(config.mainPointsLabelFontSize, weight: .regular))
+                                Text(L("คะแนน"))                                    .font(.noto(config.mainPointsLabelFontSize, weight: .regular))
                                     .foregroundColor(.white)
                                     .fontWeight(.bold)
                             }
@@ -166,9 +168,12 @@ struct SectionHeader<Destination: View>: View {
     let destinationView: Destination
     var onTapSeeAll: (() -> Void)? = nil
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         HStack {
-            Text(title)
+            Text(L(title))
                 .font(.noto(config.sectionHeaderTitleFont, weight: .bold))
                 .foregroundColor(.black)
             
@@ -177,8 +182,7 @@ struct SectionHeader<Destination: View>: View {
             if let action = onTapSeeAll {
                 Button(action: action) {
                     HStack(spacing: 4) {
-                        Text("ดูทั้งหมด")
-                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
+                        Text(L("ดูทั้งหมด"))                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
                             .foregroundColor(Color.mainColor)
                         Image(systemName: "chevron.right")
                             .font(.system(size: config.sectionHeaderButtonFont))
@@ -188,8 +192,7 @@ struct SectionHeader<Destination: View>: View {
             } else {
                 NavigationLink(destination: destinationView.navigationBarBackButtonHidden(true)) {
                     HStack(spacing: 4) {
-                        Text("ดูทั้งหมด")
-                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
+                        Text(L("ดูทั้งหมด"))                            .font(.noto(config.sectionHeaderButtonFont, weight: .medium))
                             .foregroundColor(Color.mainColor)
                         Image(systemName: "chevron.right")
                             .font(.system(size: config.sectionHeaderButtonFont))
@@ -206,10 +209,16 @@ struct FrequentWasteSection: View {
     @Binding var hideTabBar: Bool
     let items: [RecyclableItem]
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         VStack(spacing: 7) {
-            SectionHeader(config: config, title: "ขยะที่แยกบ่อย", destinationView: FrequentWasteView())
-            
+            SectionHeader(
+                config: config,
+                title: L("ขยะที่แยกบ่อย"),
+                destinationView: FrequentWasteView()
+            )
             HStack(spacing: 8) {
                 ForEach(items) { item in
                     NavigationLink(destination: WasteTypeView(hideTabBar: $hideTabBar, category: item.title)) {
@@ -226,6 +235,10 @@ struct RecyclableItemCard: View {
     let config: ResponsiveConfig
     let item: RecyclableItem
     
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -236,13 +249,11 @@ struct RecyclableItemCard: View {
                 .frame(height: config.mainItemCardImageHeight)
             
             VStack(spacing: 2) {
-                Text(item.title)
-                    .font(.noto(config.itemCardTitleFont, weight: .semibold))
+                Text(L(item.title))                    .font(.noto(config.itemCardTitleFont, weight: .semibold))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                 
-                Text("\(item.countNumber) ครั้ง")
-                    .font(.noto(config.itemCardCountFont, weight: .medium))
+                Text(String(format: L("count_format"), item.countNumber))                    .font(.noto(config.itemCardCountFont, weight: .medium))
                     .foregroundColor(.black)
             }
             .padding(.top, 4)
@@ -262,6 +273,9 @@ struct WasteSeparationGuideSection: View {
     @Binding var hideTabBar: Bool
     @Binding var tabIndex: Int
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     let totalPages = 3
     let virtualPages = 300
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
@@ -270,7 +284,7 @@ struct WasteSeparationGuideSection: View {
         VStack(spacing: 7) {
             SectionHeader(
                 config: config,
-                title: "วิธีการแยกขยะ",
+                title: L("วิธีการแยกขยะ"),
                 destinationView: KnowledgeView(hideTabBar: $hideTabBar),
                 onTapSeeAll: {
                     withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {

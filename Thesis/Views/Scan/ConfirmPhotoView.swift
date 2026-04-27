@@ -16,6 +16,9 @@ struct ConfirmPhotoView: View {
     var onSaveSuccess: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     @StateObject private var viewModel = ConfirmPhotoViewModel()
     
     var body: some View {
@@ -36,7 +39,7 @@ struct ConfirmPhotoView: View {
                 VStack(spacing: 0) {
                     
                     ScanHeaderView(
-                        title: "ยืนยันภาพถ่าย",
+                        title: L("ยืนยันภาพถ่าย"),
                         isFlashOn: viewModel.isFlashOn,
                         onFlashToggle: { viewModel.isFlashOn.toggle() },
                         config: config
@@ -44,8 +47,7 @@ struct ConfirmPhotoView: View {
                     
                     VStack {
                         
-                        Text("กรุณาถ่ายรูปขยะทีละชิ้น ให้ตรงกับที่ค้นหา")
-                            .font(.noto(config.fontHeader, weight: .medium))
+                        Text(L("กรุณาถ่ายรูปขยะทีละชิ้น ให้ตรงกับที่ค้นหา"))                            .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: config.qrContentMaxWidth, height: config.confirmBannerHeight)
@@ -78,7 +80,7 @@ struct ConfirmPhotoView: View {
                         hideTabBar: $hideTabBar,
                         category: category,
                         capturedImage: uiImage,
-                        title: "ค้นหา",
+                        title: L("ค้นหา"),
                         scanMethod: "search",
                         onSaveSuccess: {
                             var transaction = Transaction()

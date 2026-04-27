@@ -16,7 +16,7 @@ final class SearchViewModel: ObservableObject {
     @Published var searchText: String = ""
 
     var filteredItems: [String] {
-        let allLabels = WasteData.allExamples.map { $0.label }
+        let allLabels = WasteData.allExamples(lm: LanguageManager.shared).map { $0.label }
         if searchText.isEmpty { return allLabels }
         return allLabels.filter {
             $0.localizedCaseInsensitiveContains(searchText)

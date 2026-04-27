@@ -16,6 +16,9 @@ struct BarcodeScanView: View {
     
     @StateObject private var viewModel = BarcodeScanViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     private func switchTab(to tab: ScanTab) {
         slideDirection = tab.rawValue > currentTab.rawValue ? -1 : 1
         currentTab = tab
@@ -44,7 +47,7 @@ struct BarcodeScanView: View {
                 VStack(spacing: 0) {
                     
                     ScanHeaderView(
-                        title: "สแกนบาร์โค้ด",
+                        title: L("สแกนบาร์โค้ด"),
                         isFlashOn: viewModel.isFlashOn,
                         onFlashToggle: { viewModel.isFlashOn.toggle() },
                         config: config
@@ -100,14 +103,23 @@ struct BarcodeScanView: View {
                     )
                 }
             }
-            .onAppear { viewModel.onViewAppear(hideTabBar: $hideTabBar) }
-            .onDisappear { viewModel.onViewDisappear() }
+            .onAppear {
+                viewModel.onViewAppear(hideTabBar: $hideTabBar)
+                
+                OrientationHelper.setOrientation(.portrait)
+            }
+
+            .onDisappear {
+                viewModel.onViewDisappear()
+                
+                OrientationHelper.setOrientation(.all)
+            }
             .navigationDestination(isPresented: $viewModel.showDetailBarcodeView) {
                 WasteDetailView(
                     hideTabBar: $hideTabBar,
                     category: viewModel.barcodeVM.category,
                     capturedImage: viewModel.capturedBarcodeImage,
-                    title: "สแกนบาร์โค้ด",
+                    title: L("สแกนบาร์โค้ด"),
                     scanMethod: "barcode"
                 )
                 .onDisappear {

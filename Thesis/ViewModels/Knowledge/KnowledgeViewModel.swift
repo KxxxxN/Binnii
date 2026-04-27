@@ -12,8 +12,18 @@ import SwiftUI
 final class KnowledgeViewModel: ObservableObject {
 
     @Published var currentIndex: Int = 0
+    
+    // Observe LanguageManager so when language changes, categories recompute
+    @ObservedObject private var languageManager: LanguageManager
 
-    let wasteCategories: [WasteCategory] = WasteData.categories
+    init(languageManager: LanguageManager = .shared) {
+        self.languageManager = languageManager
+    }
+
+    // Compute categories from current language
+    var wasteCategories: [WasteCategory] {
+        WasteData.categories(lm: languageManager)
+    }
 
     var current: WasteCategory { wasteCategories[currentIndex] }
     var canGoPrevious: Bool { currentIndex > 0 }

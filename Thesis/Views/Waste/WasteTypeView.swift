@@ -15,6 +15,9 @@ struct WasteTypeView: View {
     let category: String
     @StateObject private var vm = WasteTypeViewModel()
 
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     let itemsPerPage = 5
 
     var totalPages: Int {
@@ -34,7 +37,7 @@ struct WasteTypeView: View {
 
                 VStack(spacing: 0) {
 
-                    WasteHeaderView(title: "ขยะแต่ละประเภท", config: config)
+                    WasteHeaderView(title: L("ขยะแต่ละประเภท"), config: config)
 
                     if vm.isLoading {
                         Spacer()
@@ -52,7 +55,7 @@ struct WasteTypeView: View {
                                     .frame(width: config.emptyStateImageSize,
                                            height: config.emptyStateImageSize)
 
-                                Text("ไม่มีประวัติการแยกขยะ")
+                                Text(L("ไม่มีประวัติการแยกขยะ"))
                                     .font(.noto(config.titleFontSize, weight: .bold))
                                     .foregroundColor(.textFieldColor)
                             }
@@ -84,8 +87,12 @@ struct WasteTypeView: View {
                             .padding(.top, config.wasteGridTopPadding)
                             .padding(.bottom, config.paddingMedium)
                         }
-                        PaginationSection(config: config, currentPage: $currentPage, totalPages: totalPages)
 
+                        PaginationSection(
+                            config: config,
+                            currentPage: $currentPage,
+                            totalPages: totalPages
+                        )
                     }
                 }
                 .edgesIgnoringSafeArea(.top)
@@ -93,6 +100,7 @@ struct WasteTypeView: View {
             .onAppear { hideTabBar = true }
             .onDisappear { hideTabBar = false }
             .navigationBarHidden(true)
+
             .task { await vm.fetchItems(category: category) }
         }
     }

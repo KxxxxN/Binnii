@@ -13,23 +13,35 @@ final class FAQViewModel: ObservableObject {
     
     @Published var faqItems: [FAQItem] = []
     
+    private let lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     init() {
         loadFAQItems()
     }
     
     private func loadFAQItems() {
-        // TODO: อนาคตเปลี่ยนเป็น fetch จาก Supabase ได้เลย
         faqItems = [
-            FAQItem(question: "สแกนขยะด้วย AI ทำงานอย่างไร",
-                    answer: "ระบบจะใช้กล้องสแกนขยะ และวิเคราะห์ด้วย AI เพื่อระบุประเภทขยะให้โดยอัตโนมัติ พร้อมแนะนำวิธีทิ้งหรือรีไซเคิลอย่างถูกต้อง"),
-            FAQItem(question: "ทำไมบางครั้งระบบแยกขยะผิดพลาด",
-                    answer: "อาจเกิดจากภาพไม่ชัด แสงน้อย หรือเห็นวัตถุไม่ครบถ้วน แนะนำให้สแกนในที่สว่าง ถือกล้องให้นิ่ง และให้วัตถุอยู่เต็มกรอบภาพ"),
-            FAQItem(question: "คะแนนการแยกขยะนำไปใช้ทำอะไรได้",
-                    answer: "คะแนนสะสมสามารถแลกเป็นชั่วโมงจิตอาสาของมหาวิทยาลัยตามเงื่อนไขที่กำหนด"),
-            FAQItem(question: "แก้ไขประวัติการแยกขยะย้อนหลังได้ไหม",
-                    answer: "ไม่สามารถแก้ไขเองได้เพื่อความถูกต้องของข้อมูล แต่สามารถแจ้งปัญหาผ่านช่องทางการติดต่อที่ระบุภายในแอปได้"),
-            FAQItem(question: "แลกคะแนนแล้วขอคืนได้ไหม",
-                    answer: "ไม่สามารถขอคะแนนที่แลกไปแล้วคืนได้ เพื่อความถูกต้องของระบบ แต่ยังสามารถสะสมคะแนนเพิ่มเติมเพื่อแลกคะแนนครั้งถัดไปได้"),
+            FAQItem(
+                question: L("faq_q1"),
+                answer: L("faq_a1")
+            ),
+            FAQItem(
+                question: L("faq_q2"),
+                answer: L("faq_a2")
+            ),
+            FAQItem(
+                question: L("faq_q3"),
+                answer: L("faq_a3")
+            ),
+            FAQItem(
+                question: L("faq_q4"),
+                answer: L("faq_a4")
+            ),
+            FAQItem(
+                question: L("faq_q5"),
+                answer: L("faq_a5")
+            )
         ]
     }
 }

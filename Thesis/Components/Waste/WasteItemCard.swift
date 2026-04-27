@@ -12,6 +12,9 @@ struct WasteItemCard: View {
     let date: String
     let imageUrl: String?
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         HStack(spacing: config.wasteItemCardSpacing) {
@@ -33,7 +36,7 @@ struct WasteItemCard: View {
             }
             
             VStack(alignment: .leading, spacing: 3) {
-                Text(title)
+                Text(L(title))
                     .font(.noto(config.fontHeader, weight: .bold))
                     .foregroundColor(.black)
                 Text(date)

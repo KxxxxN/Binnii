@@ -15,6 +15,9 @@ struct QRScanView: View {
     
     @StateObject private var viewModel = QRScanViewModel()
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
@@ -37,7 +40,8 @@ struct QRScanView: View {
                     Button {
                         viewModel.navigateToAIScan(hideTabBar: &hideTabBar)
                     } label: {
-                        Text("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน")                            .font(.noto(config.fontHeader, weight: .medium))
+                        Text(L("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน"))
+                            .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(width: config.qrContentMaxWidth, height: config.isIPad ? 155 : 115)
@@ -75,7 +79,7 @@ struct QRScanView: View {
                 }
                 
                 if viewModel.showErrorAlert {
-                    ErrorPopupView(title: "สแกนไม่สำเร็จ") {
+                    ErrorPopupView(title: L("สแกนไม่สำเร็จ")) {
                         viewModel.dismissError()
                     }
                 }
@@ -104,7 +108,7 @@ struct QRScanView: View {
                 })
             Color.clear.frame(width: 10, height: 10)
             Spacer()
-            Text("สแกนคิวอาร์โค้ดถังขยะ")
+            Text(L("สแกนคิวอาร์โค้ดถังขยะ"))
                 .font(.noto(config.titleFontSize, weight: .bold))
                 .foregroundColor(.black)
             Spacer()
@@ -138,7 +142,7 @@ struct QRScanView: View {
                     .frame(width: config.alertIconSize, height: config.alertIconSize)
                     .padding(.top, config.paddingStandard)
                 
-                Text("ยืนยันถังขยะ")
+                Text(L("ยืนยันถังขยะ"))
                     .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
@@ -151,8 +155,7 @@ struct QRScanView: View {
                 
                 HStack(spacing: config.alertButtonSpacing) {
                     Button { viewModel.cancelResult() } label: {
-                        Text("ยกเลิก")
-                            .font(.noto(config.fontBody, weight: .bold))
+                        Text(L("ยกเลิก"))                            .font(.noto(config.fontBody, weight: .bold))
                             .foregroundColor(.mainColor)
                             .frame(width: config.qrAlertButtonWidth,
                                    height: config.qrAlertButtonHeight)
@@ -165,8 +168,7 @@ struct QRScanView: View {
                     }
                     
                     Button { viewModel.confirmResult(hideTabBar: &hideTabBar) } label: {
-                        Text("ยืนยัน")
-                            .font(.noto(config.fontBody, weight: .bold))
+                        Text(L("ยืนยัน"))                            .font(.noto(config.fontBody, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: config.qrAlertButtonWidth,
                                    height: config.qrAlertButtonHeight)

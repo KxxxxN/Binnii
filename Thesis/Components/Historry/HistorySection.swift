@@ -15,11 +15,14 @@ struct HistorySection: View {
         points.hasPrefix("-") ? Color.dangerColor : Color.secondColor
     }
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         VStack(spacing: config.rewardVStackSpacing) {
             SectionHeader(
                 config: config,
-                title: "ประวัติคะแนน",
+                title: L("ประวัติคะแนน"),
                 destinationView: ScoreHistoryView(hideTabBar: $hideTabBar)
             )
             
@@ -27,11 +30,11 @@ struct HistorySection: View {
                 NavigationLink(destination: ScoreHistoryView(hideTabBar: $hideTabBar)) {
                     HStack {
                         VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
-                            Text("ยังไม่มีคะแนน?")
+                            Text(L("ยังไม่มีคะแนน?"))
                                 .font(.noto(config.historyTitleFontSize, weight: .bold))
                                 .foregroundColor(.white)
-                            
-                            Text("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!")
+
+                            Text(L("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!"))
                                 .font(.noto(config.rewardSubtitleFontSize, weight: .medium))
                                 .foregroundColor(.white)
                         }
@@ -43,7 +46,7 @@ struct HistorySection: View {
                                 .font(.system(size: config.titleFontSize, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text("คะแนน")
+                            Text(L("คะแนน"))
                                 .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                 .foregroundColor(.white)
                         }
@@ -59,7 +62,7 @@ struct HistorySection: View {
                     NavigationLink(destination: ScoreHistoryView(hideTabBar: $hideTabBar)) {
                         HStack {
                             VStack(alignment: .leading, spacing: config.rewardTextSpacing) {
-                                Text(item.title)
+                                Text(L(item.title))
                                     .font(.noto(config.historyTitleFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
@@ -75,7 +78,7 @@ struct HistorySection: View {
                                     .font(.system(size: config.titleFontSize, weight: .bold))
                                     .foregroundColor(.white)
                                 
-                                Text(item.pointsLabel)
+                                Text(L(item.pointsLabel))
                                     .font(.noto(config.mainPointsLabelFontSize, weight: .bold))
                                     .foregroundColor(.white)
                             }
