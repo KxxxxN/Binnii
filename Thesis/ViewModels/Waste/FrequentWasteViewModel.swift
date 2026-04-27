@@ -30,7 +30,7 @@ class FrequentWasteViewModel: ObservableObject {
         "เศษขนม": "Snack",
         "เครื่องดื่มเหลือ": "Drink",
         "น้ำแข็งเหลือ": "Ice",
-        "ตะเกียบ": "Chopsticks",
+        "ตะเกียบไม้": "Chopsticks",
         "กล่องกระดาษ": "Box",
         "กระดาษทั่วไป": "Paper"
         

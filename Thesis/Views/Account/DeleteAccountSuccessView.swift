@@ -12,6 +12,9 @@ struct DeleteAccountSuccessView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         GeometryReader { geo in
@@ -26,15 +29,15 @@ struct DeleteAccountSuccessView: View {
                     .frame(width: config.isIPad ? 160 : 120, height: config.isIPad ? 160 : 120)
                     .padding(.bottom, config.isIPad ? 40 : 29)
 
-                Text("ลบบัญชีสำเร็จ")
+                Text(L("ลบบัญชีสำเร็จ"))
                     .font(.noto(config.fontTitle, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.bottom, config.isIPad ? 16 : 12)
 
                 VStack(spacing: config.isIPad ? 6 : 4) {
-                    Text("บัญชีของคุณถูกลบเรียบร้อยแล้ว")
-                    Text("ขอบคุณที่ร่วมใช้งานกับเรา")
-                    Text("คุณสามารถสมัครใช้งานใหม่ได้ทุกเมื่อ")
+                    Text(L("บัญชีของคุณถูกลบเรียบร้อยแล้ว"))
+                    Text(L("ขอบคุณที่ร่วมใช้งานกับเรา"))
+                    Text(L("คุณสามารถสมัครใช้งานใหม่ได้ทุกเมื่อ"))
                 }
                 .font(.noto(config.fontBody, weight: .medium))
                 .foregroundColor(.black)
@@ -48,7 +51,7 @@ struct DeleteAccountSuccessView: View {
                     authViewModel.isAuthenticated = false
                     isLoggedIn = false
                 } label: {
-                    Text("กลับสู่หน้าหลัก")
+                    Text(L("กลับสู่หน้าหลัก"))
                         .font(.noto(config.isIPad ? 24 : 20, weight: .bold))
                         .foregroundColor(.white)
                         .frame(maxWidth: config.isIPad ? 500 : .infinity)

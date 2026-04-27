@@ -13,11 +13,13 @@ struct ScoreCard: View {
     let points: String
     let backgroundColor: Color
     let config: ResponsiveConfig
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
-                Text(title)
+                Text(L(title))
                     .font(.noto(config.scoreCardTitleFont, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
@@ -37,16 +39,16 @@ struct ScoreCard: View {
                     .font(.noto(config.scoreCardPointsFont, weight: .bold))
                     .foregroundColor(.white)
 
-                Text("คะแนน")
+                Text(L("คะแนน"))
                     .font(.noto(config.scoreCardLabelFont, weight: .medium))
                     .foregroundColor(.white)
             }
         }
-        .padding(.horizontal, config.paddingMedium)
-        .frame(width: config.isIPad ? 700 : 410, height: config.isIPad ? 110 : 75)
+        .padding(.horizontal, config.rewardCardPadding)
+        .frame(maxWidth: .infinity)
+        .frame(height: config.rewardCardHeight)
         .background(backgroundColor)
-        .cornerRadius(config.bannerCornerRadius)
-    }
+        .cornerRadius(config.bannerCornerRadius)    }
 }
 
 #Preview {

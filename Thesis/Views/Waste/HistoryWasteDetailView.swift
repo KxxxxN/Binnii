@@ -13,13 +13,16 @@ struct HistoryWasteDetailView: View {
     @Binding var hideTabBar: Bool
     let item: WasteTypeItem
 
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
 
             VStack(spacing: 0) {
 
-                DetailWasteHeader(title: "รายละเอียด", config: config)
+                DetailWasteHeader(title: L("รายละเอียด"), config: config)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -48,7 +51,7 @@ struct HistoryWasteDetailView: View {
                         Spacer().frame(height: config.isIPad ? 40 : 23)
 
                         WasteDetailContentView(
-                            category: item.title,
+                            category: L(item.title),
                             config: config,
                             showDate: true,
                             dateString: item.date
@@ -60,6 +63,7 @@ struct HistoryWasteDetailView: View {
             .background(Color.backgroundColor)
             .ignoresSafeArea()
             .navigationBarHidden(true)
+
             .onAppear {
                 hideTabBar = true
                 print("item.date = \(item.date)")

@@ -9,7 +9,9 @@ import SwiftUI
 
 struct HelpCenterView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     var body: some View {
         GeometryReader { geo in
@@ -19,7 +21,7 @@ struct HelpCenterView: View {
                 
                 // MARK: - Header
                 ZStack {
-                    Text("ช่วยเหลือ")
+                    Text(L("ช่วยเหลือ"))
                         .font(.noto(config.titleFontSize, weight: .bold))
                     
                     HStack {
@@ -33,13 +35,13 @@ struct HelpCenterView: View {
                 // MARK: - Menu List
                 VStack(spacing: 0) {
                     HelpMenuRow(
-                        title: "วิธีการใช้งาน",
+                        title: L("วิธีการใช้งาน"),
                         imageName: "BookGuide",
                         destination: Text("หน้าวิธีการใช้งาน"),
                         config: config
                     )
                     HelpMenuRow(
-                        title: "คำถามที่พบบ่อย",
+                        title: L("คำถามที่พบบ่อย"),
                         imageName: "Question",
                         destination: FAQView(),
                         config: config
