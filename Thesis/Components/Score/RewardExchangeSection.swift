@@ -13,7 +13,7 @@ struct RewardExchangeSection: View {
     @ObservedObject var profileVM: UserProfileViewModel
     @AppStorage("isLoggedIn") var isLoggedIn = false
     
-    private var displayPoints: Int { isLoggedIn ? totalPoints : 0 }
+    private var displayPoints: Int { isLoggedIn && totalPoints > 0 ? 500 : 0 }
     private var canRedeem: Bool { isLoggedIn && totalPoints >= 500 }
     
     var body: some View {

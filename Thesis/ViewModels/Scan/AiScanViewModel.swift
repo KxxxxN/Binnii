@@ -30,6 +30,8 @@ final class AiScanViewModel: ObservableObject {
     // MARK: - Result
     @Published var aiResult: String = ""
 
+    private var isResetting = false
+    
     // MARK: - Computed
     var resultTitle: AttributedString {
         var text = AttributedString("ขยะชิ้นนี้คือ \(aiResult) \nถูกต้องหรือไม่?")
@@ -46,10 +48,12 @@ final class AiScanViewModel: ObservableObject {
     }
 
     func onViewDisappear() {
-        isCameraActive = false
-        isScanning = false
+        if !showDetailView {
+            isCameraActive = false
+            isScanning = false
+        }
     }
-
+    
     // MARK: - Actions
     func toggleFlash() {
         isFlashOn.toggle()
@@ -95,7 +99,24 @@ final class AiScanViewModel: ObservableObject {
             }
         }
     }
+    
+    func resetAfterDismiss() {
+        showResultAlert = false
+        aiResult = ""
+        selectedItem = nil
+        shouldCapture = false
 
+        isCameraActive = false
+        isScanning = false
+        capturedUIImage = nil
+
+        Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            isCameraActive = true
+            isScanning = true
+        }
+    }
+    
     // MARK: - AI Analysis
     func analyzeImage() {
         guard let uiImage = capturedUIImage else { return }

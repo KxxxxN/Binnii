@@ -71,6 +71,14 @@ struct ContentView: View {
                 displayIndex = 0
             }
         }
+        .onAppear {
+            // ✅ ใส่ตรงนี้
+            for family in UIFont.familyNames.sorted() {
+                for font in UIFont.fontNames(forFamilyName: family) {
+                    print(font)
+                }
+            }
+        }
     }
 }
 #Preview {

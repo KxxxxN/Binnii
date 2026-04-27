@@ -12,14 +12,15 @@ import SwiftUI
 // MARK: - Required Title Component
 struct RequiredTitle: View {
     let title: String
+    let config: ResponsiveConfig
     
     var body: some View {
         HStack(spacing: 0) {
             Text(title)
-                .font(.noto(20, weight: .bold))
+                .font(.noto(config.fontHeader, weight: .bold))
             
             Text(" *")
-                .font(.noto(20, weight: .bold))
+                .font(.noto(config.fontHeader, weight: .bold))
                 .foregroundColor(.red)
         }
     }
@@ -27,10 +28,11 @@ struct RequiredTitle: View {
 
 struct Title : View {
     let title: String
+    let config: ResponsiveConfig
     
     var body: some View {
         Text(title)
-            .font(.noto(20, weight: .bold))
+            .font(.noto(config.fontHeader, weight: .bold))
     }
 }
 
@@ -38,13 +40,14 @@ struct Title : View {
 struct PlaceholderView: View {
     let text: String
     let placeholder: String
+    let config: ResponsiveConfig
     
     var body: some View {
         HStack {
             if text.isEmpty {
                 Text(placeholder)
                     .foregroundColor(Color.placeholderColor)
-                    .font(.noto(18 , weight: .medium))
+                    .font(.noto(config.fontSubHeader , weight: .medium))
             }
             Spacer()
         }

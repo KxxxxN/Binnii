@@ -92,8 +92,13 @@ struct ConfirmPhotoView: View {
                         }
                     )
                 }
+
             }
             .navigationBarHidden(true)
+            .onDisappear {
+                viewModel.isCameraActive = false
+                viewModel.isScanning = false
+            }
         }
     }
 }

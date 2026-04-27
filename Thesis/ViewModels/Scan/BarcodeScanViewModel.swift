@@ -20,7 +20,7 @@ final class BarcodeScanViewModel: ObservableObject {
     @Published var isFlashOn: Bool = false
     @Published var isCameraActive: Bool = true
     @Published var isScanning: Bool = true
-    @Published var cameraID: UUID = UUID()
+//    @Published var cameraID: UUID = UUID()
 
     // MARK: - Image & Barcode
     @Published var selectedItem: PhotosPickerItem? = nil
@@ -33,13 +33,17 @@ final class BarcodeScanViewModel: ObservableObject {
     // MARK: - Lifecycle
     func onViewAppear(hideTabBar: Binding<Bool>) {
         hideTabBar.wrappedValue = true
-        isCameraActive = true
-        isScanning = true
+        if !showDetailBarcodeView {
+            isCameraActive = true
+            isScanning = true
+        }
     }
-
+    
     func onViewDisappear() {
-        isCameraActive = false
-        isScanning = false
+        if !showDetailBarcodeView {
+            isCameraActive = false
+            isScanning = false
+        }
     }
 
     // MARK: - Scan from Camera
@@ -79,16 +83,23 @@ final class BarcodeScanViewModel: ObservableObject {
 
     // MARK: - Reset after detail dismiss
     func resetAfterDismiss() {
-        capturedBarcodeImage = nil
+        showBarcodeNotFound = false
+        barcodeVM.isNotFound = false
+        scannedBarcode = nil
         selectedItem = nil
+//        selectedTabNavigationItem = 0
+
         isCameraActive = false
         isScanning = false
-        cameraID = UUID()
-        isCameraActive = true
-        isScanning = true
-        barcodeVM.isNotFound = false
+        capturedBarcodeImage = nil
+
+        Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            isCameraActive = true
+            isScanning = true
+        }
     }
-    
+
     // MARK: - Image Loading from Gallery
     func loadImage(from item: PhotosPickerItem?, hideTabBar: Binding<Bool>) {
         guard let item else { return }

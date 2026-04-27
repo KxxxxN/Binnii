@@ -40,10 +40,25 @@ final class ConfirmPhotoViewModel: ObservableObject {
         showSaveSearchPhotoView = true
     }
 
+//    func resetAfterDismiss() {
+//        selectedUIImage = nil
+//        selectedItem = nil
+//        isCameraActive = true
+//    }
+    
     func resetAfterDismiss() {
         selectedUIImage = nil
         selectedItem = nil
-        isCameraActive = true
+        shouldCapture = false
+        
+        isCameraActive = false
+        isScanning = false
+        
+        Task {
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            isCameraActive = true
+            isScanning = true
+        }
     }
 
     // MARK: - Image Loading

@@ -14,6 +14,14 @@ struct ThesisApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    init() {
+        for family in UIFont.familyNames.sorted() {
+            for name in UIFont.fontNames(forFamilyName: family) {
+                print(name)
+            }
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             RootView()

@@ -175,7 +175,8 @@ struct ProfileView: View {
                                         Color.clear
                                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 26 : 20)
                                     }
-                                    .padding(.horizontal, config.paddingMedium)
+//                                    .padding(.horizontal, config.paddingMedium)
+                                    .frame(width: config.isIPad ? 545 : 345)
                                     .frame(maxWidth: .infinity)
                                 } else {
                                     ProfilePasswordField(

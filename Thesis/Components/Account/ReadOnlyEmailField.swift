@@ -15,7 +15,7 @@ struct ReadOnlyEmailField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Title(title: title)
+            Title(title: title, config: config)
             
             HStack {
                 Text(email)
