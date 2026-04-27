@@ -10,6 +10,9 @@ import SwiftUI
 struct MainTabView: View {
     @Binding var index: Int
     @Namespace private var animation
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         ZStack {
@@ -22,13 +25,13 @@ struct MainTabView: View {
 
 
             HStack {
-                tabButton(image: "Home2", selectedImage: "Home1", label: "หน้าหลัก", indexValue: 0)
+                tabButton(image: "Home2", selectedImage: "Home1", label: L("home"), indexValue: 0)
                 Spacer(minLength: 15)
-                tabButton(image: "Scan2", selectedImage: "Scan1", label: "สแกน", indexValue: 1)
+                tabButton(image: "Scan2", selectedImage: "Scan1", label: L("scan"), indexValue: 1)
                 Spacer(minLength: 15)
-                tabButton(image: "Book2", selectedImage: "Book1", label: "ความรู้ทั่วไป", indexValue: 2)
+                tabButton(image: "Book2", selectedImage: "Book1", label: L("knowledge"), indexValue: 2)
                 Spacer(minLength: 15)
-                tabButton(image: "User2", selectedImage: "User1", label: "บัญชีผู้ใช้", indexValue: 3)
+                tabButton(image: "User2", selectedImage: "User1", label: L("account"), indexValue: 3)
             }
             .padding(.horizontal, 25)
         }

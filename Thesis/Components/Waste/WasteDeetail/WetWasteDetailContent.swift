@@ -299,7 +299,7 @@ struct WetWasteDetailLeftoverDrinks: View {
             ],
             recyclingMethods: [
                 lm.localized("นำไปหมักเป็นปุ๋ยน้ำหมัก"),
-                lm.localized("นำไปเจือจางแล้วใช้รดต้นไม้ \n    (เฉพาะเครื่องดื่มที่ไม่หวานจัด ไม่เค็ม และไม่มีก๊าซ)")
+                lm.localized("นำไปเจือจางแล้วใช้รดต้นไม้     (เฉพาะเครื่องดื่มที่ไม่หวานจัด ไม่เค็ม และไม่มีก๊าซ)")
             ],
             showDate: showDate,
             dateString: dateString

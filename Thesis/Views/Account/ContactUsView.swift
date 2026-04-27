@@ -10,6 +10,8 @@ import SwiftUI
 struct ContactUsView: View {
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         GeometryReader { geo in
@@ -18,7 +20,7 @@ struct ContactUsView: View {
             VStack(spacing: 0) {
                 
                 ZStack {
-                    Text("ติดต่อเรา")
+                    Text(L("ติดต่อเรา"))
                         .font(.noto(config.titleFontSize, weight: .bold))
                     
                     HStack {
@@ -32,19 +34,19 @@ struct ContactUsView: View {
                 // Menu List
                 VStack(spacing: 0) {
                     ContactRow(
-                        title: "ช่องทางที่ 1",
+                        title: L("ช่องทางที่ 1"),
                         imageName: "ContactUs",
                         config: config
                     ) {
-                        print("ติดต่อ 1")
+                        print("contact 1")
                     }
                     
                     ContactRow(
-                        title: "ช่องทางที่ 2",
+                        title: L("ช่องทางที่ 2"),
                         imageName: "ContactUs",
                         config: config
                     ) {
-                        print("ติดต่อ 2")
+                        print("contact 2")
                     }
                 }
                 .padding(.top, 40)

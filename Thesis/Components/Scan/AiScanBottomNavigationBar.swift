@@ -11,6 +11,9 @@ struct AiScanBottomNavigationBar: View {
     @Binding var selectedTab: Int
     @Environment(\.horizontalSizeClass) private var sizeClass
     var onSelect: (Int) -> Void
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         GeometryReader { geo in
@@ -27,9 +30,9 @@ struct AiScanBottomNavigationBar: View {
                     .offset(x: CGFloat(selectedTab - 1) * config.aiBarTabWidth)
 
                 HStack(spacing: 0) {
-                    tabButton(config: config, icon: "Barcode", label: "บาร์โค้ด", index: 0)
-                    tabButton(config: config, icon: "Tabler_ai", label: "สแกน", index: 1)
-                    tabButton(config: config, icon: "Search", label: "ค้นหา", index: 2)
+                    tabButton(config: config, icon: "Barcode", label: L("บาร์โค้ด"), index: 0)
+                    tabButton(config: config, icon: "Tabler_ai", label: L("สแกน"), index: 1)
+                    tabButton(config: config, icon: "Search", label: L("ค้นหา"), index: 2)
                 }
                 .frame(width: config.aiBarWidth)
             }

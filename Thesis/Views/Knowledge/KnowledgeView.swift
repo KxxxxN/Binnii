@@ -103,7 +103,7 @@ struct KnowledgeView: View {
                                 .frame(minHeight: config.knowledgeDescHeight, maxHeight: config.knowledgeDescHeight, alignment: .top)
                                 .padding(.bottom, 10)
                             
-                            Text("ตัวอย่างขยะ:")
+                            Text(L("ตัวอย่างขยะ:"))
                                 .font(.noto(config.knowledgeDescFont, weight: .bold))
                                 .foregroundColor(.black)
                                 .padding(.bottom, 10)

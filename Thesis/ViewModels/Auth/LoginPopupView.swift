@@ -13,6 +13,9 @@ struct LoginPopupView: View {
     var onDismiss: (() -> Void)? = nil
     var onLogin: (() -> Void)? = nil
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.4)
@@ -30,19 +33,19 @@ struct LoginPopupView: View {
                     )
                     .padding(.top, 30)
 
-                Text("เริ่มใช้งาน")
+                Text(L("เริ่มใช้งาน"))
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top,20)
 
-                Text("กรุณาเข้าสู่ระบบเพื่อใช้งานได้ทันที")
+                Text(L("กรุณาเข้าสู่ระบบเพื่อใช้งานได้ทันที"))
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .padding(.bottom, 40)
 
                 HStack(spacing: 21) {
                     SecondButton(
-                        title: "ภายหลัง",
+                        title: L("ภายหลัง"),
                         action: {
                             isPresented = false
                             onDismiss?()
@@ -53,7 +56,7 @@ struct LoginPopupView: View {
                     
                     NavigationLink(destination: LoginView()) {
                         PrimaryButton(
-                            title: "เข้าสู่ระบบ",
+                            title: L("เข้าสู่ระบบ"),
                             action: { isPresented = false
                                 onLogin?()},
                             width: 120,
