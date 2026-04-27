@@ -59,6 +59,14 @@ struct CameraPreview: UIViewRepresentable {
         Coordinator(onScan: onScan)
     }
     
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            if coordinator.session.isRunning {
+                coordinator.session.stopRunning()
+            }
+        }
+    }
+    
     func makeUIView(context: Context) -> UIView {
         
         class PreviewView: UIView {
@@ -90,10 +98,10 @@ struct CameraPreview: UIViewRepresentable {
                 session.addOutput(metadataOutput)
                 metadataOutput.setMetadataObjectsDelegate(context.coordinator, queue: .main)
                 
-                if onScan != nil && !barcodeMode {
-                    metadataOutput.metadataObjectTypes = [.qr]
-                } else {
+                if barcodeMode {
                     metadataOutput.metadataObjectTypes = [.ean13, .ean8, .code128, .code39, .upce]
+                } else {
+                    metadataOutput.metadataObjectTypes = [.qr]
                 }
             }
         }
@@ -106,6 +114,10 @@ struct CameraPreview: UIViewRepresentable {
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
         
+        DispatchQueue.global(qos: .userInitiated).async {
+            session.startRunning()
+        }
+
         return view
     }
     

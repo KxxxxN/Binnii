@@ -42,7 +42,7 @@ struct BarcodeScanView: View {
                         viewModel.handleScannedBarcode(barcode, hideTabBar: $hideTabBar)
                     }
                 )
-                .id(viewModel.cameraID)
+//                .id(viewModel.cameraID)
                 
                 VStack(spacing: 0) {
                     
@@ -55,8 +55,13 @@ struct BarcodeScanView: View {
                     
                     VStack {
                         
-                        Spacer()
-                            .frame(height: config.barcodeShutterSpacerHeight)
+                        Text("กรุณาสแกนบาร์โค้ดของขยะทีละชิ้น")
+                            .font(.noto(config.fontHeader, weight: .medium))
+                            .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
+                            .frame(width: config.qrContentMaxWidth, height: config.confirmBannerHeight)
+                            .background(Color.textFieldColor)
+                            .cornerRadius(config.bannerCornerRadius)
                         
                         Spacer()
                         
@@ -117,9 +122,17 @@ struct BarcodeScanView: View {
                     title: L("สแกนบาร์โค้ด"),
                     scanMethod: "barcode"
                 )
+                .onDisappear {
+                    viewModel.resetAfterDismiss()
+                }
             }
-            .onChange(of: viewModel.showDetailBarcodeView) { _, isShowing in
-                if !isShowing { viewModel.resetAfterDismiss() }
+//            .onChange(of: viewModel.showDetailBarcodeView) { _, isShowing in
+//                if !isShowing { viewModel.resetAfterDismiss() }
+//            }
+            .onChange(of: currentTab) { _, tab in
+                viewModel.isCameraActive = (tab == .barcode)
+                viewModel.isScanning = (tab == .barcode)
+                viewModel.selectedTabNavigationItem = tab.rawValue 
             }
             .navigationBarHidden(true)
         }

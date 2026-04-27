@@ -16,7 +16,7 @@ struct RewardExchangeSection: View {
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
     
-    private var displayPoints: Int { isLoggedIn ? totalPoints : 0 }
+    private var displayPoints: Int { isLoggedIn && totalPoints > 0 ? 500 : 0 }
     private var canRedeem: Bool { isLoggedIn && totalPoints >= 500 }
     
     var body: some View {

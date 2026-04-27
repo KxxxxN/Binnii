@@ -22,13 +22,13 @@ struct ProfileInputField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
-            Title(title: title)
+            Title(title: title, config: config)
                 .padding(.leading, 6)
 
             HStack {
                 ZStack(alignment: .leading) {
                     if isEditing {
-                        PlaceholderView(text: text, placeholder: placeholder)
+                        PlaceholderView(text: text, placeholder: placeholder, config: config)
                         
                         TextField("", text: $text)
                             .font(.noto(config.accountRowFontSize, weight: .medium))
@@ -83,7 +83,7 @@ struct ProfileEmailField: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
-            Title(title: title)
+            Title(title: title, config: config)
                 .padding(.leading, 6)
             
             HStack {
@@ -139,7 +139,7 @@ struct ProfilePasswordField: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
-            Title(title: title)
+            Title(title: title, config: config)
                 .padding(.leading, 6)
             
             HStack {

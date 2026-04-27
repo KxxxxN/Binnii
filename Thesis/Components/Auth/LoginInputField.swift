@@ -21,11 +21,11 @@ struct LoginInputField: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Title(title: title)
+            Title(title: title, config: config)
 
             HStack {
                 ZStack(alignment: .leading) {
-                    PlaceholderView(text: text, placeholder: placeholder)
+                    PlaceholderView(text: text, placeholder: placeholder, config: config)
                     
                     if isSecure {
                         if isPasswordToggle?.wrappedValue ?? false {
