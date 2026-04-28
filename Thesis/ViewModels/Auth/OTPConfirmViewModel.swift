@@ -104,17 +104,16 @@ class OTPConfirmViewModel: ObservableObject {
         isSubmitted = false
     }
     
+    private var cooldownTask: Task<Void, Never>?
+
     func startCooldown() {
         resendCooldown = 60
-        cooldownTimer?.invalidate()
-        cooldownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            guard let self else { return }
-            Task { @MainActor in
-                if self.resendCooldown > 0 {
-                    self.resendCooldown -= 1
-                } else {
-                    timer.invalidate()
-                }
+        cooldownTask?.cancel()
+        cooldownTask = Task {
+            for remaining in stride(from: 59, through: 0, by: -1) {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard !Task.isCancelled else { return }
+                self.resendCooldown = remaining
             }
         }
     }
@@ -123,7 +122,7 @@ class OTPConfirmViewModel: ObservableObject {
         guard resendCooldown == 0 else { return }
         resetOTPFields()
         startCooldown()
-        
+
         do {
             switch source {
             case .forgotPassword, .confirmEmail:
@@ -132,21 +131,19 @@ class OTPConfirmViewModel: ObservableObject {
                 try await supabase.auth.update(user: UserAttributes(email: email))
             }
         } catch {
-            // แสดง error ให้ user รู้ว่าส่งไม่ได้
             print("Resend Failed: \(error.localizedDescription)")
-            self.showIncorrectError = true
-            self.resendCooldown = 0 
+            cooldownTask?.cancel()
+            resendCooldown = 0
+            showIncorrectError = true
         }
     }
     
-    // ฟังก์ชันที่ทำงานเมื่อกดปุ่ม "ยืนยัน"
     func verifyOTP(source: OTPSource, email: String) async {
         self.isSubmitted = true
         self.showIncompleteError = false
         self.showIncorrectError = false
         self.isFieldInvalid = Array(repeating: false, count: 6)
         
-        // 1. ตรวจสอบว่ากรอกครบไหม
         if fullOTP.count < 6 {
             showIncompleteError = true
             for i in 0..<6 { isFieldInvalid[i] = otpFields[i].isEmpty }
@@ -169,7 +166,6 @@ class OTPConfirmViewModel: ObservableObject {
                 )
             }
             
-            // ✅ ถ้าสำเร็จ
             switch source {
             case .forgotPassword:  navigateToChangePW = true
             case .confirmEmail:  navigateToChangePW = true
@@ -179,7 +175,6 @@ class OTPConfirmViewModel: ObservableObject {
             }
             
         } catch {
-            // ❌ ถ้าไม่สำเร็จ (รหัสผิด/หมดอายุ)
             print("OTP Verification Failed: \(error.localizedDescription)")
             self.showIncorrectError = true
             self.isFieldInvalid = Array(repeating: true, count: 6)

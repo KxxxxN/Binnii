@@ -45,12 +45,13 @@ class ForgotPasswordViewModel: ObservableObject {
                 let email: String
             }
             
-            let users: [UserEmail] = try await supabase
+            let response = try await supabase
                 .from("users")
                 .select("email")
-                .eq("email", value: email)
+                .eq("email", value: email.lowercased())
                 .execute()
-                .value
+            
+            let users = try JSONDecoder().decode([UserEmail].self, from: response.data)
             
             guard !users.isEmpty else {
                 self.emailErrorForgot = "อีเมลนี้ยังไม่ได้ลงทะเบียน"
@@ -59,7 +60,6 @@ class ForgotPasswordViewModel: ObservableObject {
             
             try await supabase.auth.resetPasswordForEmail(email)
             self.navigateToOTP = true
-            print("Reset password email sent to: \(email)")
             
         } catch {
             print("Error: \(error.localizedDescription)")
