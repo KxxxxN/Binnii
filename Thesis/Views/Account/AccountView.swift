@@ -14,6 +14,7 @@ struct AccountView: View {
     @State private var showErrorPopup = false
     @State private var errorTitle = ""
     @State private var showDeleteAccountPopup = false
+    @AppStorage("notificationEnabled") var isNotificationOn: Bool = false
     @EnvironmentObject var authViewModel: AuthViewModel
 
     @ObservedObject private var lm = LanguageManager.shared
@@ -56,7 +57,7 @@ struct AccountView: View {
                                     AccountToggleRow(
                                         title: L("การแจ้งเตือน"),
                                         imageName: "IconNotification",
-                                        isOn: $viewModel.isNotificationOn,
+                                        isOn: $isNotificationOn,
                                         config: config
                                     )
                                 }
