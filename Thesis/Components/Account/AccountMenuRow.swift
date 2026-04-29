@@ -122,11 +122,10 @@ struct AccountToggleRow: View {
 
     private func handleToggle(_ newValue: Bool) {
         if newValue {
-            // ผู้ใช้กด ON → ตรวจสอบ / ขอ permission
             requestNotificationPermission()
         } else {
-            // ผู้ใช้กด OFF → ยกเลิกการแจ้งเตือนทั้งหมด
             NotificationManager.shared.cancelDailyReminder()
+            UserDefaults.standard.set(false, forKey: "notificationEnabled") // บันทึกว่าปิด
         }
     }
 
@@ -163,9 +162,13 @@ struct AccountToggleRow: View {
     }
 
     /// ตั้งค่า default ให้ใช้ตารางแจ้งเตือนใน NotificationManager (12:00 และ 16:00)
+//    private func scheduleDefaultReminder() {
+//        NotificationManager.shared.scheduleDailyReminder(hour: 0, minute: 0)
+//    }
+    
     private func scheduleDefaultReminder() {
-        // ใช้ API ที่มีอยู่แล้ว ซึ่งจะตั้งทั้งสองเวลาให้โดยอัตโนมัติ
         NotificationManager.shared.scheduleDailyReminder(hour: 0, minute: 0)
+        UserDefaults.standard.set(true, forKey: "notificationEnabled") // บันทึกว่าเปิด
     }
 
     private func openAppSettings() {

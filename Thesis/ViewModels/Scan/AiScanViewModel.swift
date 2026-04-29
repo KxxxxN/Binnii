@@ -123,7 +123,7 @@ final class AiScanViewModel: ObservableObject {
         isAnalyzing = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let model = try? MyGarbageModel(configuration: MLModelConfiguration()),
+            guard let model = try? MyWasteClassifier(configuration: MLModelConfiguration()),
                   let vnModel = try? VNCoreMLModel(for: model.model) else {
                 DispatchQueue.main.async { self.isAnalyzing = false }
                 return
@@ -156,6 +156,22 @@ final class AiScanViewModel: ObservableObject {
         switch label {
         case "plasticBottle": return "ขวดพลาสติก"
         case "can":           return "กระป๋อง"
+        case "กระดาษทั่วไป (172)": return "กระดาษ"
+        case "กระดาษทิชชู่ (133)": return "กระดาษทิชชู่"
+        case "กล่องกระดาษ (82)": return "กล่องกระดาษ"
+        case "ช้อน-ส้อมพลาสติก (208)": return "ช้อน-ส้อม พลาสติก"
+        case "ซองขนม (1050)": return "ซองขนม"
+        case "ตะเกียบไม้ (93)": return "ตะเกียบไม้"
+        case "ถุงพลาสติก (92)": return "ถุงพลาสติก"
+        case "น้ำแข็งเหลือ (132)": return "น้ำแข็งเหลือ"
+        case "ภาชนะใส่อาหาร (236)": return "ภาชนะใส่อาหาร"
+        case "หลอด (68)": return "หลอด"
+        case "เครื่องดื่มเหลือ (127)": return "เครื่องดื่มเหลือ"
+        case "เปลือกผลไม้ (208)": return "เปลือกผลไม้"
+        case "เปลือกไข่ (127)": return "เปลือกไข่"
+        case "เศษขนม (238)": return "เศษขนม"
+        case "เศษอาหาร (415)": return "เศษอาหาร"
+        case "แก้วพลาสติก (96)": return "แก้วพลาสติก"
         default:              return "ไม่พบขยะชิ้นนี้"
         }
     }
