@@ -121,19 +121,70 @@ struct CameraPreview: UIViewRepresentable {
         return view
     }
     
+//    func updateUIView(_ uiView: UIView, context: Context) {
+//        
+//        if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
+//            previewLayer.frame = uiView.bounds
+//            
+//        }
+//        
+//        let session = context.coordinator.session
+//        
+//        if let device = AVCaptureDevice.default(for: .video), device.hasTorch {
+//            try? device.lockForConfiguration()
+//            device.torchMode = isFlashOn ? .on : .off
+//            device.unlockForConfiguration()
+//        }
+//        
+//        context.coordinator.onCapture = { image in
+//            capturedImage = image
+//        }
+//        
+//        context.coordinator.isScanning = isScanning
+//        
+//        if isActive {
+//            if !session.isRunning {
+//                DispatchQueue.global(qos: .userInitiated).async {
+//                    session.startRunning()
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
+//                        context.coordinator.isScanning = isScanning
+//                    }
+//                }
+//            }
+//        } else {
+//            if session.isRunning {
+//                DispatchQueue.global(qos: .userInitiated).async {
+//                    session.stopRunning()
+//                }
+//            }
+//        }
+//
+//        
+//        if shouldCapture && session.isRunning {
+//            let settings = AVCapturePhotoSettings()
+//            context.coordinator.photoOutput.capturePhoto(with: settings, delegate: context.coordinator)
+//        }
+//    }
+    
     func updateUIView(_ uiView: UIView, context: Context) {
         
         if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
             previewLayer.frame = uiView.bounds
-            
         }
         
         let session = context.coordinator.session
         
-        if let device = AVCaptureDevice.default(for: .video), device.hasTorch {
-            try? device.lockForConfiguration()
-            device.torchMode = isFlashOn ? .on : .off
-            device.unlockForConfiguration()
+        func setTorch(_ on: Bool) {
+            guard let device = AVCaptureDevice.default(for: .video),
+                  device.hasTorch,
+                  device.isTorchAvailable else { return }
+            do {
+                try device.lockForConfiguration()
+                device.torchMode = on ? .on : .off
+                device.unlockForConfiguration()
+            } catch {
+                print("Torch error: \(error)")
+            }
         }
         
         context.coordinator.onCapture = { image in
@@ -146,20 +197,22 @@ struct CameraPreview: UIViewRepresentable {
             if !session.isRunning {
                 DispatchQueue.global(qos: .userInitiated).async {
                     session.startRunning()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         context.coordinator.isScanning = isScanning
-                    }
+                        setTorch(isFlashOn)                    }
                 }
+            } else {
+                setTorch(isFlashOn)
             }
         } else {
             if session.isRunning {
+                setTorch(false)
                 DispatchQueue.global(qos: .userInitiated).async {
                     session.stopRunning()
                 }
             }
         }
 
-        
         if shouldCapture && session.isRunning {
             let settings = AVCapturePhotoSettings()
             context.coordinator.photoOutput.capturePhoto(with: settings, delegate: context.coordinator)

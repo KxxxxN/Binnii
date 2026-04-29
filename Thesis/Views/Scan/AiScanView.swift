@@ -130,6 +130,10 @@ struct AiScanView: View {
         .onChange(of: currentTab) { _, tab in
             viewModel.isCameraActive = (tab == .ai)
             viewModel.isScanning = (tab == .ai)
+            
+            if tab != .ai {
+                viewModel.isFlashOn = false
+            }
         }
         .navigationBarHidden(true)
     }

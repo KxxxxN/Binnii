@@ -132,7 +132,11 @@ struct BarcodeScanView: View {
             .onChange(of: currentTab) { _, tab in
                 viewModel.isCameraActive = (tab == .barcode)
                 viewModel.isScanning = (tab == .barcode)
-                viewModel.selectedTabNavigationItem = tab.rawValue 
+                viewModel.selectedTabNavigationItem = tab.rawValue
+                
+                if tab != .barcode {
+                    viewModel.isFlashOn = false
+                }
             }
             .navigationBarHidden(true)
         }

@@ -46,6 +46,7 @@ final class QRScanViewModel: ObservableObject {
         if !showAiScanView {
             hideTabBar = false
         }
+        isFlashOn = false
         isCameraActive = false
         OrientationHelper.setOrientation(.all)
     }
