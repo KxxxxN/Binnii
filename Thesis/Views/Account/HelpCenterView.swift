@@ -37,7 +37,7 @@ struct HelpCenterView: View {
                     HelpMenuRow(
                         title: L("วิธีการใช้งาน"),
                         imageName: "BookGuide",
-                        destination: Text("หน้าวิธีการใช้งาน"),
+                        destination: GuideView(),
                         config: config
                     )
                     HelpMenuRow(

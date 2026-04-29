@@ -44,7 +44,6 @@ struct OnboardingView: View {
                                     .scaledToFit()
                             }
                             .frame(width: config.isIPad ? 670 : 370, height: config.isIPad ? 935 : 635)
-                            .clipShape(RoundedRectangle(cornerRadius: 50))
                             .tag(index)
                         }
                     }
@@ -63,7 +62,7 @@ struct OnboardingView: View {
                         }
                     }
                     .padding(.top, 16)
-                    .padding(.bottom, config.isIPad ? 24 : 20)
+                    .padding(.bottom, config.isIPad ? 20 : 20)
                 } else {
                     Color.clear
                         .frame(height: config.isIPad ? 48 : 44)
