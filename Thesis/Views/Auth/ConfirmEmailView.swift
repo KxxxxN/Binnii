@@ -14,6 +14,9 @@ struct ConfirmEmailView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var showErrorPopup = false
     
+    @ObservedObject private var lm = LanguageManager.shared
+       private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -22,7 +25,7 @@ struct ConfirmEmailView: View {
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
-                    Text("ยืนยันอีเมลของคุณ")
+                    Text(L("ยืนยันอีเมลของคุณ"))
                         .font(.noto(config.titleFontSize, weight: .bold))
                         .foregroundColor(.black)
                     HStack {
@@ -35,12 +38,12 @@ struct ConfirmEmailView: View {
                 
                 // MARK: - Email Input Field
                 ReadOnlyEmailField(
-                    title: "ที่อยู่อีเมล",
+                    title: L("ที่อยู่อีเมล"),
                     email: viewModel.email,
                     config: config 
                 )
                 
-                Text("เพื่อความปลอดภัย ไม่สามารถเปลี่ยนอีเมลได้ในหน้านี้")
+                Text(L("เพื่อความปลอดภัย ไม่สามารถเปลี่ยนอีเมลได้ในหน้านี้"))
                     .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                     .foregroundColor(.placeholderColor)
                     .multilineTextAlignment(.center)
@@ -50,7 +53,7 @@ struct ConfirmEmailView: View {
                 
                 // MARK: - Action Button
                 PrimaryButton(
-                    title: "ส่งรหัส OTP",
+                    title: L("ส่งรหัส OTP"),
                     action: {
                         Task {
                             await viewModel.verifyEmailBeforeChange()
@@ -85,7 +88,7 @@ struct ConfirmEmailView: View {
                 
                 if showErrorPopup {
                     ErrorPopupView(
-                        title: "ส่งรหัส OTP ไม่สำเร็จ",
+                        title: L("ส่งรหัส OTP ไม่สำเร็จ"),
                         onDismiss: { showErrorPopup = false }
                     )
                 }

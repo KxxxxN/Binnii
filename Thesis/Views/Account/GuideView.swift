@@ -75,7 +75,7 @@ struct GuideView: View {
                         HStack(alignment: .bottom, spacing: config.isIPad ? 100 : 24) {
                             if currentPage > 0 {
                                 SecondButton(
-                                    title: "< ย้อนกลับ",
+                                    title: L("< ย้อนกลับ"),
                                     action: { currentPage -= 1 },
                                     width: config.isIPad ? 180 : 160,
                                     height: config.isIPad ? 60 : 58
@@ -87,7 +87,7 @@ struct GuideView: View {
                             
                             if currentPage < pages.count - 1 {
                                 PrimaryButton(
-                                    title: "ต่อไป >",
+                                    title: L("ต่อไป >"),
                                     action: { currentPage += 1 },
                                     width: config.isIPad ? 180 : 160,
                                     height: config.isIPad ? 60 : 58

@@ -19,10 +19,6 @@
 		BB50BD602EB8968400A20141 /* NotoSansThai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5C2EB8968400A20141 /* NotoSansThai-Regular.ttf */; };
 		BB50BD612EB8968400A20141 /* NotoSansThai-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */; };
 		BB50BD632EB8968E00A20141 /* NotoSansThai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */; };
-		BBAE237E2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */; };
-		BBAE23802F9F3A35002D4BBD /* Inter_18pt-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */; };
-		BBAE23822F9F3A47002D4BBD /* Inter_18pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */; };
-		BBAE23842F9F3A5E002D4BBD /* Inter_18pt-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,10 +29,6 @@
 		BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-SemiBold.ttf"; sourceTree = "<group>"; };
 		BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Bold.ttf"; sourceTree = "<group>"; };
 		BBAB21D52EA8CCDE006A0375 /* Thesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_24pt-Bold.ttf"; sourceTree = "<group>"; };
-		BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Medium.ttf"; sourceTree = "<group>"; };
-		BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
-		BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -80,10 +72,6 @@
 		BB50BD572EB8959300A20141 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */,
-				BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */,
-				BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */,
-				BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */,
 				BB50BD582EB8966E00A20141 /* NotoSansThai-Thin.ttf */,
 				BB50BD5A2EB8968400A20141 /* NotoSansThai-Light.ttf */,
 				BB50BD5B2EB8968400A20141 /* NotoSansThai-Medium.ttf */,
@@ -190,11 +178,7 @@
 				BB50BD632EB8968E00A20141 /* NotoSansThai-Bold.ttf in Resources */,
 				BB50BD602EB8968400A20141 /* NotoSansThai-Regular.ttf in Resources */,
 				BB50BD612EB8968400A20141 /* NotoSansThai-SemiBold.ttf in Resources */,
-				BBAE23842F9F3A5E002D4BBD /* Inter_18pt-Light.ttf in Resources */,
-				BBAE23802F9F3A35002D4BBD /* Inter_18pt-Medium.ttf in Resources */,
-				BBAE237E2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf in Resources */,
 				BB50BD592EB8966E00A20141 /* NotoSansThai-Thin.ttf in Resources */,
-				BBAE23822F9F3A47002D4BBD /* Inter_18pt-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,7 +323,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5ZJTU58G85;
+				DEVELOPMENT_TEAM = 2K4DCY3986;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Thesis/Info.plist;
@@ -355,7 +339,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CODE.Binnii.Thesis;
+				PRODUCT_BUNDLE_IDENTIFIER = CODE.Theis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

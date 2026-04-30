@@ -29,6 +29,10 @@ class UserProfileViewModel: ObservableObject{
     @Published var isLoading: Bool = false
     @Published var latestHistory: HistoryItem? = nil
     
+    private func L(_ key: String) -> String {
+        LanguageManager.shared.localized(key)
+    }
+    
     func fetchProfile(userId: UUID) async {
         isLoading = true
         defer { isLoading = false }
@@ -58,7 +62,7 @@ class UserProfileViewModel: ObservableObject{
                 }
             }
         } catch {
-            fullName = "ชื่อ - นามสกุล"
+            fullName = L("ชื่อ - นามสกุล")
             print("❌ fetchName error: \(error)")
         }
     }
@@ -132,7 +136,7 @@ class UserProfileViewModel: ObservableObject{
                     title: latest.category,
                     date: displayDate,
                     points: latest.points < 0 ? "\(latest.points)" : "+\(latest.points)",
-                    pointsLabel: "คะแนน"
+                    pointsLabel: L("คะแนน")
                 )
                 print("📋 latestHistory updated: \(latest.category) | \(latest.points)")
             }
