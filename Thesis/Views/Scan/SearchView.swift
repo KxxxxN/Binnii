@@ -91,6 +91,9 @@ struct SearchView: View {
             .onAppear {
                 selectedTabnavigationItem = 2
             }
+            .onChange(of: currentTab) { _, tab in
+                selectedTabnavigationItem = tab.rawValue
+            }
         }
     }
 }

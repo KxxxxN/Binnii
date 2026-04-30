@@ -123,6 +123,17 @@ struct AiScanView: View {
                 title: L("สแกนด้วย AI"),
                 scanMethod: "ai"
             )
+            .onDisappear {
+                viewModel.resetAfterDismiss()
+            }
+        }
+        .onChange(of: currentTab) { _, tab in
+            viewModel.isCameraActive = (tab == .ai)
+            viewModel.isScanning = (tab == .ai)
+            
+            if tab != .ai {
+                viewModel.isFlashOn = false
+            }
         }
         .navigationBarHidden(true)
     }

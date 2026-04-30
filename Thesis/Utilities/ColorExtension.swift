@@ -52,21 +52,18 @@ extension Font {
     }
     static func inter(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         switch weight {
-        case .thin:
-            return .custom("Inter-Thin", size: size)
-        case .light:
-            return .custom("Inter-Light", size: size)
-        case .medium:
-            return .custom("Inter-Medium", size: size)
-        case .semibold:
-            return .custom("Inter-SemiBold", size: size)
         case .bold:
-            return .custom("Inter-Bold", size: size)
+            return .custom("Inter24pt-Bold", size: size)
+        case .light:
+            return .custom("Inter18pt-Light", size: size)
+        case .medium:
+            return .custom("Inter18pt-Medium", size: size)
+        case .regular:
+            return .custom("Inter24pt-Regular", size: size)
         default:
-            return .custom("Inter-Regular", size: size)
+            return .custom("Inter24pt-Bold", size: size)
         }
     }
-    
 }
 
 extension UIImage {
