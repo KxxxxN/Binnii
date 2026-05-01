@@ -16,6 +16,9 @@ struct OTPConfirmView: View {
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -24,7 +27,7 @@ struct OTPConfirmView: View {
                 VStack(spacing: 0) {
                     // MARK: - Header
                     ZStack {
-                        Text("ยืนยันรหัส OTP")
+                        Text(L("ยืนยันรหัส OTP"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                         
                         HStack {
@@ -35,7 +38,7 @@ struct OTPConfirmView: View {
                     .padding(.top, config.topPadding)
                     .padding(.bottom, config.isIPad ? 80 : 42)
                     
-                    Text("ใส่รหัสที่ส่งไปยังอีเมลของคุณ")
+                    Text(L("ใส่รหัสที่ส่งไปยังอีเมลของคุณ"))
                         .font(.noto(config.isIPad ? 24 : 20, weight: .semibold))
                         .padding(.bottom, config.isIPad ? 24 : 18)
                     
@@ -48,14 +51,12 @@ struct OTPConfirmView: View {
                         .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                         .foregroundColor(Color.errorColor)
                         .frame(height: config.isIPad ? 20 : 15)
-                        .padding(.bottom, 0)
                         .opacity(viewModel.shouldShowError ? 1 : 0)
-                    
                         .padding(.bottom, config.isIPad ? 25 : 18)
                     
                     // MARK: - Action Button
                     PrimaryButton(
-                        title: "ยืนยัน",
+                        title: L("ยืนยัน"),
                         action: {
                             focusedField = nil
                             Task {
@@ -68,12 +69,12 @@ struct OTPConfirmView: View {
                     
                     // MARK: - Resend Code
                     HStack(spacing: 8) {
-                        Text("ยังไม่ได้รับรหัส?")
+                        Text(L("ยังไม่ได้รับรหัส?"))
                             .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                             .foregroundColor(.black)
                         
                         if viewModel.resendCooldown > 0 {
-                            Text("ส่งรหัสใหม่ (\(viewModel.resendCooldown))")
+                            Text(L("ส่งรหัสใหม่") + " (\(viewModel.resendCooldown))")
                                 .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
                                 .foregroundColor(.placeholderColor)
                         } else {
@@ -82,7 +83,7 @@ struct OTPConfirmView: View {
                                     await viewModel.resendOTP(source: source, email: email)
                                 }
                             }) {
-                                Text("ส่งรหัสใหม่")
+                                Text(L("ส่งรหัสใหม่"))
                                     .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
                                     .foregroundColor(.mainColor)
                                     .underline(color: .mainColor)
@@ -108,16 +109,17 @@ struct OTPConfirmView: View {
                 .navigationDestination(isPresented: $viewModel.navigateToProfile) {
                     ProfileView()
                 }
+                
                 // MARK: - Popups
                 if viewModel.showSuccessPopup {
-                    SuccessPopupView(message: "แก้ไขอีเมลสำเร็จ") {
+                    SuccessPopupView(message: L("แก้ไขอีเมลสำเร็จ")) {
                         viewModel.showSuccessPopup = false
                         viewModel.navigateToProfile = true
                     }
                 }
                 
                 if viewModel.showErrorPopup && source == .changeEmail {
-                    ErrorPopupView(title: "แก้ไขอีเมลไม่สำเร็จ"){
+                    ErrorPopupView(title: L("แก้ไขอีเมลไม่สำเร็จ")){
                         withAnimation {
                             viewModel.showErrorPopup = false
                             viewModel.resetOTPFields()
@@ -130,7 +132,6 @@ struct OTPConfirmView: View {
         .navigationBarBackButtonHidden(true)
     }
 }
-
 #Preview {
     OTPConfirmView(source: .changeEmail, email: "1123kansinee@gmail.com")
 }

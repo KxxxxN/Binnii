@@ -11,6 +11,9 @@ struct ConfirmPasswordView: View {
     @StateObject private var viewModel = ConfirmPasswordViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -18,7 +21,7 @@ struct ConfirmPasswordView: View {
             VStack(spacing: 0) {
                 // MARK: - Header
                 ZStack {
-                    Text("ยืนยันรหัสผ่าน")
+                    Text(L("ยืนยันรหัสผ่าน"))
                         .font(.noto(config.titleFontSize, weight: .bold))
 
                     HStack {
@@ -31,13 +34,14 @@ struct ConfirmPasswordView: View {
                 
                 // MARK: - Input Field
                 LoginInputField(
-                    title: "รหัสผ่าน",
-                    placeholder: "กรอกรหัสผ่าน",
+                    title: L("รหัสผ่าน"),
+                    placeholder: L("กรอกรหัสผ่าน"),
                     text: $viewModel.password,
                     isValid: .constant(!viewModel.isSubmitted || viewModel.passwordError == nil),
                     errorMessage: viewModel.isSubmitted ? (viewModel.passwordError ?? "") : "",
                     isSecure: true,
-                    isPasswordToggle: $viewModel.isPasswordVisible, config: config
+                    isPasswordToggle: $viewModel.isPasswordVisible,
+                    config: config
                 )
                 .onChange(of: viewModel.password) { _, _ in
                     viewModel.clearError()
@@ -45,7 +49,7 @@ struct ConfirmPasswordView: View {
                 
                 // MARK: - Confirm Button
                 PrimaryButton(
-                    title: "ยืนยัน",
+                    title: L("ยืนยัน"),
                     action: {
                         viewModel.verifyPassword()
                     },

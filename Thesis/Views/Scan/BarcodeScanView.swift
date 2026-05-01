@@ -55,7 +55,7 @@ struct BarcodeScanView: View {
                     
                     VStack {
                         
-                        Text("กรุณาสแกนบาร์โค้ดของขยะทีละชิ้น")
+                        Text(L("กรุณาสแกนบาร์โค้ดของขยะทีละชิ้น"))
                             .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)

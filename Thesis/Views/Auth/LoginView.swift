@@ -16,6 +16,9 @@ struct LoginView: View {
     @AppStorage("isLoggedIn") var isLoggedIn = false
     @Environment(\.dismiss) var dismiss
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         
         NavigationStack(path: $path) {
@@ -48,8 +51,8 @@ struct LoginView: View {
                             // MARK: - Input Fields
                             VStack(spacing: 0) {
                                 LoginInputField(
-                                    title: "อีเมล",
-                                    placeholder: "กรอกอีเมล",
+                                    title: L("อีเมล"),
+                                    placeholder: L("กรอกอีเมล"),
                                     text: $viewModel.email,
                                     isValid: .constant(!viewModel.isLoginSubmitted || viewModel.emailError == nil),
                                     errorMessage: viewModel.isLoginSubmitted ? (viewModel.emailError ?? "") : "",
@@ -60,8 +63,8 @@ struct LoginView: View {
                                 }
                                 
                                 LoginInputField(
-                                    title: "รหัสผ่าน",
-                                    placeholder: "กรอกรหัสผ่าน",
+                                    title: L("รหัสผ่าน"),
+                                    placeholder: L("กรอกรหัสผ่าน"),
                                     text: $viewModel.password,
                                     isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
                                     errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
@@ -78,7 +81,7 @@ struct LoginView: View {
                                     Spacer()
                                     
                                     NavigationLink(destination: EmailForgotPassword()){
-                                        Text("ลืมรหัสผ่าน?")
+                                        Text(L("ลืมรหัสผ่าน?"))
                                             .font(.noto(bodyFontSize, weight: .medium))
                                             .foregroundColor(.mainColor)
                                     }
@@ -88,7 +91,7 @@ struct LoginView: View {
                             
                             // MARK: - Login Button
                             PrimaryButton(
-                                title: "เข้าสู่ระบบ",
+                                title: L("เข้าสู่ระบบ"),
                                 action: {
                                     Task {
                                         await viewModel.login()
@@ -101,12 +104,12 @@ struct LoginView: View {
                             
                             // MARK: - Register Link
                             HStack(spacing: 8){
-                                Text("ยังไม่มีบัญชี?")
+                                Text(L("ยังไม่มีบัญชี?"))
                                     .font(.noto(bodyFontSize, weight: .medium))
                                     .foregroundColor(.black)
                                 
                                 NavigationLink(destination: RegisterView()){
-                                    Text("ลงทะเบียน")
+                                    Text(L("ลงทะเบียน"))
                                         .font(.noto(bodyFontSize, weight: .medium))
                                         .foregroundColor(.mainColor)
                                         .underline(color: .mainColor)
@@ -120,7 +123,7 @@ struct LoginView: View {
                                     .frame(width: config.isIPad ? 160 : 108, height: 2)
                                     .background(Color.textFieldColor)
                                 
-                                Text("หรือลงชื่อเข้าใช้ด้วย")
+                                Text(L("หรือลงชื่อเข้าใช้ด้วย"))
                                     .font(.noto(bodyFontSize, weight: .medium))
                                     .foregroundColor(Color.black)
                                 
@@ -132,21 +135,25 @@ struct LoginView: View {
                             
                             // MARK: - Social Login
                             VStack(spacing: 16){
-                                SocialLoginButton(iconName: "GoogleIcon", title: "ดำเนินการต่อด้วย Google", config: config) {
+                                SocialLoginButton(
+                                    iconName: "GoogleIcon",
+                                    title: L("ดำเนินการต่อด้วย Google"),
+                                    config: config
+                                ) {
                                     Task { await authViewModel.signInWithOAuth(provider: .google) }
                                 }
                                 .padding(.top, 21)
                                 
                                 SocialLoginButton(
                                     iconName: "FacebookIcon",
-                                    title: "ดำเนินการต่อด้วย Facebook",
+                                    title: L("ดำเนินการต่อด้วย Facebook"),
                                     config: config
                                 ) {
                                     Task { await authViewModel.signInWithOAuth(provider: .facebook) }
                                 }
                             }
-                            Spacer()
                             
+                            Spacer()
                         }
                         .frame(minHeight: geo.size.height)
                         .background(Color.backgroundColor)
@@ -169,12 +176,11 @@ struct LoginView: View {
             }
             .navigationBarBackButtonHidden(true)
             .navigationTitle("")
-
         }
     }
 }
 
 #Preview {
     LoginView()
-            .environmentObject(AuthViewModel())
+        .environmentObject(AuthViewModel())
 }

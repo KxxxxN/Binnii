@@ -13,6 +13,8 @@ struct EmailForgotPassword: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var showErrorPopup = false
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     var body: some View {
         GeometryReader { geo in
@@ -21,11 +23,10 @@ struct EmailForgotPassword: View {
             ZStack{
                 VStack(spacing: 0){
                     ZStack {
-                        Text("ลืมรหัสผ่าน")
+                        Text(L("ลืมรหัสผ่าน"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                         HStack {
                             BackButton()
-                            
                             Spacer()
                         }
                     }
@@ -33,11 +34,12 @@ struct EmailForgotPassword: View {
                     .padding(.bottom, config.isIPad ? 80 : 57)
                     
                     LoginInputField(
-                        title: "ที่อยู่อีเมล",
-                        placeholder: "กรอกอีเมล",
+                        title: L("ที่อยู่อีเมล"),
+                        placeholder: L("กรอกอีเมล"),
                         text: $viewModel.emailForgotPassword,
                         isValid: .constant(!viewModel.isForgotSubmitted || viewModel.emailErrorForgot == nil),
-                        errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : "", config: config
+                        errorMessage: viewModel.isForgotSubmitted ? (viewModel.emailErrorForgot ?? "") : "",
+                        config: config
                     )
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
@@ -46,7 +48,7 @@ struct EmailForgotPassword: View {
                     }
                     
                     PrimaryButton(
-                        title: "ส่งรหัส OTP",
+                        title: L("ส่งรหัส OTP"),
                         action: {
                             Task {
                                 await viewModel.forgotPassword()
@@ -62,20 +64,23 @@ struct EmailForgotPassword: View {
                     .padding(.top, 40)
                     
                     Spacer()
-                    
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.backgroundColor)
                 .ignoresSafeArea()
                 .navigationDestination(isPresented: $viewModel.navigateToOTP) {
-                    OTPConfirmView(source: .forgotPassword, email: viewModel.emailForgotPassword)
+                    OTPConfirmView(
+                        source: .forgotPassword,
+                        email: viewModel.emailForgotPassword
+                    )
                 }
                 .navigationBarBackButtonHidden(true)
                 .blur(radius: showErrorPopup ? 3 : 0)
                 .disabled(showErrorPopup)
+                
                 if showErrorPopup {
                     ErrorPopupView(
-                        title: "ส่งรหัส OTP ไม่สำเร็จ",
+                        title: L("ส่งรหัส OTP ไม่สำเร็จ"),
                         onDismiss: { showErrorPopup = false }
                     )
                 }

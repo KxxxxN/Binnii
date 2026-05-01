@@ -12,6 +12,9 @@ struct ChangeEmailView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var showErrorPopup = false
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -19,7 +22,7 @@ struct ChangeEmailView: View {
             ZStack {
                 VStack(spacing: 0) {
                     ZStack {
-                        Text("ยืนยันแก้ไขอีเมล")
+                        Text(L("ยืนยันแก้ไขอีเมล"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .foregroundColor(.black)
                         
@@ -32,8 +35,8 @@ struct ChangeEmailView: View {
                     
                     // MARK: - Input Field
                     LoginInputField(
-                        title: "ที่อยู่อีเมล",
-                        placeholder: "กรอกอีเมลที่ต้องการแก้ไข",
+                        title: L("ที่อยู่อีเมล"),
+                        placeholder: L("กรอกอีเมลที่ต้องการแก้ไข"),
                         text: $viewModel.newEmail,
                         isValid: .constant(!viewModel.isSubmitted || viewModel.emailError == nil),
                         errorMessage: viewModel.isSubmitted ? (viewModel.emailError ?? "") : "",
@@ -47,7 +50,7 @@ struct ChangeEmailView: View {
                     
                     // MARK: - Action Button
                     PrimaryButton(
-                        title: "ส่งรหัส OTP",
+                        title: L("ส่งรหัส OTP"),
                         action: {
                             Task {
                                 await viewModel.validateEmail()
@@ -78,7 +81,7 @@ struct ChangeEmailView: View {
                 
                 if showErrorPopup {
                     ErrorPopupView(
-                        title: "ส่งรหัส OTP ไม่สำเร็จ",
+                        title: L("ส่งรหัส OTP ไม่สำเร็จ"),
                         onDismiss: { showErrorPopup = false }
                     )
                 }

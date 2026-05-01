@@ -173,7 +173,7 @@ struct WetWasteDetailFoodscraps: View {
             category: lm.localized("เศษอาหาร"),
             wasteDetail: lm.localized("เช่น ข้าว เศษผัก เศษเนื้อ ก้างปลา กระดูกไก่"),
             separationSteps: [
-                WasteSeparationStep(imageName: "step_food_1", text: lm.localized("เทเศษอาหาร \nออกจากภาชนะ")),
+                WasteSeparationStep(imageName: "step_food_1", text: lm.localized("เทเศษอาหารออกจากภาชนะ")),
                 WasteSeparationStep(imageName: "step_food_2", text: lm.localized("เก็บภาชนะไว้แยกต่อ"))
             ],
             binSteps: [
@@ -183,7 +183,7 @@ struct WetWasteDetailFoodscraps: View {
             recyclingMethods: [
                 lm.localized("ทำปุ๋ยหมักจากเศษอาหาร"),
                 lm.localized("นำไปหมักเป็นปุ๋ยน้ำสำหรับต้นไม้"),
-                lm.localized("ใช้เป็นอาหารปลา \n    (เฉพาะเศษผัก ผลไม้ และเศษอาหารชิ้นเล็กๆ)")
+                lm.localized("ใช้เป็นอาหารปลา (เฉพาะเศษผัก ผลไม้ และเศษอาหารชิ้นเล็กๆ)")
             ],
             showDate: showDate,
             dateString: dateString
@@ -242,7 +242,7 @@ struct WetWasteDetailCrumbs: View {
             recyclingMethods: [
                 lm.localized("นำไปทำปุ๋ยหมัก"),
                 lm.localized("นำไปหมักเป็นปุ๋ยน้ำสำหรับต้นไม้"),
-                lm.localized("ใช้เลี้ยงสัตว์เล็กบางชนิด \n    (เฉพาะเศษขนมที่เหมาะสม)")
+                lm.localized("ใช้เลี้ยงสัตว์เล็กบางชนิด (เฉพาะเศษขนมที่เหมาะสม)")
             ],
             showDate: showDate,
             dateString: dateString

@@ -13,6 +13,9 @@ struct ChangePasswordView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     var source: ChangePasswordSource = .forgotPassword
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
@@ -20,7 +23,7 @@ struct ChangePasswordView: View {
                 VStack(spacing: 0) {
                     // MARK: - Header
                     ZStack {
-                        Text("เปลี่ยนรหัสผ่านใหม่")
+                        Text(L("เปลี่ยนรหัสผ่านใหม่"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                         HStack {
                             BackButton()
@@ -30,14 +33,19 @@ struct ChangePasswordView: View {
                     .padding(.top, config.headerTopPadding)
                     .padding(.bottom, config.isIPad ? 50 : 21)
                     
-                    
                     // MARK: - New Password
                     ChangePasswordField(
-                        title: "รหัสผ่าน",
-                        placeholder: "อย่างน้อย 8 ตัวอักษร",
+                        title: L("รหัสผ่าน"),
+                        placeholder: L("อย่างน้อย 8 ตัวอักษร"),
                         text: $viewModel.password,
                         isValid: .constant(!viewModel.isChangePasswordSubmitted || viewModel.isPasswordValid),
-                        errorMessage: viewModel.isChangePasswordSubmitted && !viewModel.isPasswordValid ? (viewModel.password.isEmpty ? "กรุณากรอกรหัสผ่าน" : !ValidationHelper.isPasswordValid(viewModel.password) ? "รูปแบบรหัสผ่านไม่ถูกต้อง" : "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม") : "",
+                        errorMessage: viewModel.isChangePasswordSubmitted && !viewModel.isPasswordValid
+                        ? (viewModel.password.isEmpty
+                           ? L("กรุณากรอกรหัสผ่าน")
+                           : !ValidationHelper.isPasswordValid(viewModel.password)
+                           ? L("รูปแบบรหัสผ่านไม่ถูกต้อง")
+                           : L("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม"))
+                        : "",
                         isSecure: true,
                         isPasswordToggle: $viewModel.isPasswordVisible,
                         config: config
@@ -55,11 +63,17 @@ struct ChangePasswordView: View {
                     
                     // MARK: - Confirm Password
                     ChangePasswordField(
-                        title: "ยืนยันรหัสผ่าน",
-                        placeholder: "กรอกรหัสผ่านอีกครั้ง",
+                        title: L("ยืนยันรหัสผ่าน"),
+                        placeholder: L("กรอกรหัสผ่านอีกครั้ง"),
                         text: $viewModel.confirmPassword,
                         isValid: .constant(!viewModel.isChangePasswordSubmitted || viewModel.isConfirmPasswordValid),
-                        errorMessage: viewModel.isChangePasswordSubmitted && !viewModel.isConfirmPasswordValid ? (viewModel.confirmPassword.isEmpty ? "กรุณากรอกรหัสผ่านอีกครั้ง" : !viewModel.isPasswordValid ? "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม" : "รหัสผ่านไม่ตรงกัน") : "",
+                        errorMessage: viewModel.isChangePasswordSubmitted && !viewModel.isConfirmPasswordValid
+                        ? (viewModel.confirmPassword.isEmpty
+                           ? L("กรุณากรอกรหัสผ่านอีกครั้ง")
+                           : !viewModel.isPasswordValid
+                           ? L("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม")
+                           : L("รหัสผ่านไม่ตรงกัน"))
+                        : "",
                         isSecure: true,
                         isPasswordToggle: $viewModel.isConfirmPasswordVisible,
                         config: config
@@ -70,7 +84,7 @@ struct ChangePasswordView: View {
                     
                     // MARK: - Submit Button
                     PrimaryButton(
-                        title: "ยืนยัน",
+                        title: L("ยืนยัน"),
                         action: {
                             Task {
                                 await viewModel.changePassword(source: source)
@@ -82,14 +96,14 @@ struct ChangePasswordView: View {
                     .padding(.top, config.isIPad ? 65 : 55)
                     
                     Spacer()
-                    
                 }
                 .frame(minHeight: geo.size.height)
                 .blur(radius: (viewModel.showSuccessPopup || viewModel.showErrorPopup) ? 3 : 0)
                 .disabled(viewModel.showSuccessPopup || viewModel.showErrorPopup)
+                
                 // MARK: - Popups
                 if viewModel.showSuccessPopup {
-                    SuccessPopupView(message: "เปลี่ยนรหัสผ่านสำเร็จ") {
+                    SuccessPopupView(message: L("เปลี่ยนรหัสผ่านสำเร็จ")) {
                         viewModel.showSuccessPopup = false
                         switch source {
                         case .forgotPassword: viewModel.navigateToLogin = true
@@ -100,7 +114,7 @@ struct ChangePasswordView: View {
                 
                 if viewModel.showErrorPopup {
                     ErrorPopupView(
-                        title: "ดำเนินการไม่สำเร็จ"
+                        title: L("ดำเนินการไม่สำเร็จ")
                     ) {
                         withAnimation {
                             viewModel.showErrorPopup = false
@@ -121,6 +135,7 @@ struct ChangePasswordView: View {
         }
     }
 }
+
 #Preview {
    ChangePasswordView()
 }
