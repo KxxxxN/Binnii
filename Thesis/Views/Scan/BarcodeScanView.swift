@@ -129,15 +129,15 @@ struct BarcodeScanView: View {
 //            .onChange(of: viewModel.showDetailBarcodeView) { _, isShowing in
 //                if !isShowing { viewModel.resetAfterDismiss() }
 //            }
-            .onChange(of: currentTab) { _, tab in
-                viewModel.isCameraActive = (tab == .barcode)
-                viewModel.isScanning = (tab == .barcode)
-                viewModel.selectedTabNavigationItem = tab.rawValue
-                
-                if tab != .barcode {
-                    viewModel.isFlashOn = false
-                }
-            }
+//            .onChange(of: currentTab) { _, tab in
+//                viewModel.isCameraActive = (tab == .barcode)
+//                viewModel.isScanning = (tab == .barcode)
+//                viewModel.selectedTabNavigationItem = tab.rawValue
+//                
+//                if tab != .barcode {
+//                    viewModel.isFlashOn = false
+//                }
+//            }
             .navigationBarHidden(true)
         }
     }

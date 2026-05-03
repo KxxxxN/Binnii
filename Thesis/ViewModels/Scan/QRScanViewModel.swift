@@ -48,7 +48,7 @@ final class QRScanViewModel: ObservableObject {
         }
         isFlashOn = false
         isCameraActive = false
-        OrientationHelper.setOrientation(.all)
+//        OrientationHelper.setOrientation(.all)
     }
 
     // MARK: - QR Scan Handler
