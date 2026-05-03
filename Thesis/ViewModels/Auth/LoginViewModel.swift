@@ -23,8 +23,10 @@ class LoginViewModel: ObservableObject {
     @Published var isLoginSubmitted: Bool = false
     @Published var authErrorMessage: String? = nil
     
-    
     @AppStorage("isLoggedIn") var isLoggedIn = false
+    
+    private let lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     func clearError(for field: String) {
         if field == "email" {
@@ -35,7 +37,6 @@ class LoginViewModel: ObservableObject {
         authErrorMessage = nil
     }
     
-    
     @discardableResult
     func validateFormLogin() -> Bool {
         emailError = nil
@@ -43,15 +44,15 @@ class LoginViewModel: ObservableObject {
         var allFieldsValid = true
         
         if ValidationHelper.isEmpty(email) {
-            emailError = "กรุณากรอกอีเมล"
+            emailError = L("กรุณากรอกอีเมล")
             allFieldsValid = false
         } else if !ValidationHelper.isValidEmail(email) {
-            emailError = "รูปแบบอีเมลไม่ถูกต้อง"
+            emailError = L("รูปแบบอีเมลไม่ถูกต้อง")
             allFieldsValid = false
         }
 
         if ValidationHelper.isEmpty(password) {
-            passwordError = "กรุณากรอกรหัสผ่าน"
+            passwordError = L("กรุณากรอกรหัสผ่าน")
             allFieldsValid = false
         }
         
@@ -68,8 +69,9 @@ class LoginViewModel: ObservableObject {
                 self.isLoggedIn = true
                 print("Sign in Success!")
             } catch {
-                self.emailError = "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
-                self.passwordError = "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+                let errorText = L("อีเมลหรือรหัสผ่านไม่ถูกต้อง")
+                self.emailError = errorText
+                self.passwordError = errorText
                 print("Login Failed: \(error.localizedDescription)")
             }
         }

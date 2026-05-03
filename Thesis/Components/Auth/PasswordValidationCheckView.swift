@@ -12,15 +12,18 @@ struct ValidationRow: View {
     let passed: Bool
     let checkColor: Color
     let defaultColor: Color
-    let config: ResponsiveConfig 
+    let config: ResponsiveConfig
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
         HStack(spacing: config.isIPad ? 8 : 4) {
             Image(systemName: passed ? "checkmark.circle.fill" : "circle")
                 .foregroundColor(passed ? checkColor : defaultColor)
                 .font(.system(size: config.isIPad ? 18 : 14))
             
-            Text(title)
+            Text(L(title))
                 .font(.noto(config.isIPad ? 18 : 14, weight: .medium))
                 .foregroundColor(passed ? checkColor : defaultColor)
         }
@@ -30,6 +33,9 @@ struct ValidationRow: View {
 struct PasswordValidationCheckView: View {
     let password: String
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     var body: some View {
         let checkColor: Color = Color.mainColor

@@ -11,6 +11,9 @@ import SwiftUI
 struct PrivacyPopupView: View {
     @Binding var showPrivacyPopup: Bool
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.4).ignoresSafeArea()
@@ -29,10 +32,10 @@ struct PrivacyPopupView: View {
                 }
                 
                 ScrollView {
-                    Text("""
+                    Text(L("""
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
                     ... (ข้อความนโยบายความเป็นส่วนตัว)
-                    """)
+                    """))
                     .font(.noto(16))
                     .padding()
                 }
@@ -56,6 +59,9 @@ struct SuccessPopupView: View {
     let message: String
     var onDismiss: () -> Void
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.4).ignoresSafeArea()
@@ -71,13 +77,14 @@ struct SuccessPopupView: View {
                         .resizable()
                         .frame(width: 111, height: 111)
                     
-                    Text(message)
+                    Text(L(message))
                         .font(.noto(25, weight: .bold))
                         .foregroundColor(.black)
                         .multilineTextAlignment(.center)
                 }
                 .padding(40)
-                .frame(width: 343, height: 255)
+                .frame(width: 340)
+//                .frame(width: 343, height: 255)
                 .background(Color.white)
                 .cornerRadius(20)
                 .shadow(radius: 10)
@@ -93,15 +100,19 @@ struct SuccessPopupView: View {
     }
 }
 
-
+// MARK: - Error Popup View
 struct ErrorPopupView: View {
     let title: String
     var onDismiss: () -> Void
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
     
     var body: some View {
         ZStack {
             Color.black.opacity(0.4).ignoresSafeArea()
                 .onTapGesture { onDismiss() }
+            
             VStack {
                 VStack(spacing: 0) {
                     Image("Errormark")
@@ -109,22 +120,21 @@ struct ErrorPopupView: View {
                         .frame(width: 111, height: 111)
                         .padding(.bottom,29)
                     
-                    
                     VStack(spacing:0){
-                        Text(title)
+                        Text(L(title))
                             .font(.noto(25, weight: .bold))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .padding(.bottom,7)
                         
-                        Text("กรุณาลองใหม่อีกครั้ง")
+                        Text(L("กรุณาลองใหม่อีกครั้ง"))
                             .font(.noto(18, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                     }
                 }
                 .padding(40)
-                .frame(width: 343, height: 255)
+                .frame(width: 340)
                 .background(Color.white)
                 .cornerRadius(20)
                 .shadow(radius: 10)
@@ -139,7 +149,6 @@ struct ErrorPopupView: View {
         }
     }
 }
-
 
 #Preview("Privacy Popup") {
     PrivacyPopupView(showPrivacyPopup: .constant(true))

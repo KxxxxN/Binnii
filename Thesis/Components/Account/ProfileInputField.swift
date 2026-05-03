@@ -19,6 +19,10 @@ struct ProfileInputField: View {
     var onEditingChanged: () -> Void = {}
     
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
 
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
@@ -38,7 +42,7 @@ struct ProfileInputField: View {
                                 onEditingChanged()
                             }
                     } else {
-                        Text(text.isEmpty ? "กรุณาเพิ่มข้อมูล" : text)
+                        Text(text.isEmpty ? L("กรุณาเพิ่มข้อมูล") : text)
                             .font(.noto(config.accountRowFontSize, weight: .medium))
                             .foregroundColor(.black)
                     }
