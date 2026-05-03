@@ -13,30 +13,10 @@
 		486D0DF82F69517100D65319 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF72F69517100D65319 /* Realtime */; };
 		486D0DFA2F69517100D65319 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DF92F69517100D65319 /* Storage */; };
 		486D0DFC2F69530400D65319 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 486D0DFB2F69530400D65319 /* Supabase */; };
-		BB50BD592EB8966E00A20141 /* NotoSansThai-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD582EB8966E00A20141 /* NotoSansThai-Thin.ttf */; };
-		BB50BD5E2EB8968400A20141 /* NotoSansThai-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5A2EB8968400A20141 /* NotoSansThai-Light.ttf */; };
-		BB50BD5F2EB8968400A20141 /* NotoSansThai-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5B2EB8968400A20141 /* NotoSansThai-Medium.ttf */; };
-		BB50BD602EB8968400A20141 /* NotoSansThai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5C2EB8968400A20141 /* NotoSansThai-Regular.ttf */; };
-		BB50BD612EB8968400A20141 /* NotoSansThai-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */; };
-		BB50BD632EB8968E00A20141 /* NotoSansThai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */; };
-		BBAE237E2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */; };
-		BBAE23802F9F3A35002D4BBD /* Inter_18pt-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */; };
-		BBAE23822F9F3A47002D4BBD /* Inter_18pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */; };
-		BBAE23842F9F3A5E002D4BBD /* Inter_18pt-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BB50BD582EB8966E00A20141 /* NotoSansThai-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Thin.ttf"; sourceTree = "<group>"; };
-		BB50BD5A2EB8968400A20141 /* NotoSansThai-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Light.ttf"; sourceTree = "<group>"; };
-		BB50BD5B2EB8968400A20141 /* NotoSansThai-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Medium.ttf"; sourceTree = "<group>"; };
-		BB50BD5C2EB8968400A20141 /* NotoSansThai-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Regular.ttf"; sourceTree = "<group>"; };
-		BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-SemiBold.ttf"; sourceTree = "<group>"; };
-		BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Bold.ttf"; sourceTree = "<group>"; };
 		BBAB21D52EA8CCDE006A0375 /* Thesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_24pt-Bold.ttf"; sourceTree = "<group>"; };
-		BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Medium.ttf"; sourceTree = "<group>"; };
-		BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
-		BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter_18pt-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -77,29 +57,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BB50BD572EB8959300A20141 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				BBAE237F2F9F3A35002D4BBD /* Inter_18pt-Medium.ttf */,
-				BBAE23832F9F3A5E002D4BBD /* Inter_18pt-Light.ttf */,
-				BBAE23812F9F3A47002D4BBD /* Inter_18pt-Regular.ttf */,
-				BBAE237D2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf */,
-				BB50BD582EB8966E00A20141 /* NotoSansThai-Thin.ttf */,
-				BB50BD5A2EB8968400A20141 /* NotoSansThai-Light.ttf */,
-				BB50BD5B2EB8968400A20141 /* NotoSansThai-Medium.ttf */,
-				BB50BD5C2EB8968400A20141 /* NotoSansThai-Regular.ttf */,
-				BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */,
-				BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */,
-			);
-			path = Fonts;
-			sourceTree = "<group>";
-		};
 		BBAB21CC2EA8CCDE006A0375 = {
 			isa = PBXGroup;
 			children = (
 				BBAB21D72EA8CCDE006A0375 /* Thesis */,
 				BBAB21D62EA8CCDE006A0375 /* Products */,
-				BB50BD572EB8959300A20141 /* Fonts */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,7 +112,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					BBAB21D42EA8CCDE006A0375 = {
 						CreatedOnToolsVersion = 16.3;
@@ -185,16 +147,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB50BD5E2EB8968400A20141 /* NotoSansThai-Light.ttf in Resources */,
-				BB50BD5F2EB8968400A20141 /* NotoSansThai-Medium.ttf in Resources */,
-				BB50BD632EB8968E00A20141 /* NotoSansThai-Bold.ttf in Resources */,
-				BB50BD602EB8968400A20141 /* NotoSansThai-Regular.ttf in Resources */,
-				BB50BD612EB8968400A20141 /* NotoSansThai-SemiBold.ttf in Resources */,
-				BBAE23842F9F3A5E002D4BBD /* Inter_18pt-Light.ttf in Resources */,
-				BBAE23802F9F3A35002D4BBD /* Inter_18pt-Medium.ttf in Resources */,
-				BBAE237E2F9F3A2A002D4BBD /* Inter_24pt-Bold.ttf in Resources */,
-				BB50BD592EB8966E00A20141 /* NotoSansThai-Thin.ttf in Resources */,
-				BBAE23822F9F3A47002D4BBD /* Inter_18pt-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +168,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -269,6 +222,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -280,6 +234,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -326,6 +281,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
@@ -370,7 +326,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2K4DCY3986;
+				DEVELOPMENT_TEAM = 5ZJTU58G85;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Thesis/Info.plist;
