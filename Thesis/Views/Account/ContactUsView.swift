@@ -31,6 +31,7 @@ struct ContactUsView: View {
                     ZStack {
                         Text(L("ติดต่อเรา"))
                             .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.black)
                         
                         HStack {
                             BackButton()

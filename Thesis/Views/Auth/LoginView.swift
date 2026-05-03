@@ -56,20 +56,22 @@ struct LoginView: View {
                                     text: $viewModel.email,
                                     isValid: .constant(!viewModel.isLoginSubmitted || viewModel.emailError == nil),
                                     errorMessage: viewModel.isLoginSubmitted ? (viewModel.emailError ?? "") : "",
+//                                    contentType: .emailAddress,
                                     config: config
                                 )
+                                .keyboardType(.emailAddress)
+                                .autocapitalization(.none)
                                 .onChange(of: viewModel.email) { _, _ in
                                     viewModel.clearError(for: "email")
                                 }
                                 
-                                LoginInputField(
+                                LoginPasswordField(
                                     title: L("รหัสผ่าน"),
                                     placeholder: L("กรอกรหัสผ่าน"),
                                     text: $viewModel.password,
                                     isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
                                     errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
-                                    isSecure: true,
-                                    isPasswordToggle: $viewModel.isPasswordVisible,
+                                    isPasswordVisible: $viewModel.isPasswordVisible,
                                     config: config
                                 )
                                 .onChange(of: viewModel.password) { _, _ in

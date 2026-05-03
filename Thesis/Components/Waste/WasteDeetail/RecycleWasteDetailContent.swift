@@ -46,6 +46,7 @@ struct RecycleWasteDetailContent: View {
             HStack(spacing: 12) {
                 Text(category)
                     .font(.noto(config.titleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 if showDate {
                     Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
@@ -65,9 +66,11 @@ struct RecycleWasteDetailContent: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     HStack(spacing: 0) {
                         Text(L("ถังขยะรีไซเคิล") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                            .foregroundColor(.black)
                         Text(L("(สีเหลือง)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.recycleWasteColor)
@@ -131,10 +134,12 @@ struct RecycleWasteDetailContent: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(L("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
                         Text("•   \(method)")
                             .font(.noto(config.detailBodyFontSize, weight: .medium))
+                            .foregroundColor(.black)
                     }
                 }
             }
@@ -164,6 +169,7 @@ struct RecycleWasteDetailPlasticBottle: View {
             HStack(spacing: 12) {
                 Text(lm.localized("ขวดพลาสติก"))
                     .font(.noto(config.titleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 if showDate {
                     Text(dateString ?? formatCurrentDate())
                         .font(.noto(config.detailStepTextFontSize, weight: .medium))
@@ -182,9 +188,11 @@ struct RecycleWasteDetailPlasticBottle: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(lm.localized("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     HStack(spacing: 0) {
                         Text(lm.localized("ถังขยะรีไซเคิล") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                            .foregroundColor(.black)
                         Text(lm.localized("(สีเหลือง)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.recycleWasteColor)
@@ -204,9 +212,11 @@ struct RecycleWasteDetailPlasticBottle: View {
                     // Step 1
                     VStack(spacing: 0) {
                         Image("DetailRecycle1").resizable().aspectRatio(contentMode: .fit)
-                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize).padding(.bottom, 10)
+                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
+                            .padding(.bottom, 10)
                         Text(lm.localized("เทน้ำให้หมด"))
-                            .font(.noto(config.detailStepTextFontSize, weight: .medium)).foregroundColor(.black)
+                            .font(.noto(config.detailStepTextFontSize, weight: .medium))
+                            .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                         Spacer().frame(height: 8)
@@ -214,7 +224,9 @@ struct RecycleWasteDetailPlasticBottle: View {
                             Image("bin-icon1").resizable().scaledToFit()
                                 .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
                             Text(lm.localized("ถังขยะเปียก"))
-                                .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
+                                .font(.noto(config.detailBinTextFontSize, weight: .medium))
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
                         }
                     }.frame(maxWidth: .infinity)
 
@@ -236,16 +248,21 @@ struct RecycleWasteDetailPlasticBottle: View {
                                 Image("bin-icon3").resizable().scaledToFit()
                                     .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
                                 Text(lm.localized("ถังขยะรีไซเคิล"))
-                                    .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
+                                    .font(.noto(config.detailBinTextFontSize, weight: .medium))
+                                    .foregroundColor(.black)
+                                    .multilineTextAlignment(.center)
                             }
                             VStack(spacing: 2) {
                                 Image("bin-icon2").resizable().scaledToFit()
                                     .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
                                 Text(lm.localized("ถังขยะทั่วไป"))
-                                    .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
+                                    .font(.noto(config.detailBinTextFontSize, weight: .medium))
+                                    .foregroundColor(.black)
+                                    .multilineTextAlignment(.center)
                             }
                         }
-                    }.frame(maxWidth: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
 
                     Image(systemName: "arrow.right").foregroundColor(.black)
                         .font(.system(size: config.detailArrowSize)).padding(.horizontal, 2)
@@ -254,9 +271,11 @@ struct RecycleWasteDetailPlasticBottle: View {
                     // Step 3
                     VStack(spacing: 0) {
                         Image("DetailRecycle3").resizable().aspectRatio(contentMode: .fit)
-                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize).padding(.bottom, 10)
+                            .frame(width: config.detailStepImageSize, height: config.detailStepImageSize)
+                            .padding(.bottom, 10)
                         Text(lm.localized("บีบขวดให้แบน"))
-                            .font(.noto(config.detailStepTextFontSize, weight: .medium)).foregroundColor(.black)
+                            .font(.noto(config.detailStepTextFontSize, weight: .medium))
+                            .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, minHeight: config.isIPad ? 60 : 45, alignment: .top)
                         Spacer().frame(height: 8)
@@ -264,7 +283,9 @@ struct RecycleWasteDetailPlasticBottle: View {
                             Image("bin-icon3").resizable().scaledToFit()
                                 .frame(width: config.detailBinIconSize, height: config.detailBinIconSize)
                             Text(lm.localized("ถังขยะรีไซเคิล"))
-                                .font(.noto(config.detailBinTextFontSize, weight: .medium)).foregroundColor(.black).multilineTextAlignment(.center)
+                                .font(.noto(config.detailBinTextFontSize, weight: .medium))
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
                         }
                     }.frame(maxWidth: .infinity)
                 }
@@ -277,13 +298,16 @@ struct RecycleWasteDetailPlasticBottle: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(lm.localized("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach([
                         lm.localized("ทำเป็นกระถางปลูกต้นไม้เล็กๆ"),
                         lm.localized("ตัดครึ่งขวดทำเป็นที่ใส่เครื่องเขียน"),
                         lm.localized("นำไปหลอมเป็นเส้นใยพลาสติก")
                     ], id: \.self) { method in
-                        Text("•   \(method)").font(.noto(config.detailBodyFontSize, weight: .medium))
+                        Text("•   \(method)")
+                            .font(.noto(config.detailBodyFontSize, weight: .medium))
+                            .foregroundColor(.black)
                     }
                 }
             }

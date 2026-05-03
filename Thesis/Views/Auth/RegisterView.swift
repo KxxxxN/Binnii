@@ -27,7 +27,7 @@ struct RegisterView: View {
                         ZStack {
                             Text(L("ลงทะเบียน"))
                                 .font(.noto(config.titleFontSize, weight: .bold))
-                            
+                                .foregroundColor(.black)
                             HStack {
                                 BackButton()
                                 Spacer()
@@ -70,8 +70,10 @@ struct RegisterView: View {
                                     text: $viewModel.email,
                                     isValid: .constant(!viewModel.isRegisterSubmitted || viewModel.isEmailValid),
                                     errorMessage: viewModel.isRegisterSubmitted && !viewModel.isEmailValid ? (viewModel.email.isEmpty ? L("จำเป็นต้องระบุ") : L("รูปแบบอีเมลไม่ถูกต้อง")) : "",
-                                    config: config
+                                    config: config,
                                 )
+                                .keyboardType(.emailAddress)
+                                .autocapitalization(.none)
                                 .onChange(of: viewModel.email) { _, _ in
                                     viewModel.clearError(for: "email")
                                 }
@@ -88,14 +90,13 @@ struct RegisterView: View {
                                     viewModel.clearError(for: "phone")
                                 }
                                 
-                                RegisterInputField(
+                                PasswordInputField(
                                     title: L("รหัสผ่าน"),
                                     placeholder: L("อย่างน้อย 8 ตัวอักษร"),
                                     text: $viewModel.password,
                                     isValid: .constant(!viewModel.isRegisterSubmitted || viewModel.isPasswordValid),
                                     errorMessage: viewModel.isRegisterSubmitted && !viewModel.isPasswordValid ? (viewModel.password.isEmpty ? L("จำเป็นต้องระบุ") : L("รูปแบบรหัสผ่านไม่ถูกต้อง")) : "",
-                                    isSecure: true,
-                                    isPasswordToggle: $viewModel.isPasswordVisible,
+                                    isPasswordVisible: $viewModel.isPasswordVisible,
                                     config: config
                                 )
                                 .onChange(of: viewModel.password) { _, _ in
@@ -112,14 +113,13 @@ struct RegisterView: View {
                                         .padding(.bottom, 5)
                                 }
                                 
-                                RegisterInputField(
+                                PasswordInputField(
                                     title: L("ยืนยันรหัสผ่าน"),
                                     placeholder: L("กรอกรหัสผ่านอีกครั้ง"),
                                     text: $viewModel.confirmPassword,
                                     isValid: .constant(!viewModel.isRegisterSubmitted || viewModel.isConfirmPasswordValid),
                                     errorMessage: viewModel.isRegisterSubmitted && !viewModel.isConfirmPasswordValid ? (viewModel.confirmPassword.isEmpty ? L("จำเป็นต้องระบุ") : L("รหัสผ่านไม่ตรงกัน")) : "",
-                                    isSecure: true,
-                                    isPasswordToggle: $viewModel.isConfirmPasswordVisible,
+                                    isPasswordVisible: $viewModel.isConfirmPasswordVisible,
                                     config: config
                                 )
                                 .onChange(of: viewModel.confirmPassword) { _, _ in
@@ -137,6 +137,7 @@ struct RegisterView: View {
                                         HStack(spacing:0){
                                             Text(L("ฉันได้อ่านและยอมรับ"))
                                                 .font(.noto(bodyFontSize, weight: .medium))
+                                                .foregroundColor(.black)
                                             
                                             Button(action: { viewModel.showPrivacyPopup = true }){
                                                 Text(L("นโยบายความเป็นส่วนตัว*"))
@@ -168,7 +169,7 @@ struct RegisterView: View {
                                             await viewModel.register()
                                         }
                                     },
-                                    width: config.isIPad ? 220 : 155,
+                                    width: config.isIPad ? 220 : 170,
                                     height: config.isIPad ? 60 : 49
                                 )
                                 .padding(.vertical, 20)

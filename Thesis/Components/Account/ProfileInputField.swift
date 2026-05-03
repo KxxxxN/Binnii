@@ -27,6 +27,7 @@ struct ProfileInputField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title, config: config)
+                .foregroundColor(.black)
                 .padding(.leading, 6)
 
             HStack {
@@ -88,6 +89,7 @@ struct ProfileEmailField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title, config: config)
+                .foregroundColor(.black)
                 .padding(.leading, 6)
             
             HStack {
@@ -144,6 +146,7 @@ struct ProfilePasswordField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: config.isIPad ? 6 : 4) {
             Title(title: title, config: config)
+                .foregroundColor(.black)
                 .padding(.leading, 6)
             
             HStack {
