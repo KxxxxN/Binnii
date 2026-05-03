@@ -32,24 +32,59 @@ extension Color {
 
 }
 
+//extension Font {
+//    
+//    static func noto(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+//        switch weight {
+//        case .thin:
+//            return .custom("Noto Sans Thai Thin", size: size)
+//        case .light:
+//            return .custom("Noto Sans Thai Light", size: size)
+//        case .medium:
+//            return .custom("Noto Sans Thai Medium", size: size)
+//        case .semibold:
+//            return .custom("Noto Sans Thai SemiBold", size: size)
+//        case .bold:
+//            return .custom("Noto Sans Thai Bold", size: size)
+//        default:
+//            return .custom("Noto Sans Thai Regular", size: size)
+//        }
+//    }
+//    static func inter(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+//        switch weight {
+//        case .bold:
+//            return .custom("Inter24pt-Bold", size: size)
+//        case .light:
+//            return .custom("Inter18pt-Light", size: size)
+//        case .medium:
+//            return .custom("Inter18pt-Medium", size: size)
+//        case .regular:
+//            return .custom("Inter24pt-Regular", size: size)
+//        default:
+//            return .custom("Inter24pt-Bold", size: size)
+//        }
+//    }
+//}
+
 extension Font {
     
     static func noto(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         switch weight {
         case .thin:
-            return .custom("Noto Sans Thai Thin", size: size)
+            return .custom("NotoSansThai-Thin", size: size)
         case .light:
-            return .custom("Noto Sans Thai Light", size: size)
+            return .custom("NotoSansThai-Light", size: size)
         case .medium:
-            return .custom("Noto Sans Thai Medium", size: size)
+            return .custom("NotoSansThai-Medium", size: size)
         case .semibold:
-            return .custom("Noto Sans Thai SemiBold", size: size)
+            return .custom("NotoSansThai-SemiBold", size: size)
         case .bold:
-            return .custom("Noto Sans Thai Bold", size: size)
+            return .custom("NotoSansThai-Bold", size: size)
         default:
-            return .custom("Noto Sans Thai Regular", size: size)
+            return .custom("NotoSansThai-Regular", size: size)
         }
     }
+    
     static func inter(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         switch weight {
         case .bold:

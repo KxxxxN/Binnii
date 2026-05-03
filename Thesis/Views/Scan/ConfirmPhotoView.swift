@@ -71,9 +71,9 @@ struct ConfirmPhotoView: View {
             .onChange(of: viewModel.selectedUIImage) { _, newImage in
                 viewModel.onImageChanged(newImage, hideTabBar: $hideTabBar)
             }
-            .onChange(of: viewModel.showSaveSearchPhotoView) { _, isShowing in
-                if !isShowing { viewModel.resetAfterDismiss() }
-            }
+//            .onChange(of: viewModel.showSaveSearchPhotoView) { _, isShowing in
+//                if !isShowing { viewModel.resetAfterDismiss() }
+//            }
             .navigationDestination(isPresented: $viewModel.showSaveSearchPhotoView) {
                 if let uiImage = viewModel.selectedUIImage {
                     WasteDetailView(
@@ -93,6 +93,9 @@ struct ConfirmPhotoView: View {
                             }
                         }
                     )
+                    .onDisappear {        
+                        viewModel.resetAfterDismiss()
+                    }
                 }
 
             }

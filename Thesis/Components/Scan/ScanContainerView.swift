@@ -52,29 +52,31 @@ struct ScanContainerView: View {
 
     var body: some View {
         ZStack {
-            BarcodeScanView(
-                hideTabBar: $hideTabBar,
-                currentTab: $currentTab,
-                slideDirection: $slideDirection
-            )
-            .opacity(currentTab == .barcode ? 1 : 0)
-            .allowsHitTesting(currentTab == .barcode)
-
-            AiScanView(
-                hideTabBar: $hideTabBar,
-                currentTab: $currentTab,
-                slideDirection: $slideDirection
-            )
-            .opacity(currentTab == .ai ? 1 : 0)
-            .allowsHitTesting(currentTab == .ai)
-
-            SearchView(
-                hideTabBar: $hideTabBar,
-                currentTab: $currentTab,
-                slideDirection: $slideDirection
-            )
-            .opacity(currentTab == .search ? 1 : 0)
-            .allowsHitTesting(currentTab == .search)
+            switch currentTab {
+            case .barcode:
+                BarcodeScanView(
+                    hideTabBar: $hideTabBar,
+                    currentTab: $currentTab,
+                    slideDirection: $slideDirection
+                )
+                .transition(.opacity)
+                
+            case .ai:
+                AiScanView(
+                    hideTabBar: $hideTabBar,
+                    currentTab: $currentTab,
+                    slideDirection: $slideDirection
+                )
+                .transition(.opacity)
+                
+            case .search:
+                SearchView(
+                    hideTabBar: $hideTabBar,
+                    currentTab: $currentTab,
+                    slideDirection: $slideDirection
+                )
+                .transition(.opacity)
+            }
         }
         .animation(.easeInOut(duration: 0.3), value: currentTab)
     }

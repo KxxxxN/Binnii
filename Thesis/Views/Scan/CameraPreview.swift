@@ -60,10 +60,10 @@ struct CameraPreview: UIViewRepresentable {
     }
     
     static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        let session = coordinator.session
         DispatchQueue.global(qos: .userInitiated).async {
-            if coordinator.session.isRunning {
-                coordinator.session.stopRunning()
-            }
+            guard session.isRunning else { return }
+            session.stopRunning()
         }
     }
     

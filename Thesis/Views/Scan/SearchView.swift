@@ -88,11 +88,11 @@ struct SearchView: View {
             .navigationBarHidden(true)
             .ignoresSafeArea(edges: .top)
             .environment(\.locale, lm.locale)   
+//            .onAppear {
+//                selectedTabnavigationItem = 2
+//            }
             .onAppear {
-                selectedTabnavigationItem = 2
-            }
-            .onChange(of: currentTab) { _, tab in
-                selectedTabnavigationItem = tab.rawValue
+                selectedTabnavigationItem = currentTab.rawValue
             }
         }
     }

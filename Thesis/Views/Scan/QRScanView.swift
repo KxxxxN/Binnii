@@ -90,7 +90,13 @@ struct QRScanView: View {
         }
         
         .onAppear { viewModel.onAppear(hideTabBar: &hideTabBar) }
-        .onDisappear { viewModel.onDisappear(hideTabBar: &hideTabBar) }
+        .onDisappear {
+            viewModel.onDisappear(hideTabBar: &hideTabBar)
+            // post หลังจาก camera เริ่ม stop แล้ว
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                NotificationCenter.default.post(name: .didFinishScan, object: nil)
+            }
+        }
         .navigationBarHidden(true)
     }
     
@@ -98,14 +104,14 @@ struct QRScanView: View {
     private func headerView(config: ResponsiveConfig) -> some View {
         HStack {
             XBackButtonBlack(index: $index)
-                .simultaneousGesture(TapGesture().onEnded {
-                    viewModel.isCameraActive = false
-                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.8) {
-                        DispatchQueue.main.async {
-                            NotificationCenter.default.post(name: .didFinishScan, object: nil)
-                        }
-                    }
-                })
+//                .simultaneousGesture(TapGesture().onEnded {
+//                    viewModel.isCameraActive = false
+//                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.8) {
+//                        DispatchQueue.main.async {
+//                            NotificationCenter.default.post(name: .didFinishScan, object: nil)
+//                        }
+//                    }
+//                })
             Color.clear.frame(width: 10, height: 10)
             Spacer()
             Text(L("สแกนคิวอาร์โค้ดถังขยะ"))
