@@ -10,7 +10,6 @@ import SwiftUI
 struct TranslateView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @StateObject private var viewModel = TranslateViewModel()
-    // ✅ observe เพื่อให้ checkmark อัปเดตทันทีที่เลือกภาษา
     @ObservedObject private var lm = LanguageManager.shared
 
     var body: some View {
@@ -40,7 +39,7 @@ struct TranslateView: View {
                             code: lang.code,
                             name: lang.name,
                             imageName: lang.image,
-                            selectedCode: lm.selectedLanguage  // ✅ ใช้ lm โดยตรง
+                            selectedCode: lm.selectedLanguage
                         ) { newCode in
                             viewModel.selectLanguage(newCode)
                         }
@@ -54,7 +53,6 @@ struct TranslateView: View {
             .background(Color.backgroundColor)
             .ignoresSafeArea()
             .navigationBarBackButtonHidden(true)
-            // ✅ ทุก Text("key") ใน view นี้แปลตามภาษาที่เลือก
             .environment(\.locale, lm.locale)
         }
     }
