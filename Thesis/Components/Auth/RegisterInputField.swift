@@ -22,28 +22,69 @@ struct RegisterInputField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             RequiredTitle(title: title, config: config)
-                  
+                .foregroundColor(.black)
+                .padding(.leading, 6)
+            
+            
+            ZStack(alignment: .leading) {
+                PlaceholderView(text: text, placeholder: placeholder, config: config)
+                
+                TextField("", text: $text)
+                
+            }
+                .padding()
+                .frame(maxWidth: config.isIPad ? 445 : 345, maxHeight: config.isIPad ? 60 : 49)
+                .background(Color.textFieldColor)
+                .cornerRadius(config.isIPad ? 25 : 20)
+                .modifier(ValidationBorder(isValid: isValid))
+            
+            Group {
+                Text(errorMessage)
+                    .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
+                    .foregroundColor(Color.errorColor)
+                    .frame(height: config.isIPad ? 25 : 20)
+                    .padding(.top, 3)
+                    .opacity(isValid ? 0 : 1)
+            }
+            .clipped()
+        }
+        .padding(.horizontal, config.paddingStandard)
+    }
+}
+
+// MARK: - Password Input Field Component
+struct PasswordInputField: View {
+    let title: String
+    let placeholder: String
+    @Binding var text: String
+    @Binding var isValid: Bool
+    var errorMessage: String = "จำเป็นต้องระบุ"
+    @Binding var isPasswordVisible: Bool
+    let config: ResponsiveConfig
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            RequiredTitle(title: title, config: config)
+                .foregroundColor(.black)
+                .padding(.leading, 6)
+            
             HStack {
                 ZStack(alignment: .leading) {
                     PlaceholderView(text: text, placeholder: placeholder, config: config)
                     
-                    if isSecure {
-                        if isPasswordToggle?.wrappedValue ?? false {
-                            TextField("", text: $text)
-                        } else {
-                            SecureField("", text: $text)
-                        }
-                    } else {
+                    if isPasswordVisible {
                         TextField("", text: $text)
+                    } else {
+                        SecureField("", text: $text)
                     }
                 }
                 
-                if isSecure, let isVisible = isPasswordToggle {
-                    Button { isVisible.wrappedValue.toggle() } label: {
-                        Image(systemName: isVisible.wrappedValue ? "eye.fill" : "eye.slash.fill")
-                            .foregroundColor(.black)
-                            .font(.system(size: config.isIPad ? 22 : 18))
-                    }
+                Button {
+                    isPasswordVisible.toggle()
+                } label: {
+                    Image(systemName: isPasswordVisible ? "eye.fill" : "eye.slash.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: config.isIPad ? 22 : 18))
                 }
             }
             .padding()
@@ -51,7 +92,7 @@ struct RegisterInputField: View {
             .background(Color.textFieldColor)
             .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
-                  
+            
             Group {
                 Text(errorMessage)
                     .font(.noto(config.isIPad ? 18 : 15, weight: .medium))

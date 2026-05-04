@@ -23,6 +23,7 @@ struct ConfirmPasswordView: View {
                 ZStack {
                     Text(L("ยืนยันรหัสผ่าน"))
                         .font(.noto(config.titleFontSize, weight: .bold))
+                        .foregroundColor(.black)
 
                     HStack {
                         BackButton()
@@ -33,14 +34,13 @@ struct ConfirmPasswordView: View {
                 .padding(.bottom, config.isIPad ? 100 : 57)
                 
                 // MARK: - Input Field
-                LoginInputField(
+                LoginPasswordField(
                     title: L("รหัสผ่าน"),
                     placeholder: L("กรอกรหัสผ่าน"),
                     text: $viewModel.password,
                     isValid: .constant(!viewModel.isSubmitted || viewModel.passwordError == nil),
                     errorMessage: viewModel.isSubmitted ? (viewModel.passwordError ?? "") : "",
-                    isSecure: true,
-                    isPasswordToggle: $viewModel.isPasswordVisible,
+                    isPasswordVisible: $viewModel.isPasswordVisible,
                     config: config
                 )
                 .onChange(of: viewModel.password) { _, _ in

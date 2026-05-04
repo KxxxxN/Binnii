@@ -18,29 +18,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         NotificationManager.shared.requestPermission()
-        preloadFonts()
         return true
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.orientationLock
-    }
-    
-    private func preloadFonts() {
-        let fontNames = [
-            "NotoSansThai-Regular",
-            "NotoSansThai-Bold",
-            "NotoSansThai-Medium",
-            "NotoSansThai-SemiBold",
-            "NotoSansThai-Light",
-            "NotoSansThai-Thin",
-            "Inter-Regular",
-            "Inter-Bold",
-            "Inter-Medium",
-            "Inter-SemiBold",
-            "Inter-Light",
-            "Inter-Thin",
-        ]
-        fontNames.forEach { _ = UIFont(name: $0, size: 12) }
     }
 }

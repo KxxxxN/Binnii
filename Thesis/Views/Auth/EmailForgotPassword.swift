@@ -25,6 +25,7 @@ struct EmailForgotPassword: View {
                     ZStack {
                         Text(L("ลืมรหัสผ่าน"))
                             .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.black)
                         HStack {
                             BackButton()
                             Spacer()

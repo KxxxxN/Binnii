@@ -49,7 +49,8 @@ struct DetailSearchView: View {
                             showConfirmPhotoView = true
                         } label: {
                             HStack {
-                                Text(L("ยืนยันภาพถ่าย"))                                    .font(.noto(config.fontHeader))
+                                Text(L("ยืนยันภาพถ่าย"))
+                                    .font(.noto(config.fontHeader))
                                     .foregroundColor(.white)
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.white)

@@ -12,6 +12,7 @@ struct LoginPopupView: View {
     @Binding var isPresented: Bool
     var onDismiss: (() -> Void)? = nil
     var onLogin: (() -> Void)? = nil
+    @State private var navigateToLogin = false
     
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
@@ -54,15 +55,25 @@ struct LoginPopupView: View {
                         height: 40
                     )
                     
-                    NavigationLink(destination: LoginView()) {
-                        PrimaryButton(
-                            title: L("เข้าสู่ระบบ"),
-                            action: { isPresented = false
-                                onLogin?()},
-                            width: 120,
-                            height: 40
-                        )
-                    }
+//                    NavigationLink(destination: LoginView()) {
+//                        PrimaryButton(
+//                            title: L("เข้าสู่ระบบ"),
+//                            action: { isPresented = false
+//                                onLogin?()},
+//                            width: 120,
+//                            height: 40
+//                        )
+//                    }
+                    PrimaryButton(
+                        title: L("เข้าสู่ระบบ"),
+                        action: {
+                            isPresented = false
+                            onLogin?()
+                            NotificationCenter.default.post(name: .navigateToLogin, object: nil)
+                        },
+                        width: 120,
+                        height: 40
+                    )
                 }
                 .padding(.bottom, 24)
             }
