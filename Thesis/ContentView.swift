@@ -71,15 +71,6 @@ struct ContentView: View {
                 displayIndex = 0
             }
         }
-        .onAppear {
-            for family in UIFont.familyNames.sorted() {
-                for font in UIFont.fontNames(forFamilyName: family) {
-                    if font.contains("Noto") || font.contains("Inter") {
-                        print(font)
-                    }
-                }
-            }
-        }
     }
 }
 #Preview {
