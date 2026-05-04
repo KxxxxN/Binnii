@@ -92,7 +92,6 @@ struct QRScanView: View {
         .onAppear { viewModel.onAppear(hideTabBar: &hideTabBar) }
         .onDisappear {
             viewModel.onDisappear(hideTabBar: &hideTabBar)
-            // post หลังจาก camera เริ่ม stop แล้ว
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 NotificationCenter.default.post(name: .didFinishScan, object: nil)
             }
