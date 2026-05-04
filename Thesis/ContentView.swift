@@ -56,6 +56,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $navigateToLogin) {
                 LoginView()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .popToRoot)) { _ in
+                navigateToLogin = false  // pop กลับมาที่ ContentView
+            }
         }
         .onChange(of: index) {
             if (index == 1 || index == 3) && !isLoggedIn {

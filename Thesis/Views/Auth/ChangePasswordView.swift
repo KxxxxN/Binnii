@@ -57,7 +57,7 @@ struct ChangePasswordView: View {
                     if !ValidationHelper.isPasswordValid(viewModel.password) {
                         PasswordValidationCheckView(password: viewModel.password, config: config)
                             .frame(maxWidth: config.isIPad ? 520 : 400, alignment: .leading)
-                            .padding(.top, -7)
+                            .padding(.top, -3)
                             .padding(.bottom, 5)
                     }
                     
