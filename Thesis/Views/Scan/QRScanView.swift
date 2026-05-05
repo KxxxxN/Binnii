@@ -97,17 +97,11 @@ struct QRScanView: View {
         }
         .onDisappear {
             viewModel.onDisappear(hideTabBar: &hideTabBar)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                NotificationCenter.default.post(name: .didFinishScan, object: nil)
-            }
             if !viewModel.showAiScanView {
                 OrientationHelper.setOrientation(.all)
             }
         }
-        .onChange(of: shouldLockPortraitOnReturn) { _, newValue in
-            if newValue {
-                OrientationHelper.setOrientation(.portrait)
-                shouldLockPortraitOnReturn = false
+        // ✅ onChange ตัวเดียว ไม่ซ้ำ
         .onChange(of: shouldLockPortraitOnReturn) { _, newValue in
             if newValue {
                 OrientationHelper.setOrientation(.portrait)
