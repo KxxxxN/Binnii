@@ -31,6 +31,7 @@ struct ExchangeConfirmPopupView: View {
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
                     .padding(.top, 12)
                     .padding(.bottom, 40)
 
@@ -63,10 +64,8 @@ struct ExchangeConfirmPopupView: View {
                 .padding(.bottom, 24)
             }
             .frame(width: 320, height: 260)
-            .padding(.horizontal, 24)
             .background(Color.white)
             .cornerRadius(20)
-            .padding(.horizontal, 32)
         }
     }
 }
