@@ -22,6 +22,7 @@ struct LoginInputField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Title(title: title, config: config)
+                .foregroundColor(.black)
 
             HStack {
                 ZStack(alignment: .leading) {

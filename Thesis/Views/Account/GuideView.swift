@@ -30,6 +30,7 @@ struct GuideView: View {
                 ZStack {
                     Text(L("วิธีการใช้งาน"))
                         .font(.noto(config.titleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     
                     HStack {
                         BackButton()

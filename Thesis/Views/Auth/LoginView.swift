@@ -86,7 +86,8 @@ struct LoginView: View {
                                             .foregroundColor(.mainColor)
                                     }
                                 }
-                                .padding(.horizontal,config.isIPad ?  200 : 46)
+                                .padding(.horizontal,config.isIPad ?  200 : 35)
+                                .padding(.top, 4)
                             }
                             
                             // MARK: - Login Button

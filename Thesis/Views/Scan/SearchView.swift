@@ -93,6 +93,7 @@ struct SearchView: View {
 //            }
             .onAppear {
                 selectedTabnavigationItem = currentTab.rawValue
+                OrientationHelper.setOrientation(.all)
             }
         }
     }

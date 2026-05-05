@@ -14,9 +14,12 @@ struct PortraitLocker: UIViewControllerRepresentable {
 }
 
 class PortraitLockerVC: UIViewController {
-    // ถูกเรียกทุกครั้งที่ view กลับมา รวมถึงตอน pop จาก NavigationStack
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        OrientationHelper.setOrientation(.portrait)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard self?.viewIfLoaded?.window != nil else { return }
+            OrientationHelper.setOrientation(.portrait)
+        }
     }
 }

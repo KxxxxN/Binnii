@@ -68,9 +68,11 @@ struct WetWasteDetailContent: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     HStack(spacing: 0) {
                         Text(L("ถังขยะเปียก") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                            .foregroundColor(.black)
                         Text(L("(สีเขียว)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.wetWasteColor)
@@ -139,12 +141,14 @@ struct WetWasteDetailContent: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(L("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
                         Text("•   \(method)")
                             .font(.noto(config.detailBodyFontSize, weight: .medium))
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.black)
                     }
                 }
             }

@@ -29,7 +29,7 @@ struct BarcodeScanView: View {
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
             
             ZStack(alignment: .top) {
-                
+            
                 CameraContainerView(
                     hideTabBar: $hideTabBar,
                     capturedUIImage: $viewModel.capturedBarcodeImage,
@@ -105,14 +105,10 @@ struct BarcodeScanView: View {
             }
             .onAppear {
                 viewModel.onViewAppear(hideTabBar: $hideTabBar)
-                
-                OrientationHelper.setOrientation(.portrait)
             }
 
             .onDisappear {
                 viewModel.onViewDisappear()
-                
-                OrientationHelper.setOrientation(.all)
             }
             .navigationDestination(isPresented: $viewModel.showDetailBarcodeView) {
                 WasteDetailView(

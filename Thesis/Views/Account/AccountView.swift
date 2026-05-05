@@ -31,6 +31,7 @@ struct AccountView: View {
                         // MARK: - Header
                         Text(L("บัญชีผู้ใช้"))
                             .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.black)
                             .padding(.top, config.headerTopPadding)
                             .padding(.bottom, config.bottomTitlePadding)
 

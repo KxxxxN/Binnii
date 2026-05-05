@@ -23,6 +23,7 @@ struct HelpCenterView: View {
                 ZStack {
                     Text(L("ช่วยเหลือ"))
                         .font(.noto(config.titleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     
                     HStack {
                         BackButton()

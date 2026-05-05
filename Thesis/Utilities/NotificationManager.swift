@@ -30,6 +30,7 @@ class NotificationManager: ObservableObject {
     }
 
     // MARK: - 🔔 Daily Reminders
+
     func scheduleDailyReminders() {
         let allIDs = legacyIDs + dailySchedule.map { $0.id }
         UNUserNotificationCenter.current()
@@ -40,10 +41,8 @@ class NotificationManager: ObservableObject {
             content.title = "อย่าลืมแยกขยะวันนี้ 🗑️"
             content.body  = notificationBody(for: schedule.hour)
             content.sound = .default
-            // ✅ ไม่มี content.badge
 
             var dateComponents      = DateComponents()
-            dateComponents.timeZone = TimeZone(identifier: "Asia/Bangkok")
             dateComponents.hour     = schedule.hour
             dateComponents.minute   = schedule.minute
 
@@ -62,7 +61,7 @@ class NotificationManager: ObservableObject {
                 if let error {
                     print("❌ schedule \(schedule.id): \(error)")
                 } else {
-                    print("✅ scheduled \(schedule.id) → \(schedule.hour):\(String(format: "%02d", schedule.minute)) Asia/Bangkok")
+                    print("✅ scheduled \(schedule.id) → \(schedule.hour):\(String(format: "%02d", schedule.minute)) local time")
                 }
             }
         }
@@ -90,11 +89,13 @@ class NotificationManager: ObservableObject {
 
     // MARK: - 🏆 Points Notification
     func sendPointsNotification(points: Int, totalPoints: Int) {
+        // ✅ ถ้า toggle ปิดอยู่ ไม่ส่งเลย
+        guard dailyReminderEnabled else { return }
+        
         let content   = UNMutableNotificationContent()
         content.title = "ได้รับ \(points) คะแนน! 🏆"
         content.body  = "คะแนนสะสมของคุณตอนนี้: \(totalPoints) คะแนน"
         content.sound = .default
-        // ✅ ไม่มี content.badge
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(
@@ -106,5 +107,19 @@ class NotificationManager: ObservableObject {
         UNUserNotificationCenter.current().add(request) { error in
             if let error { print("❌ sendPointsNotification: \(error)") }
         }
+    }
+    func cancelAllNotifications() {
+        // ยกเลิก daily reminders
+        let allIDs = legacyIDs + dailySchedule.map { $0.id }
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: allIDs)
+        
+        // ✅ ยกเลิก points notifications และทุกอย่างที่ pending อยู่
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        // ✅ ลบที่แสดงอยู่ใน notification center แล้วด้วย
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        
+        dailyReminderEnabled = false
     }
 }

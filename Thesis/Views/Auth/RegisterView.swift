@@ -27,6 +27,8 @@ struct RegisterView: View {
                         ZStack {
                             Text(L("ลงทะเบียน"))
                                 .font(.noto(config.titleFontSize, weight: .bold))
+                                .foregroundColor(.black)
+
                             
                             HStack {
                                 BackButton()

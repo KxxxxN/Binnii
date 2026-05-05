@@ -100,9 +100,13 @@ struct ConfirmPhotoView: View {
 
             }
             .navigationBarHidden(true)
+            .onAppear {
+                OrientationHelper.setOrientation(.portrait)
+            }
             .onDisappear {
                 viewModel.isCameraActive = false
                 viewModel.isScanning = false
+                OrientationHelper.setOrientation(.all)
             }
         }
     }

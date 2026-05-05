@@ -5,7 +5,6 @@
 //  Created by Kansinee Klinkhachon on 3/4/2569 BE.
 //
 
-
 import SwiftUI
 import Storage
 import Auth
@@ -14,54 +13,49 @@ struct WasteDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
-    
+
     var category: String
     var capturedImage: UIImage?
     var showBarcodeImage: Bool = false
     var title: String = "ยืนยันภาพถ่าย"
     var scanMethod: String = "search"
     var onSaveSuccess: (() -> Void)? = nil
-    
+
     @StateObject private var viewModel = WasteDetailViewModel()
-    
+
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
-    
+
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-                
+            let imageWidth = geo.size.width > 40 ? geo.size.width - 40 : 0
+
             VStack(spacing: 0) {
                 headerView(config: config)
-                
+
                 ScrollView {
                     VStack(spacing: 0) {
-                        photoView
-                        
+                        photoView(imageWidth: imageWidth)
+
                         WasteDetailContentView(
                             category: category,
                             config: config,
                             showDate: true
                         )
                     }
-                    .frame(minHeight: 750)
                 }
                 .edgesIgnoringSafeArea(.bottom)
             }
-            .background(Color.backgroundColor)
-            .ignoresSafeArea()
             .navigationBarHidden(true)
             .onAppear { hideTabBar = true }
-            
             .overlay {
                 if viewModel.showSaveSuccess {
                     SuccessPopupView(message: L("บันทึกสำเร็จ")) {
                         if let onSaveSuccess {
                             var transaction = Transaction()
                             transaction.disablesAnimations = true
-                            withTransaction(transaction) {
-                                dismiss()
-                            }
+                            withTransaction(transaction) { dismiss() }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 onSaveSuccess()
                             }
@@ -70,7 +64,7 @@ struct WasteDetailView: View {
                         }
                     }
                 }
-                
+
                 if viewModel.showSaveError {
                     ErrorPopupView(title: L("บันทึกไม่สำเร็จ")) {
                         viewModel.showSaveError = false
@@ -78,6 +72,8 @@ struct WasteDetailView: View {
                 }
             }
         }
+        .background(Color.backgroundColor)
+        .ignoresSafeArea()
     }
 
     // MARK: - Header
@@ -90,7 +86,7 @@ struct WasteDetailView: View {
             HStack {
                 BackButton()
                 Spacer()
-                
+
                 Button {
                     Task {
                         await viewModel.save(
@@ -103,7 +99,7 @@ struct WasteDetailView: View {
                     if viewModel.isSaving {
                         ProgressView().padding(.trailing, 25)
                     } else {
-                        Text(L("บันทึก")) 
+                        Text(L("บันทึก"))
                             .font(.noto(config.fontBody, weight: .medium))
                             .foregroundColor(.mainColor)
                             .padding(.trailing, 25)
@@ -118,7 +114,7 @@ struct WasteDetailView: View {
     }
 
     // MARK: - Photo
-    private var photoView: some View {
+    private func photoView(imageWidth: CGFloat) -> some View {
         Group {
             if let uiImage = capturedImage {
                 Image(uiImage: uiImage)
@@ -130,7 +126,7 @@ struct WasteDetailView: View {
                     .aspectRatio(contentMode: .fill)
             }
         }
-        .frame(width: UIScreen.main.bounds.width - 40, height: 290)
+        .frame(width: imageWidth, height: imageWidth > 0 ? 290 : 0)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .padding(.bottom, 30)
     }

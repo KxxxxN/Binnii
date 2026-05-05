@@ -63,9 +63,11 @@ struct GeneralWasteDetailContent: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L("ประเภทถังขยะ"))
                         .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     HStack(spacing: 0) {
                         Text(L("ถังขยะทั่วไป") + " ")
                             .font(.noto(config.isIPad ? 24 : 18, weight: .medium))
+                            .foregroundColor(.black)
                         Text(L("(สีน้ำเงิน)"))
                             .font(.noto(config.isIPad ? 24 : 18, weight: .bold))
                             .foregroundColor(.generalWasteColor)
@@ -131,10 +133,12 @@ struct GeneralWasteDetailContent: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(L("การรีไซเคิล"))
                     .font(.noto(config.detailSectionTitleFontSize, weight: .bold))
+                    .foregroundColor(.black)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(recyclingMethods, id: \.self) { method in
                         Text("•   \(method)")
                             .font(.noto(config.detailBodyFontSize, weight: .medium))
+                            .foregroundColor(.black)
                     }
                 }
             }

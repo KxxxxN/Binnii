@@ -77,6 +77,7 @@ struct RewardExchangeView: View {
                         .padding(.horizontal, config.paddingMedium)
                     }
                 }
+                .background(Color.backgroundColor)
                 .edgesIgnoringSafeArea(.top)
                 .onAppear { hideTabBar = true }
                 .onDisappear { hideTabBar = false }

@@ -5,25 +5,26 @@
 
 import SwiftUI
 import AVFoundation
-import PhotosUI
 
 struct QRScanView: View {
-    
+
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var hideTabBar: Bool
     @Binding var index: Int
-    
+
     @StateObject private var viewModel = QRScanViewModel()
-    
+
+    @State private var shouldLockPortraitOnReturn = false
+
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
-    
+
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-            
+
             ZStack(alignment: .top) {
-                
+
                 // MARK: - Background
                 Image("QRBackground")
                     .resizable()
@@ -31,10 +32,10 @@ struct QRScanView: View {
                     .frame(width: geo.size.width, height: geo.size.height)
                     .clipped()
                     .ignoresSafeArea()
-                
+
                 // MARK: - Foreground
                 VStack(spacing: 0) {
-                    
+
                     headerView(config: config)
 
                     Button {
@@ -44,12 +45,13 @@ struct QRScanView: View {
                             .font(.noto(config.fontHeader, weight: .medium))
                             .foregroundColor(.black)
                             .multilineTextAlignment(.center)
-                            .frame(width: config.qrContentMaxWidth, height: config.isIPad ? 155 : 115)
+                            .frame(width: config.qrContentMaxWidth,
+                                   height: config.isIPad ? 155 : 115)
                             .background(Color.textFieldColor)
                             .cornerRadius(config.bannerCornerRadius)
                     }
                     .padding(.top, config.qrBannerTopPadding)
-                    
+
                     ZStack {
                         CameraPreview(
                             isScanning: $viewModel.isScanning,
@@ -57,27 +59,25 @@ struct QRScanView: View {
                             capturedImage: .constant(nil),
                             isFlashOn: $viewModel.isFlashOn,
                             scanMode: true,
-                            onScan: {
-                                viewModel.handleScanResult($0)
-                            }
+                            onScan: { viewModel.handleScanResult($0) }
                         )
                         .id(viewModel.cameraID)
                         .frame(width: config.cameraSize, height: config.cameraSize)
                         .cornerRadius(config.bannerCornerRadius)
-                        
+
                         QRCornerLines(config: config)
                     }
                     .frame(width: config.cameraSize, height: config.cameraSize)
                     .padding(.top, config.qrCameraTopPadding)
-                    
+
                     Spacer()
                     Color.clear.frame(height: 50)
                 }
-                
+
                 if viewModel.showResultAlert {
                     resultAlertOverlay(config: config)
                 }
-                
+
                 if viewModel.showErrorAlert {
                     ErrorPopupView(title: L("สแกนไม่สำเร็จ")) {
                         viewModel.dismissError()
@@ -85,33 +85,35 @@ struct QRScanView: View {
                 }
             }
             .navigationDestination(isPresented: $viewModel.showAiScanView) {
-                ScanContainerView(hideTabBar: $hideTabBar)
+                ScanContainerView(
+                    hideTabBar: $hideTabBar,
+                    shouldLockPortraitOnReturn: $shouldLockPortraitOnReturn
+                )
             }
         }
-        
-        .onAppear { viewModel.onAppear(hideTabBar: &hideTabBar) }
+        .onAppear {
+            viewModel.onAppear(hideTabBar: &hideTabBar)
+            OrientationHelper.setOrientation(.portrait)
+        }
         .onDisappear {
             viewModel.onDisappear(hideTabBar: &hideTabBar)
-            // post หลังจาก camera เริ่ม stop แล้ว
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                NotificationCenter.default.post(name: .didFinishScan, object: nil)
+            if !viewModel.showAiScanView {
+                OrientationHelper.setOrientation(.all)
+            }
+        }
+        .onChange(of: shouldLockPortraitOnReturn) { _, newValue in
+            if newValue {
+                OrientationHelper.setOrientation(.portrait)
+                shouldLockPortraitOnReturn = false
             }
         }
         .navigationBarHidden(true)
     }
-    
+
     // MARK: - Header
     private func headerView(config: ResponsiveConfig) -> some View {
         HStack {
             XBackButtonBlack(index: $index)
-//                .simultaneousGesture(TapGesture().onEnded {
-//                    viewModel.isCameraActive = false
-//                    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.8) {
-//                        DispatchQueue.main.async {
-//                            NotificationCenter.default.post(name: .didFinishScan, object: nil)
-//                        }
-//                    }
-//                })
             Color.clear.frame(width: 10, height: 10)
             Spacer()
             Text(L("สแกนคิวอาร์โค้ดถังขยะ"))
@@ -132,7 +134,7 @@ struct QRScanView: View {
         .background(Color.backgroundColor)
         .ignoresSafeArea()
     }
-    
+
     // MARK: - Result Alert Overlay
     private func resultAlertOverlay(config: ResponsiveConfig) -> some View {
         ZStack {
@@ -140,28 +142,29 @@ struct QRScanView: View {
                 .fill(.ultraThinMaterial)
                 .opacity(0.8)
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 Image("Passmark")
                     .resizable()
                     .scaledToFit()
                     .frame(width: config.alertIconSize, height: config.alertIconSize)
                     .padding(.top, config.paddingStandard)
-                
+
                 Text(L("ยืนยันถังขยะ"))
                     .font(.noto(config.titleFontSize, weight: .bold))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .padding(.top, config.spacingSmall)
-                
+
                 Text(viewModel.resultTitle(config: config))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .padding(.top, config.paddingSmall)
-                
+
                 HStack(spacing: config.alertButtonSpacing) {
                     Button { viewModel.cancelResult() } label: {
-                        Text(L("ยกเลิก"))                            .font(.noto(config.fontBody, weight: .bold))
+                        Text(L("ยกเลิก"))
+                            .font(.noto(config.fontBody, weight: .bold))
                             .foregroundColor(.mainColor)
                             .frame(width: config.qrAlertButtonWidth,
                                    height: config.qrAlertButtonHeight)
@@ -172,9 +175,10 @@ struct QRScanView: View {
                                     .stroke(Color.mainColor, lineWidth: 2)
                             )
                     }
-                    
+
                     Button { viewModel.confirmResult(hideTabBar: &hideTabBar) } label: {
-                        Text(L("ยืนยัน"))                            .font(.noto(config.fontBody, weight: .bold))
+                        Text(L("ยืนยัน"))
+                            .font(.noto(config.fontBody, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: config.qrAlertButtonWidth,
                                    height: config.qrAlertButtonHeight)

@@ -24,6 +24,7 @@ struct FAQView: View {
                 ZStack {
                     Text(L("คำถามที่พบบ่อย"))
                         .font(.noto(config.titleFontSize, weight: .bold))
+                        .foregroundColor(.black)
                     
                     HStack {
                         BackButton()

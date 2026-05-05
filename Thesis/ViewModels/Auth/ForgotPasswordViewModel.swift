@@ -11,6 +11,9 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var navigateToOTP = false
     @Published var hasNetworkError = false
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     func clearError() {
         emailErrorForgot = nil
     }
@@ -19,10 +22,10 @@ class ForgotPasswordViewModel: ObservableObject {
         emailErrorForgot = nil
         
         if emailForgotPassword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            emailErrorForgot = "กรุณากรอกอีเมลที่ลงทะเบียนไว้"
+            emailErrorForgot = L("กรุณากรอกอีเมลที่ลงทะเบียนไว้")
             return false
         } else if !ValidationHelper.isValidEmail(emailForgotPassword) {
-            emailErrorForgot = "รูปแบบอีเมลไม่ถูกต้อง"
+            emailErrorForgot = L("รูปแบบอีเมลไม่ถูกต้อง")
             return false
         }
         return true
@@ -54,7 +57,7 @@ class ForgotPasswordViewModel: ObservableObject {
             let users = try JSONDecoder().decode([UserEmail].self, from: response.data)
             
             guard !users.isEmpty else {
-                self.emailErrorForgot = "อีเมลนี้ยังไม่ได้ลงทะเบียน"
+                self.emailErrorForgot = L("อีเมลนี้ยังไม่ได้ลงทะเบียน")
                 return
             }
             
@@ -64,9 +67,9 @@ class ForgotPasswordViewModel: ObservableObject {
         } catch {
             print("Error: \(error.localizedDescription)")
             if error.localizedDescription.contains("rate limit") {
-                self.emailErrorForgot = "ส่งคำขอบ่อยเกินไป กรุณารอสักครู่"
+                self.emailErrorForgot = L("ส่งคำขอบ่อยเกินไป กรุณารอสักครู่")
             } else {
-                self.emailErrorForgot = "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"
+                self.emailErrorForgot = L("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง")
             }
             self.hasNetworkError = true
         }

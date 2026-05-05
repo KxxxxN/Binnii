@@ -193,12 +193,12 @@ struct ScoreSortMenu: View {
 struct PageView: View {
     @State private var currentPage = 0
     @State private var items: [ScoreItem]
+    @State private var originalItems: [ScoreItem]
     @State private var isDropdownOpen = false
     @State private var selectedSort: SortType = .newest
-
     let config: ResponsiveConfig
     let availableHeight: CGFloat
-
+    
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
 
@@ -206,22 +206,24 @@ struct PageView: View {
 
     init(items: [ScoreItem], config: ResponsiveConfig, availableHeight: CGFloat) {
         _items = State(initialValue: items)
+        _originalItems = State(initialValue: items)
         _currentPage = State(initialValue: 1)
         self.config = config
         self.availableHeight = availableHeight
     }
-    
+
     private func applySortIfNeeded() {
         switch selectedSort {
-        case .oldest:
-            items.sort { dateFrom($0.date) < dateFrom($1.date) }
-        case .highToLow:
-            items.sort { cleanPoints($0.points) > cleanPoints($1.points) }
-        case .lowToHigh:
-            items.sort { cleanPoints($0.points) < cleanPoints($1.points) }
         case .newest:
-            items.sort { dateFrom($0.date) > dateFrom($1.date) }
+            items = originalItems.sorted { dateFrom($0.date) > dateFrom($1.date) }
+        case .oldest:
+            items = originalItems.sorted { dateFrom($0.date) < dateFrom($1.date) }
+        case .highToLow:
+            items = originalItems.sorted { cleanPoints($0.points) > cleanPoints($1.points) }
+        case .lowToHigh:
+            items = originalItems.sorted { cleanPoints($0.points) < cleanPoints($1.points) }
         }
+        currentPage = 1
     }
 
     private func dateFrom(_ str: String) -> Date {

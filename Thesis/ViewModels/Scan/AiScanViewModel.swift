@@ -10,6 +10,7 @@ import SwiftUI
 import PhotosUI
 import CoreML
 import Vision
+import Combine // เพิ่ม Combine
 
 @MainActor
 final class AiScanViewModel: ObservableObject {
@@ -32,10 +33,32 @@ final class AiScanViewModel: ObservableObject {
 
     private var isResetting = false
     
+    // MARK: - Language Management
+    private var lm = LanguageManager.shared
+    private var cancellables = Set<AnyCancellable>()
+    
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
+    init() {
+        // ติดตามการเปลี่ยนภาษาเพื่อให้ UI อัปเดต AttributedString ทันที
+        lm.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Computed
     var resultTitle: AttributedString {
-        var text = AttributedString("ขยะชิ้นนี้คือ \(aiResult) \nถูกต้องหรือไม่?")
-        if let range = text.range(of: aiResult) {
+        // ใช้ Key สำหรับประโยคคำถาม เช่น "ขยะชิ้นนี้คือ %@ \nถูกต้องหรือไม่?"
+        // หรือจะแยกส่วนเพื่อความง่ายในการจัด Format
+        let prefix = L("ขยะชิ้นนี้คือ")
+        let suffix = L("ถูกต้องหรือไม่?")
+        let localizedResult = L(aiResult) // แปลชื่อขยะที่ได้จาก AI
+        
+        var text = AttributedString("\(prefix) \(localizedResult) \n\(suffix)")
+        
+        if let range = text.range(of: localizedResult) {
             text[range].font = .noto(25, weight: .bold)
         }
         return text
@@ -139,7 +162,8 @@ final class AiScanViewModel: ObservableObject {
                         print("🏷️ \($0.identifier) - \(String(format: "%.1f", $0.confidence * 100))%")
                     }
 
-                    self.aiResult = self.labelToThai(top.identifier)
+                    // เก็บค่า identifier ดิบไว้เพื่อนำไปใช้หาคำแปลในภายหลัง
+                    self.aiResult = top.identifier
                     self.showResultAlert = true
                 }
             }
@@ -151,27 +175,28 @@ final class AiScanViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Label Mapping
+    // MARK: - Label Mapping (คืนค่าเป็น Key สำหรับแปลภาษา)
     private func labelToThai(_ label: String) -> String {
+        // แนะนำให้คืนค่าเป็น Key กลาง แล้วไปกำหนดคำแปลใน Localizable.strings
         switch label {
-        case "plasticBottle": return "ขวดพลาสติก"
-        case "can":           return "กระป๋อง"
-        case "กระดาษทั่วไป (172)": return "กระดาษ"
-        case "กระดาษทิชชู่ (133)": return "กระดาษทิชชู่"
-        case "กล่องกระดาษ (82)": return "กล่องกระดาษ"
-        case "ช้อน-ส้อมพลาสติก (208)": return "ช้อน-ส้อม พลาสติก"
-        case "ซองขนม (1050)": return "ซองขนม"
-        case "ตะเกียบไม้ (93)": return "ตะเกียบไม้"
-        case "ถุงพลาสติก (92)": return "ถุงพลาสติก"
-        case "น้ำแข็งเหลือ (132)": return "น้ำแข็งเหลือ"
-        case "ภาชนะใส่อาหาร (236)": return "ภาชนะใส่อาหาร"
-        case "หลอด (68)": return "หลอด"
-        case "เครื่องดื่มเหลือ (127)": return "เครื่องดื่มเหลือ"
-        case "เปลือกผลไม้ (208)": return "เปลือกผลไม้"
-        case "เปลือกไข่ (127)": return "เปลือกไข่"
-        case "เศษขนม (238)": return "เศษขนม"
-        case "เศษอาหาร (415)": return "เศษอาหาร"
-        case "แก้วพลาสติก (96)": return "แก้วพลาสติก"
+        case "Plastic Bottle": return "ขวดพลาสติก"
+        case "Cans":           return "กระป๋อง"
+        case "General Paper": return "กระดาษ"
+        case "Tissues": return "กระดาษทิชชู่"
+        case "Cardboard Box": return "กล่องกระดาษ"
+        case "Plastic Cutlery": return "ช้อน-ส้อม พลาสติก"
+        case "Snack Bag": return "ซองขนม"
+        case "Wooden Chopsticks": return "ตะเกียบไม้"
+        case "Plastic Bag": return "ถุงพลาสติก"
+        case "Leftover Ice": return "น้ำแข็งเหลือ"
+        case "Food Container": return "ภาชนะใส่อาหาร"
+        case "Straw": return "หลอด"
+        case "Leftover Drinks": return "เครื่องดื่มเหลือ"
+        case "Fruit Peel": return "เปลือกผลไม้"
+        case "Eggshell": return "เปลือกไข่"
+        case "Crumbs": return "เศษขนม"
+        case "Food Waste": return "เศษอาหาร"
+        case "Plastic Cups": return "แก้วพลาสติก"
         default:              return "ไม่พบขยะชิ้นนี้"
         }
     }

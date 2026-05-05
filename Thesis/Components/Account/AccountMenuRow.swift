@@ -120,12 +120,14 @@ struct AccountToggleRow: View {
 
     // MARK: - Logic
 
+    // AccountMenuRow.swift — แก้ handleToggle ให้ sync state
+
     private func handleToggle(_ newValue: Bool) {
         if newValue {
             requestNotificationPermission()
         } else {
-            NotificationManager.shared.cancelDailyReminder()
-            UserDefaults.standard.set(false, forKey: "notificationEnabled") // บันทึกว่าปิด
+            NotificationManager.shared.cancelAllNotifications()
+            UserDefaults.standard.set(false, forKey: "notificationEnabled")
         }
     }
 
