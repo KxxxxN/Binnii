@@ -149,6 +149,7 @@ struct WetWasteDetailContent: View {
                             .foregroundColor(.black)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.black)
                     }
                 }
             }

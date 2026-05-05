@@ -91,6 +91,7 @@ struct SearchView: View {
             .environment(\.locale, lm.locale)
             .onAppear {
                 selectedTabnavigationItem = currentTab.rawValue
+                OrientationHelper.setOrientation(.all)
             }
         }
     }

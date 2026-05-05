@@ -5,7 +5,6 @@
 //  Created by Kansinee Klinkhachon on 22/3/2569 BE.
 //
 
-
 import SwiftUI
 import Supabase
 
@@ -13,6 +12,10 @@ import Supabase
 class FrequentWasteViewModel: ObservableObject {
     @Published var wasteItems: [FrequentWasteItem] = []
     @Published var isLoading: Bool = false
+    
+    
+    @ObservedObject private var lm = LanguageManager.shared
+       private func L(_ key: String) -> String { lm.localized(key) }
     
     let imageMap: [String: String] = [
         "ขวดพลาสติก": "Bottle",
@@ -60,20 +63,20 @@ class FrequentWasteViewModel: ObservableObject {
                     FrequentWasteItem(
                         imageName: imageName,
                         title: title,
-                        count: "\(countDict[title] ?? 0) ครั้ง"
+                        count: "\(countDict[title] ?? 0) \(L("ครั้ง"))"
                     )
                 }
                 .sorted { extractNumber($0.count) > extractNumber($1.count) } // เรียงมาก→น้อย
         } catch {
             print("❌ fetchWasteCounts error: \(error)")
             wasteItems = imageMap.map { (title, imageName) in
-                FrequentWasteItem(imageName: imageName, title: title, count: "0 ครั้ง")
+                FrequentWasteItem(imageName: imageName, title: title, count: "0 \(L("ครั้ง"))")
             }
             .sorted { $0.title < $1.title }
         }
     }
+    
     private func extractNumber(_ text: String) -> Int {
-        Int(text.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
+        Int(text.replacingOccurrences(of: " \(L("ครั้ง"))", with: "")) ?? 0
     }
 }
-

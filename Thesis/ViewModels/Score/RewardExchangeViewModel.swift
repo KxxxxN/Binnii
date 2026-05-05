@@ -25,23 +25,20 @@ class RewardExchangeViewModel: ObservableObject {
     // MARK: - Load Display Data
 
     func loadData() {
+        let lm = LanguageManager.shared 
         let remaining = currentPoints - exchangeCost
 
         pointsData = [
-            ("total_points", "\(currentPoints)", false),
-            ("redeem_points", "\(exchangeCost)", true),
-            ("remaining_points", "\(max(remaining, 0))", false)
+            (lm.localized("total_points"), "\(currentPoints)", false),
+            (lm.localized("redeem_points"), "\(exchangeCost)", true),
+            (lm.localized("remaining_points"), "\(max(remaining, 0))", false)
         ]
 
-        conditionsList = [
-            "condition_1",
-            "condition_2",
-            "condition_3",
-            "condition_4",
-            "condition_5",
-            "condition_6",
-            "condition_7"
+        let keys = [
+            "condition_1", "condition_2", "condition_3",
+            "condition_4", "condition_5", "condition_6", "condition_7"
         ]
+        conditionsList = keys.map { lm.localized($0) }
     }
 
     // MARK: - Exchange Flow

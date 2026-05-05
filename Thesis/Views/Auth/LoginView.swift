@@ -56,19 +56,18 @@ struct LoginView: View {
                                 errorMessage: viewModel.isLoginSubmitted ? (viewModel.emailError ?? "") : "",
                                 config: config
                             )
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
                             .onChange(of: viewModel.email) { _, _ in
                                 viewModel.clearError(for: "email")
                             }
                             
-                            LoginPasswordField(
+                            LoginInputField(
                                 title: L("รหัสผ่าน"),
                                 placeholder: L("กรอกรหัสผ่าน"),
                                 text: $viewModel.password,
                                 isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
                                 errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
-                                isPasswordVisible: $viewModel.isPasswordVisible,
+                                isSecure: true,
+                                isPasswordToggle: $viewModel.isPasswordVisible,
                                 config: config
                             )
                             .onChange(of: viewModel.password) { _, _ in
@@ -85,7 +84,8 @@ struct LoginView: View {
                                         .foregroundColor(.mainColor)
                                 }
                             }
-                            .padding(.horizontal,config.isIPad ?  200 : 46)
+                            .padding(.horizontal,config.isIPad ?  200 : 35)
+                            .padding(.top, 4)
                         }
                         
                         // MARK: - Login Button

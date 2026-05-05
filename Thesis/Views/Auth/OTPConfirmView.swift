@@ -29,6 +29,7 @@ struct OTPConfirmView: View {
                     ZStack {
                         Text(L("ยืนยันรหัส OTP"))
                             .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.black)
                         
                         HStack {
                             BackButton()
@@ -40,6 +41,7 @@ struct OTPConfirmView: View {
                     
                     Text(L("ใส่รหัสที่ส่งไปยังอีเมลของคุณ"))
                         .font(.noto(config.isIPad ? 24 : 20, weight: .semibold))
+                        .foregroundColor(.black)
                         .padding(.bottom, config.isIPad ? 24 : 18)
                     
                     // MARK: - OTP Input
@@ -68,15 +70,17 @@ struct OTPConfirmView: View {
                     )
                     
                     // MARK: - Resend Code
-                    HStack(spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(L("ยังไม่ได้รับรหัส?"))
                             .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                             .foregroundColor(.black)
+                            .fixedSize(horizontal: false, vertical: true)  // ✅ ป้องกัน wrap ผิด
                         
                         if viewModel.resendCooldown > 0 {
                             Text(L("ส่งรหัสใหม่") + " (\(viewModel.resendCooldown))")
                                 .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
                                 .foregroundColor(.placeholderColor)
+                                .fixedSize(horizontal: false, vertical: true)
                         } else {
                             Button(action: {
                                 Task {
@@ -87,9 +91,12 @@ struct OTPConfirmView: View {
                                     .font(.noto(config.isIPad ? 18 : 15, weight: .bold))
                                     .foregroundColor(.mainColor)
                                     .underline(color: .mainColor)
+                                    .fixedSize(horizontal: true, vertical: false)
                             }
                         }
                     }
+                    .multilineTextAlignment(.center)  
+                    .padding(.horizontal, config.paddingStandard)
                     .padding(.top, config.isIPad ? 20 : 15)
                     
                     Spacer()

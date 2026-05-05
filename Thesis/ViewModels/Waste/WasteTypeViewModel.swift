@@ -16,6 +16,9 @@ final class WasteTypeViewModel: ObservableObject {
     @Published private(set) var items        : [WasteTypeItem] = []
     @Published private(set) var isLoading    : Bool            = false
     @Published private(set) var errorMessage : String?         = nil
+    
+    private let lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     private let inputFormatter: DateFormatter = {
         let f        = DateFormatter()
@@ -62,7 +65,7 @@ final class WasteTypeViewModel: ObservableObject {
             items = rows.map { mapToItem($0) }
 
         } catch {
-            errorMessage = "โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่"
+            errorMessage = L("โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่")
             items        = []
             print("❌ WasteTypeViewModel.fetchItems:", error)
         }

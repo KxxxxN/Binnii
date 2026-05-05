@@ -25,6 +25,7 @@ struct ChangePasswordView: View {
                     ZStack {
                         Text(L("เปลี่ยนรหัสผ่านใหม่"))
                             .font(.noto(config.titleFontSize, weight: .bold))
+                            .foregroundColor(.black)
                         HStack {
                             BackButton()
                             Spacer()

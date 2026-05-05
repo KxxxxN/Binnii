@@ -16,12 +16,15 @@ class ConfirmPasswordViewModel: ObservableObject {
     @Published var isPasswordVisible = false
     @Published var navigateToNextStep = false
     @Published var isSubmitted = false
+    
+    private let lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     func verifyPassword() {
         self.isSubmitted = true
         
         if password.isEmpty {
-            passwordError = "กรุณากรอกรหัสผ่าน"
+            passwordError = L("กรุณากรอกรหัสผ่าน")
             return
         }
         
@@ -44,7 +47,7 @@ class ConfirmPasswordViewModel: ObservableObject {
             
         } catch {
             print("Error full: \(error)")
-            self.passwordError = "รหัสผ่านไม่ถูกต้อง"
+            self.passwordError = L("รหัสผ่านไม่ถูกต้อง")
         }
     }
     

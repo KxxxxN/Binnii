@@ -9,20 +9,22 @@
 import UIKit
 
 struct OrientationHelper {
-    
     static func setOrientation(_ orientation: UIInterfaceOrientationMask) {
         AppDelegate.orientationLock = orientation
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            let rootViewController = windowScene.windows.first?.rootViewController
-            rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
-            
-            if #available(iOS 16.0, *) {
-                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
-            } else {
-                let targetOrientation: UIInterfaceOrientation = (orientation == .portrait) ? .portrait : .unknown
-                UIDevice.current.setValue(targetOrientation.rawValue, forKey: "orientation")
-            }
+
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .first as? UIWindowScene else { return }
+
+        if #available(iOS 16.0, *) {
+            windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
+            windowScene.windows.first?.rootViewController?
+                .setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            let target = (orientation == .portrait)
+                ? UIInterfaceOrientation.portrait.rawValue
+                : UIInterfaceOrientation.unknown.rawValue
+            UIDevice.current.setValue(target, forKey: "orientation")
+            UINavigationController.attemptRotationToDeviceOrientation()
         }
     }
 }

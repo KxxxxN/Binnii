@@ -23,18 +23,21 @@ class ChangeEmailViewModel: ObservableObject {
     
     @Published var hasNetworkError = false
     
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
     func validateEmail() async {
         self.isSubmitted = true
         
         let trimmed = newEmail.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmed.isEmpty {
-            emailError = "กรุณากรอกอีเมลที่ต้องการแก้ไข"
+            emailError = L("กรุณากรอกอีเมลที่ต้องการแก้ไข")
         } else if ValidationHelper.isValidEmail(trimmed) {
             emailError = nil
             await updateEmailRequest(to: trimmed) 
         } else {
-            emailError = "รูปแบบอีเมลไม่ถูกต้อง"
+            emailError = L("รูปแบบอีเมลไม่ถูกต้อง")
         }
     }
     
@@ -52,9 +55,9 @@ class ChangeEmailViewModel: ObservableObject {
         } catch {
             print("Update Email Error: \(error.localizedDescription)")
             if error.localizedDescription.contains("already been registered") || error.localizedDescription.contains("already exists") {
-                self.emailError = "อีเมลนี้ถูกใช้งานแล้ว"
+                self.emailError = L("อีเมลนี้ถูกใช้งานแล้ว")
             } else {
-                self.emailError = "ไม่สามารถใช้อีเมลนี้ได้ หรือส่งคำขอบ่อยเกินไป"
+                self.emailError = L("ไม่สามารถใช้อีเมลนี้ได้ หรือส่งคำขอบ่อยเกินไป")
                 self.hasNetworkError = true
             }
         }

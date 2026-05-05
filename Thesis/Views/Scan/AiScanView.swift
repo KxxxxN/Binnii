@@ -106,14 +106,10 @@ struct AiScanView: View {
         }
         .onAppear {
             viewModel.onViewAppear()
-            
-            OrientationHelper.setOrientation(.portrait)
         }
 
         .onDisappear {
             viewModel.onViewDisappear()
-            
-            OrientationHelper.setOrientation(.all)
         }
         .navigationDestination(isPresented: $viewModel.showDetailView) {
             WasteDetailView(
