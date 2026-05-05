@@ -56,6 +56,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $navigateToLogin) {
                 LoginView()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .popToRoot)) { _ in
+                navigateToLogin = false  // pop กลับมาที่ ContentView
+            }
         }
         .onChange(of: index) {
             if (index == 1 || index == 3) && !isLoggedIn {
@@ -69,15 +72,6 @@ struct ContentView: View {
             if !isLoggedIn {
                 index = 0
                 displayIndex = 0
-            }
-        }
-        .onAppear {
-            for family in UIFont.familyNames.sorted() {
-                for font in UIFont.fontNames(forFamilyName: family) {
-                    if font.contains("Noto") || font.contains("Inter") {
-                        print(font)
-                    }
-                }
             }
         }
     }

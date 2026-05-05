@@ -48,12 +48,23 @@ final class QRScanViewModel: ObservableObject {
         }
         isFlashOn = false
         isCameraActive = false
-//        OrientationHelper.setOrientation(.all)
+    }
+    
+    private func formatResult(_ result: String) -> String {
+        let isEnglish = LanguageManager.shared.selectedLanguage == "en"
+        
+        let floor = result.components(separatedBy: "-").last ?? ""
+        
+        if isEnglish {
+            return "COSCI fl.\(floor)"
+        } else {
+            return "อาคาร COSCI ชั้น \(floor)"
+        }
     }
 
     // MARK: - QR Scan Handler
     func handleScanResult(_ result: String) {
-        qrResult = result
+        qrResult = formatResult(result)
         isCameraActive = false
         isScanning = false
         if result.contains("COSCI") {

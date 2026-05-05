@@ -146,6 +146,7 @@ struct WetWasteDetailContent: View {
                     ForEach(recyclingMethods, id: \.self) { method in
                         Text("•   \(method)")
                             .font(.noto(config.detailBodyFontSize, weight: .medium))
+                            .foregroundColor(.black)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(.black)
