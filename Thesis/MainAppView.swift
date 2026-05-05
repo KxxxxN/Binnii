@@ -108,7 +108,7 @@ struct MainAppView: View {
                                 RecyclableItem(
                                     imageName: $0.imageName,
                                     title: $0.title,
-                                    countNumber: Int($0.count.replacingOccurrences(of: " ครั้ง", with: "")) ?? 0
+                                    countNumber: Int($0.count.filter { $0.isNumber }) ?? 0
                                 )
                             }
                         )
@@ -143,6 +143,13 @@ struct MainAppView: View {
                     _ = await (profile, waste)
                 } catch {
                     print("❌ No session: \(error)")
+                }
+            }
+            .onAppear {
+                NotificationManager.shared.requestPermission { granted in
+                    if granted {
+                        NotificationManager.shared.scheduleDailyReminders()
+                    }
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: .didFinishScan)) { _ in

@@ -12,10 +12,11 @@ import Supabase
 class FrequentWasteViewModel: ObservableObject {
     @Published var wasteItems: [FrequentWasteItem] = []
     @Published var isLoading: Bool = false
-
-    private let lm = LanguageManager.shared
-    private func L(_ key: String) -> String { lm.localized(key) }
-
+    
+    
+    @ObservedObject private var lm = LanguageManager.shared
+       private func L(_ key: String) -> String { lm.localized(key) }
+    
     let imageMap: [String: String] = [
         "ขวดพลาสติก": "Bottle",
         "แก้วพลาสติก": "Plasticcup",
@@ -35,53 +36,47 @@ class FrequentWasteViewModel: ObservableObject {
         "ตะเกียบไม้": "Chopsticks",
         "กล่องกระดาษ": "Box",
         "กระดาษทั่วไป": "Paper"
+        
     ]
-
+    
     func fetchWasteCounts() async {
         isLoading = true
         defer { isLoading = false }
-
+        
         do {
             let session = try await supabase.auth.session
-
+            
             struct WasteCount: Decodable {
                 let category: String
                 let count: Int
             }
-
+            
             let rows: [WasteCount] = try await supabase
                 .rpc("get_waste_counts", params: ["p_user_id": session.user.id.uuidString])
                 .execute()
                 .value
-
+            
             let countDict = Dictionary(uniqueKeysWithValues: rows.map { ($0.category, $0.count) })
-
+            
             wasteItems = imageMap
                 .map { (title, imageName) in
                     FrequentWasteItem(
                         imageName: imageName,
-                        title: L(title),
+                        title: title,
                         count: "\(countDict[title] ?? 0) \(L("ครั้ง"))"
                     )
                 }
-                .sorted { extractNumber($0.count) > extractNumber($1.count) }
-
+                .sorted { extractNumber($0.count) > extractNumber($1.count) } // เรียงมาก→น้อย
         } catch {
             print("❌ fetchWasteCounts error: \(error)")
-            wasteItems = imageMap
-                .map { (title, imageName) in
-                    FrequentWasteItem(
-                        imageName: imageName,
-                        title: L(title),
-                        count: "0 \(L("ครั้ง"))"
-                    )
-                }
-                .sorted { $0.title < $1.title }
+            wasteItems = imageMap.map { (title, imageName) in
+                FrequentWasteItem(imageName: imageName, title: title, count: "0 \(L("ครั้ง"))")
+            }
+            .sorted { $0.title < $1.title }
         }
     }
-
+    
     private func extractNumber(_ text: String) -> Int {
-        let digits = text.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-        return Int(digits) ?? 0
+        Int(text.replacingOccurrences(of: " \(L("ครั้ง"))", with: "")) ?? 0
     }
 }
