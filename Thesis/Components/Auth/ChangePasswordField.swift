@@ -4,8 +4,6 @@
 //
 //  Created by Kansinee Klinkhachon on 10/12/2568 BE.
 //
-
-
 import SwiftUI
 
 struct ChangePasswordField: View {
@@ -16,20 +14,23 @@ struct ChangePasswordField: View {
     var errorMessage: String = "กรุณากรอกรหัสผ่าน"
     var isSecure: Bool = false
     var isPasswordToggle: Binding<Bool>?
-    
+
     let config: ResponsiveConfig
-    
+
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0){
-            Title(title: title, config: config)
-            
-            HStack{
-                ZStack(alignment: .leading){
-                    PlaceholderView(text: text, placeholder: placeholder, config: config)
-                    
+        VStack(alignment: .leading, spacing: 0) {
+            Title(title: L(title), config: config)
+
+            HStack {
+                ZStack(alignment: .leading) {
+                    PlaceholderView(text: text, placeholder: L(placeholder), config: config)
+
                     if isSecure {
                         if isPasswordToggle?.wrappedValue ?? false {
-                            TextField("",text: $text)
+                            TextField("", text: $text)
                         } else {
                             SecureField("", text: $text)
                         }
@@ -37,9 +38,9 @@ struct ChangePasswordField: View {
                         TextField("", text: $text)
                     }
                 }
-                
+
                 if isSecure, let isVisible = isPasswordToggle {
-                    Button { isVisible.wrappedValue.toggle()} label: {
+                    Button { isVisible.wrappedValue.toggle() } label: {
                         Image(systemName: isVisible.wrappedValue ? "eye.fill" : "eye.slash.fill")
                             .foregroundColor(.black)
                             .font(.system(size: config.isIPad ? 22 : 18))
@@ -51,9 +52,9 @@ struct ChangePasswordField: View {
             .background(Color.textFieldColor)
             .cornerRadius(config.isIPad ? 25 : 20)
             .modifier(ValidationBorder(isValid: isValid))
-            
+
             Group {
-                Text(errorMessage)
+                Text(L(errorMessage))
                     .font(.noto(config.isIPad ? 18 : 15, weight: .medium))
                     .foregroundColor(Color.errorColor)
                     .opacity(isValid ? 0 : 1)
@@ -68,5 +69,5 @@ struct ChangePasswordField: View {
 }
 
 #Preview {
-   ChangePasswordView()
+    ChangePasswordView()
 }

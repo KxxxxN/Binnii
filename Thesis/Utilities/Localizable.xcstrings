@@ -1029,6 +1029,40 @@
         }
       }
     },
+    "กรุณากรอกอีเมลที่ต้องการแก้ไข" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter the email address you want to edit"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "กรุณากรอกอีเมลที่ต้องการแก้ไข"
+          }
+        }
+      }
+    },
+    "กรุณากรอกอีเมลที่ลงทะเบียนไว้" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter your registered email address"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "กรุณากรอกอีเมลที่ลงทะเบียนไว้"
+          }
+        }
+      }
+    },
     "กรุณาเข้าสู่ระบบเพื่อใช้งานได้ทันที" : {
       "comment" : "A description of the login popup.",
       "extractionState" : "manual",
