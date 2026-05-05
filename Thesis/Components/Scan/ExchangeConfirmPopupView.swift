@@ -5,12 +5,14 @@
 //  Created by Kansinee Klinkhachon on 24/4/2569 BE.
 //
 
-
 import SwiftUI
 
 struct ExchangeConfirmPopupView: View {
     @Binding var isPresented: Bool
     var onConfirm: () -> Void
+
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         ZStack {
@@ -20,12 +22,12 @@ struct ExchangeConfirmPopupView: View {
 
             VStack(spacing: 0) {
 
-                Text("ยืนยันการแลกคะแนน")
+                Text(L("ยืนยันการแลกคะแนน"))
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 40)
 
-                Text("ต้องการใช้ 500 คะแนน\nแลก 5 ชั่วโมงจิตอาสาใช่หรือไม่?")
+                Text(L("ต้องการใช้ 500 คะแนน\nแลก 5 ชั่วโมงจิตอาสาใช่หรือไม่?"))
                     .font(.noto(16, weight: .medium))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -36,7 +38,7 @@ struct ExchangeConfirmPopupView: View {
                     Button {
                         isPresented = false
                     } label: {
-                        Text("ยกเลิก")
+                        Text(L("ยกเลิก"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.mainColor)
                             .frame(width: 120, height: 40)
@@ -50,7 +52,7 @@ struct ExchangeConfirmPopupView: View {
                         isPresented = false
                         onConfirm()
                     } label: {
-                        Text("ยืนยัน")
+                        Text(L("ยืนยัน"))
                             .font(.noto(16, weight: .medium))
                             .foregroundColor(.white)
                             .frame(width: 120, height: 40)

@@ -56,19 +56,18 @@ struct LoginView: View {
                                 errorMessage: viewModel.isLoginSubmitted ? (viewModel.emailError ?? "") : "",
                                 config: config
                             )
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
                             .onChange(of: viewModel.email) { _, _ in
                                 viewModel.clearError(for: "email")
                             }
                             
-                            LoginPasswordField(
+                            LoginInputField(
                                 title: L("รหัสผ่าน"),
                                 placeholder: L("กรอกรหัสผ่าน"),
                                 text: $viewModel.password,
                                 isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
                                 errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
-                                isPasswordVisible: $viewModel.isPasswordVisible,
+                                isSecure: true,
+                                isPasswordToggle: $viewModel.isPasswordVisible,
                                 config: config
                             )
                             .onChange(of: viewModel.password) { _, _ in
@@ -78,78 +77,6 @@ struct LoginView: View {
                             
                             HStack {
                                 Spacer()
-                            }
-                            .padding(.top, config.headerTopPadding)
-                            
-                            Spacer()
-                            
-                            // MARK: - Logo
-                            Image("logo_green")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: config.isIPad ? 300 : 220)
-                                .padding(.bottom, config.isIPad ? 90 : 26)
-                            
-                            // MARK: - Input Fields
-                            VStack(spacing: 0) {
-                                LoginInputField(
-                                    title: L("อีเมล"),
-                                    placeholder: L("กรอกอีเมล"),
-                                    text: $viewModel.email,
-                                    isValid: .constant(!viewModel.isLoginSubmitted || viewModel.emailError == nil),
-                                    errorMessage: viewModel.isLoginSubmitted ? (viewModel.emailError ?? "") : "",
-                                    config: config
-                                )
-                                .onChange(of: viewModel.email) { _, _ in
-                                    viewModel.clearError(for: "email")
-                                }
-                                
-                                LoginInputField(
-                                    title: L("รหัสผ่าน"),
-                                    placeholder: L("กรอกรหัสผ่าน"),
-                                    text: $viewModel.password,
-                                    isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
-                                    errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
-                                    isSecure: true,
-                                    isPasswordToggle: $viewModel.isPasswordVisible,
-                                    config: config
-                                )
-                                .onChange(of: viewModel.password) { _, _ in
-                                    viewModel.clearError(for: "password")
-                                }
-                                .padding(.bottom, -15)
-                                
-                                HStack {
-                                    Spacer()
-                                    
-                                    NavigationLink(destination: EmailForgotPassword()){
-                                        Text(L("ลืมรหัสผ่าน?"))
-                                            .font(.noto(bodyFontSize, weight: .medium))
-                                            .foregroundColor(.mainColor)
-                                    }
-                                }
-                                .padding(.horizontal,config.isIPad ?  200 : 35)
-                                .padding(.top, 4)
-                            }
-                            
-                            // MARK: - Login Button
-                            PrimaryButton(
-                                title: L("เข้าสู่ระบบ"),
-                                action: {
-                                    Task {
-                                        await viewModel.login()
-                                    }
-                                },
-                                width: config.isIPad ? 220 : 155,
-                                height: config.isIPad ? 60 : 49
-                            )
-                            .padding(.top, 21)
-                            
-                            // MARK: - Register Link
-                            HStack(spacing: 8){
-                                Text(L("ยังไม่มีบัญชี?"))
-                                    .font(.noto(bodyFontSize, weight: .medium))
-                                    .foregroundColor(.black)
                                 
                                 NavigationLink(destination: EmailForgotPassword()){
                                     Text(L("ลืมรหัสผ่าน?"))
@@ -157,7 +84,8 @@ struct LoginView: View {
                                         .foregroundColor(.mainColor)
                                 }
                             }
-                            .padding(.horizontal,config.isIPad ?  200 : 46)
+                            .padding(.horizontal,config.isIPad ?  200 : 35)
+                            .padding(.top, 4)
                         }
                         
                         // MARK: - Login Button
