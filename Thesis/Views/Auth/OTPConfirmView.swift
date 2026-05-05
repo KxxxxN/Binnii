@@ -41,6 +41,7 @@ struct OTPConfirmView: View {
                     
                     Text(L("ใส่รหัสที่ส่งไปยังอีเมลของคุณ"))
                         .font(.noto(config.isIPad ? 24 : 20, weight: .semibold))
+                        .foregroundColor(.black)
                         .padding(.bottom, config.isIPad ? 24 : 18)
                     
                     // MARK: - OTP Input

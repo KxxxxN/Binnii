@@ -23,6 +23,8 @@ struct ChangePasswordField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Title(title: L(title), config: config)
+                .foregroundColor(.black)
+
 
             HStack {
                 ZStack(alignment: .leading) {

@@ -15,7 +15,7 @@ class NotificationManager: ObservableObject {
 
     private let legacyIDs = ["daily_sort"]
     private let dailySchedule: [(hour: Int, minute: Int, id: String)] = [
-        (hour: 15, minute: 0, id: "daily_noon"),
+        (hour: 12, minute: 0, id: "daily_noon"),
         (hour: 16, minute: 0, id: "daily_4pm")
     ]
 
@@ -81,7 +81,7 @@ class NotificationManager: ObservableObject {
 
     private func notificationBody(for hour: Int) -> String {
         switch hour {
-        case 15: return "ช่วงพักเที่ยง อย่าลืมแยกขยะก่อนทิ้งนะ 🍱"
+        case 12: return "ช่วงพักเที่ยง อย่าลืมแยกขยะก่อนทิ้งนะ 🍱"
         case 16: return "ใกล้เลิกเรียนแล้ว แยกขยะวันนี้ยังไหม? ♻️"
         default: return "แยกขยะถูกต้อง = โลกสะอาด + คะแนนจิตอาสา!"
         }

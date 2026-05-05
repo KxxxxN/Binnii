@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Supabase
+import Combine  
 
 struct UserProfile: Decodable {
     let firstName: String
@@ -23,11 +24,27 @@ struct UserProfile: Decodable {
 
 @MainActor
 class UserProfileViewModel: ObservableObject{
-    @Published var fullName: String = "ชื่อ - นามสกุล"
+    @Published var fullName: String = LanguageManager.shared.localized("ชื่อ - นามสกุล")
     @Published var totalPoints: Int = 0
     @Published var profileImage: UIImage? = nil
     @Published var isLoading: Bool = false
     @Published var latestHistory: HistoryItem? = nil
+    
+    private var langCancellable: AnyCancellable?
+    
+    init() {
+        langCancellable = LanguageManager.shared.objectWillChange.sink { [weak self] _ in
+            guard let self else { return }
+            // ถ้ายังไม่มีชื่อจริง (ยังเป็น default) ให้ update ตามภาษาใหม่
+            if self.fullName == LanguageManager.shared.localized("ชื่อ - นามสกุล") ||
+               self.fullName == "ชื่อ - นามสกุล" ||
+               self.fullName == "First - Last Name" {
+                Task { @MainActor in
+                    self.fullName = LanguageManager.shared.localized("ชื่อ - นามสกุล")
+                }
+            }
+        }
+    }
     
     private func L(_ key: String) -> String {
         LanguageManager.shared.localized(key)

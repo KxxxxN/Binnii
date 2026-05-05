@@ -347,6 +347,40 @@
         }
       }
     },
+    "enter_first_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your first name"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "กรุณากรอกชื่อของคุณ"
+          }
+        }
+      }
+    },
+    "enter_last_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your last name"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "กรุณากรอกนามสกุลของคุณ"
+          }
+        }
+      }
+    },
     "faq_a1" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1103,7 +1137,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Please enter the email address you want to edit"
+            "value" : "Please enter the email you want to edit"
           }
         },
         "th" : {
@@ -4691,6 +4725,23 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "รหัสผ่านไม่ตรงกัน"
+          }
+        }
+      }
+    },
+    "รหัสผ่านไม่ถูกต้อง" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incorrect password"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "รหัสผ่านไม่ถูกต้อง"
           }
         }
       }
