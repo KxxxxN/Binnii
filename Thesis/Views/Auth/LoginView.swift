@@ -60,14 +60,13 @@ struct LoginView: View {
                                 viewModel.clearError(for: "email")
                             }
                             
-                            LoginInputField(
+                            LoginPasswordField(
                                 title: L("รหัสผ่าน"),
                                 placeholder: L("กรอกรหัสผ่าน"),
                                 text: $viewModel.password,
                                 isValid: .constant(!viewModel.isLoginSubmitted || viewModel.passwordError == nil),
                                 errorMessage: viewModel.isLoginSubmitted ? (viewModel.passwordError ?? "") : "",
-                                isSecure: true,
-                                isPasswordToggle: $viewModel.isPasswordVisible,
+                                isPasswordVisible: $viewModel.isPasswordVisible,
                                 config: config
                             )
                             .onChange(of: viewModel.password) { _, _ in
@@ -133,24 +132,14 @@ struct LoginView: View {
                         .padding(.top, config.isIPad ? 80 : 64.5)
                         
                         // MARK: - Social Login
-                        VStack(spacing: 16){
-                            SocialLoginButton(
-                                iconName: "GoogleIcon",
-                                title: L("ดำเนินการต่อด้วย Google"),
-                                config: config
-                            ) {
-                                Task { await authViewModel.signInWithOAuth(provider: .google) }
-                            }
-                            .padding(.top, 21)
-                            
-                            SocialLoginButton(
-                                iconName: "FacebookIcon",
-                                title: L("ดำเนินการต่อด้วย Facebook"),
-                                config: config
-                            ) {
-                                Task { await authViewModel.signInWithOAuth(provider: .facebook) }
-                            }
+                        SocialLoginButton(
+                            iconName: "GoogleIcon",
+                            title: L("ดำเนินการต่อด้วย Google"),
+                            config: config
+                        ) {
+                            Task { await authViewModel.signInWithOAuth(provider: .google) }
                         }
+                        .padding(.top, 21)
                         
                         Spacer()
                     }
