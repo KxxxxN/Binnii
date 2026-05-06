@@ -42,22 +42,22 @@ struct GuideView: View {
                 
                 // Menu List
                 VStack(spacing: 0) {
-                    
+                                        ScrollView {
                     // MARK: - Page Content
-                        TabView(selection: $currentPage) {
-                            ForEach(pages.indices, id: \.self) { index in
-                                ZStack {
-                                    Image(pages[index].imageName)
-                                        .resizable()
-                                        .scaledToFit()
-                                }
-                                .frame(width: config.isIPad ? 570 : 370, height: config.isIPad ? 835 : 635)
-                                .tag(index)
+                    TabView(selection: $currentPage) {
+                        ForEach(pages.indices, id: \.self) { index in
+                            ZStack {
+                                Image(pages[index].imageName)
+                                    .resizable()
+                                    .scaledToFit()
                             }
+                            .frame(width: config.isIPad ? 570 : 370, height: config.isIPad ? 835 : 635)
+                            .tag(index)
                         }
-                        .tabViewStyle(.page(indexDisplayMode: .never))
-                        .frame(height: config.isIPad ? 835 : 635)
-                        .padding(.top, config.isIPad ? 35 : 15)
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .frame(height: config.isIPad ? 835 : 635)
+                    .padding(.top, config.isIPad ? 35 : 15)
                     
                     // MARK: - Page Indicator
                     if currentPage >= 0 {
@@ -73,32 +73,33 @@ struct GuideView: View {
                     }
                     
                     // MARK: - Buttons
-                        HStack(alignment: .bottom, spacing: config.isIPad ? 100 : 24) {
-                            if currentPage > 0 {
-                                SecondButton(
-                                    title: L("< ย้อนกลับ"),
-                                    action: { currentPage -= 1 },
-                                    width: config.isIPad ? 180 : 160,
-                                    height: config.isIPad ? 60 : 58
-                                )
-                            } else {
-                                Color.clear
-                                    .frame(width: config.isIPad ? 180 : 160, height: config.isIPad ? 60 : 58)
-                            }
-                            
-                            if currentPage < pages.count - 1 {
-                                PrimaryButton(
-                                    title: L("ต่อไป >"),
-                                    action: { currentPage += 1 },
-                                    width: config.isIPad ? 180 : 160,
-                                    height: config.isIPad ? 60 : 58
-                                )
-                            } else {
-                                Color.clear
-                                    .frame(width: config.isIPad ? 180 : 160, height: config.isIPad ? 60 : 58)
-                            }
+                    HStack(alignment: .bottom, spacing: config.isIPad ? 100 : 24) {
+                        if currentPage > 0 {
+                            SecondButton(
+                                title: L("< ย้อนกลับ"),
+                                action: { currentPage -= 1 },
+                                width: config.isIPad ? 180 : 160,
+                                height: config.isIPad ? 60 : 58
+                            )
+                        } else {
+                            Color.clear
+                                .frame(width: config.isIPad ? 180 : 160, height: config.isIPad ? 60 : 58)
                         }
-                        .padding(.bottom, config.isIPad ? 20 : 20)
+                        
+                        if currentPage < pages.count - 1 {
+                            PrimaryButton(
+                                title: L("ต่อไป >"),
+                                action: { currentPage += 1 },
+                                width: config.isIPad ? 180 : 160,
+                                height: config.isIPad ? 60 : 58
+                            )
+                        } else {
+                            Color.clear
+                                .frame(width: config.isIPad ? 180 : 160, height: config.isIPad ? 60 : 58)
+                        }
+                    }
+                    .padding(.bottom, config.isIPad ? 20 : 20)
+                }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

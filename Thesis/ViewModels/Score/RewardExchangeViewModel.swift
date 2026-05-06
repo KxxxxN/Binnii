@@ -14,7 +14,7 @@ class RewardExchangeViewModel: ObservableObject {
     @Published var showConfirmAlert = false
     @Published var showSuccessPopup = false
 
-    private let exchangeCost = 10
+    private let exchangeCost = 500
     private(set) var currentPoints: Int
 
     init(totalPoints: Int) {
@@ -55,9 +55,6 @@ class RewardExchangeViewModel: ObservableObject {
     }
 
     // MARK: - 🏆 เพิ่มคะแนน + แจ้งเตือน
-    /// เรียกฟังก์ชันนี้ทุกครั้งที่ผู้ใช้สแกนขยะสำเร็จและได้รับคะแนน
-    /// - Parameters:
-    ///   - earnedPoints: คะแนนที่ได้รับครั้งนี้
     func addPoints(_ earnedPoints: Int) {
         print("🏆 addPoints called: +\(earnedPoints), total: \(currentPoints + earnedPoints)")
         currentPoints += earnedPoints
