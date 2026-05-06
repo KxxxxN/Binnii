@@ -44,8 +44,8 @@ struct AiScanView: View {
                 VStack(spacing: 0) {
                     
                     ScanHeaderView(
-                        title: L("สแกนด้วย "),
-                        aiSuffix: "AI",
+                        title: L("สแกนด้วย AI"),
+//                        aiSuffix: "AI",
                         isFlashOn: viewModel.isFlashOn,
                         onFlashToggle: { viewModel.toggleFlash() },
                         config: config
