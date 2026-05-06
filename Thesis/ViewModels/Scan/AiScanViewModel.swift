@@ -50,16 +50,17 @@ final class AiScanViewModel: ObservableObject {
 
     // MARK: - Computed
     var resultTitle: AttributedString {
-        // ใช้ Key สำหรับประโยคคำถาม เช่น "ขยะชิ้นนี้คือ %@ \nถูกต้องหรือไม่?"
-        // หรือจะแยกส่วนเพื่อความง่ายในการจัด Format
         let prefix = L("ขยะชิ้นนี้คือ")
         let suffix = L("ถูกต้องหรือไม่?")
-        let localizedResult = L(aiResult) // แปลชื่อขยะที่ได้จาก AI
         
-        var text = AttributedString("\(prefix) \(localizedResult) \n\(suffix)")
-        
+        let thaiName = labelToThai(aiResult)        // "plasticBottle" → "ขวดพลาสติก"
+        let localizedResult = L(thaiName)           // "ขวดพลาสติก" → "Plastic Bottle" (EN)
+
+        var text = AttributedString("\(prefix) \(localizedResult)\n\(suffix)")
+
         if let range = text.range(of: localizedResult) {
             text[range].font = .noto(25, weight: .bold)
+            text[range].foregroundColor = .black
         }
         return text
     }
@@ -175,27 +176,27 @@ final class AiScanViewModel: ObservableObject {
     }
 
     // MARK: - Label Mapping (คืนค่าเป็น Key สำหรับแปลภาษา)
-    private func labelToThai(_ label: String) -> String {
-        switch label {
-        case "plasticBottle": return "ขวดพลาสติก"
-        case "can": return "กระป๋อง"
-        case "General Paper": return "กระดาษ"
-        case "Tissues": return "กระดาษทิชชู่"
-        case "Cardboard Box": return "กล่องกระดาษ"
-        case "Plastic cutlery": return "ช้อน-ส้อม พลาสติก"
-        case "Snack Bag": return "ซองขนม"
-        case "Wooden Chopsticks": return "ตะเกียบไม้"
-        case "Plastic Bag": return "ถุงพลาสติก"
-        case "Leftover Ice": return "น้ำแข็งเหลือ"
-        case "Food Container": return "ภาชนะใส่อาหาร"
-        case "Straw": return "หลอด"
-        case "Leftover Drinks": return "เครื่องดื่มเหลือ"
-        case "Fruit Peel": return "เปลือกผลไม้"
-        case "Eggshell": return "เปลือกไข่"
-        case "Crumbs": return "เศษขนม"
-        case "Food waste": return "เศษอาหาร"
-        case "Plastic Cups": return "แก้วพลาสติก"
-        default:              return "ไม่พบขยะชิ้นนี้"
+        private func labelToThai(_ label: String) -> String {
+            switch label {
+            case "plasticBottle": return "ขวดพลาสติก"
+            case "can": return "กระป๋อง"
+            case "General Paper": return "กระดาษทั่วไป" 
+            case "Tissues": return "กระดาษทิชชู่"
+            case "Cardboard Box": return "กล่องกระดาษ"
+            case "Plastic cutlery": return "ช้อน-ส้อม พลาสติก"
+            case "Snack Bag": return "ซองขนม"
+            case "Wooden Chopsticks": return "ตะเกียบไม้"
+            case "Plastic Bag": return "ถุงพลาสติก"
+            case "Leftover Ice": return "น้ำแข็งเหลือ"
+            case "Food Container": return "ภาชนะใส่อาหาร"
+            case "Straw": return "หลอด"
+            case "Leftover Drinks": return "เครื่องดื่มเหลือ"
+            case "Fruit Peel": return "เปลือกผลไม้"
+            case "Eggshell": return "เปลือกไข่"
+            case "Crumbs": return "เศษขนม"
+            case "Food waste": return "เศษอาหาร"
+            case "Plastic Cups": return "แก้วพลาสติก"
+            default:              return "ไม่พบขยะชิ้นนี้"
+            }
         }
-    }
 }

@@ -17,7 +17,7 @@ struct WasteItemCard: View {
     private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
-        HStack(spacing: config.wasteItemCardSpacing) {
+        HStack(spacing: config.spacingMedium) {
             if let urlString = imageUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFill()
@@ -39,12 +39,15 @@ struct WasteItemCard: View {
                 Text(L(title))
                     .font(.noto(config.fontHeader, weight: .bold))
                     .foregroundColor(.black)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
                 Text(date)
                     .font(.noto(config.fontCaption, weight: .medium))
                     .foregroundColor(.black)
             }
-
-            Spacer()
+            
         }
         .padding(.horizontal, config.paddingMedium)
         .frame(height: config.wasteItemCardHeight)
