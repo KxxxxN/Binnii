@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "question.png",
+      "filename" : "material-symbols_live-help-outline-rounded.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "question 1.png",
+      "filename" : "material-symbols_live-help-outline-rounded 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "question 2.png",
+      "filename" : "material-symbols_live-help-outline-rounded 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

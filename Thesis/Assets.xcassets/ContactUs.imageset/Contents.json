@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Online.png",
+      "filename" : "fluent-mdl2_join-online-meeting.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Online 1.png",
+      "filename" : "fluent-mdl2_join-online-meeting 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Online 2.png",
+      "filename" : "fluent-mdl2_join-online-meeting 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

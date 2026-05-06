@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Bookguide.png",
+      "filename" : "material-symbols_developer-guide-outline-rounded.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Bookguide 1.png",
+      "filename" : "material-symbols_developer-guide-outline-rounded 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Bookguide 2.png",
+      "filename" : "material-symbols_developer-guide-outline-rounded 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

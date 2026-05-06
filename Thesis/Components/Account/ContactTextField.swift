@@ -24,7 +24,7 @@ struct ContactTextField: View {
         guard isEmailField, showError, !text.isEmpty else { return false }
         return !ValidationHelper.isValidEmail(text)
     }
-
+    
     private var errorMessage: String {
         if showError && text.isEmpty {
             return L("จำเป็นต้องระบุ")
@@ -33,11 +33,11 @@ struct ContactTextField: View {
         }
         return ""
     }
-
+    
     private var showBorder: Bool {
         (showError && text.isEmpty) || isInvalidEmail
     }
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -48,8 +48,14 @@ struct ContactTextField: View {
                     .font(.noto(config.fontHeader, weight: .bold))
                     .foregroundColor(.errorColor)
             }
-            TextField(placeholder, text: $text)
+            
+            
+            TextField(text: $text, prompt: Text(placeholder)
+                .foregroundColor(Color.placeholderColor)) {
+                    Text("")
+                }
                 .font(.noto(config.fontSubHeader, weight: .medium))
+                .foregroundColor(.black)
                 .keyboardType(keyboardType)
                 .autocorrectionDisabled()
                 .padding()
@@ -99,13 +105,14 @@ struct ContactTextEditor: View {
                 if text.isEmpty {
                     Text(placeholder)
                         .font(.noto(config.fontSubHeader, weight: .medium))
-                        .foregroundColor(Color(.placeholderText))
+                        .foregroundColor(Color.placeholderColor)
 //                        .padding(.horizontal, 16)
 //                        .padding(.vertical, 12)
                         .padding()
                 }
                 TextEditor(text: $text)
                     .font(.noto(config.fontSubHeader, weight: .medium))
+                    .foregroundColor(.black)
                     .padding()
                     .frame(minHeight: 180)
                     .scrollContentBackground(.hidden)

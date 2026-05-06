@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "solar_book-bold.png",
+      "filename" : "book-bold.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "solar_book-bold 1.png",
+      "filename" : "book-bold 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "solar_book-bold 2.png",
+      "filename" : "book-bold 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

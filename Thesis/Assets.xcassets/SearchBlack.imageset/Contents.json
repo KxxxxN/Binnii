@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "SearchBlack.png",
+      "filename" : "material-symbols_search-rounded.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "SearchBlack 1.png",
+      "filename" : "material-symbols_search-rounded 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "SearchBlack 2.png",
+      "filename" : "material-symbols_search-rounded 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

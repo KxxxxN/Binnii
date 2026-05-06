@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "notification.png",
+      "filename" : "mingcute_notification-line.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "notification 1.png",
+      "filename" : "mingcute_notification-line 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "notification 2.png",
+      "filename" : "mingcute_notification-line 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
