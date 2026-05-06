@@ -30,6 +30,7 @@ struct RegisterInputField: View {
                 PlaceholderView(text: text, placeholder: placeholder, config: config)
                 
                 TextField("", text: $text)
+                    .foregroundColor(.black)
                 
             }
                 .padding()
@@ -74,8 +75,10 @@ struct PasswordInputField: View {
                     
                     if isPasswordVisible {
                         TextField("", text: $text)
+                            .foregroundColor(.black)
                     } else {
                         SecureField("", text: $text)
+                            .foregroundColor(.black)
                     }
                 }
                 

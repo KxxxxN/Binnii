@@ -33,11 +33,14 @@ struct ChangePasswordField: View {
                     if isSecure {
                         if isPasswordToggle?.wrappedValue ?? false {
                             TextField("", text: $text)
+                                .foregroundColor(.black)
                         } else {
                             SecureField("", text: $text)
+                                .foregroundColor(.black)
                         }
                     } else {
                         TextField("", text: $text)
+                            .foregroundColor(.black)
                     }
                 }
 

@@ -82,14 +82,18 @@ struct SearchBar: View {
     let config: ResponsiveConfig
     @Binding var searchText: String
     var isFocused: FocusState<Bool>.Binding
-
+    
     var body: some View {
         HStack(spacing: config.isIPad ? 12 : 8) {
-            TextField("ค้นหา", text: $searchText)
+            TextField(text: $searchText, prompt: Text("ค้นหา")
+                .foregroundColor(Color.placeholderColor)) {
+                    Text("")
+                }
                 .font(.noto(config.buttonFont))
+                .foregroundColor(.black)
                 .focused(isFocused)
                 .padding(.leading, config.isIPad ? 35 : 23)
-
+            
             Button { } label: {
                 Image("SearchBlack")
                     .resizable()

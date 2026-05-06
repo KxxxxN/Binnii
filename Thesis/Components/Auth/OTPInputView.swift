@@ -26,6 +26,7 @@ struct OTPInputView: View {
         HStack(spacing: config.isIPad ? 15 : 7) {
             ForEach(0..<6, id: \.self) { index in
                 TextField("", text: $viewModel.otpFields[index])
+                    .foregroundColor(.black)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.center)
                     .frame(

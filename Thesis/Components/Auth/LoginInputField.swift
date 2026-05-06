@@ -29,6 +29,7 @@ struct LoginInputField: View {
                 PlaceholderView(text: text, placeholder: placeholder, config: config)
                 
                 TextField("", text: $text)
+                    .foregroundColor(.black)
             }
             .padding(.leading, 15)
             .frame(width: config.isIPad ? 445 : 345, height: config.isIPad ? 60 : 49)
@@ -71,8 +72,10 @@ struct LoginPasswordField: View {
                     
                     if isPasswordVisible {
                         TextField("", text: $text)
+                            .foregroundColor(.black)
                     } else {
                         SecureField("", text: $text)
+                            .foregroundColor(.black)
                     }
                 }
                 .padding(.leading, 15)
