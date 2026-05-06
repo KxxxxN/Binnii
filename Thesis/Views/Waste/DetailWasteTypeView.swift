@@ -19,6 +19,7 @@ struct DetailWasteTypeView: View {
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            let imageWidth = geo.size.width > 40 ? geo.size.width - 40 : 0
 
             VStack(spacing: 0) {
 
@@ -29,7 +30,7 @@ struct DetailWasteTypeView: View {
                         Image(WasteImageMapper.image(for: category))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: geo.size.width - 40, height: 290)
+                            .frame(width: imageWidth, height: imageWidth > 0 ? 290 : 0)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
 
                         Spacer().frame(height: config.isIPad ? 40 : 23)
