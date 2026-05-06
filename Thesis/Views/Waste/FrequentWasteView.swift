@@ -71,6 +71,7 @@ struct FrequentWasteView: View {
                     }
                 }
                 .edgesIgnoringSafeArea(.top)
+                .ignoresSafeArea()
             }
             .background(Color.backgroundColor)
             .navigationDestination(item: $selectedWaste) { waste in
