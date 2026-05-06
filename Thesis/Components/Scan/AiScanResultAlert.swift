@@ -21,18 +21,18 @@ struct AiScanResultAlert: View {
     // ปรับให้รับ 'manager' เข้ามา หรือใช้ Shared โดยตรงอย่างปลอดภัย
     static func makeResultTitle(category: String, config: ResponsiveConfig) -> AttributedString {
         let manager = LanguageManager.shared
-        
-        // แนะนำ: ใช้ String Interpolation ร่วมกับการ Localize key
+
         let prefix = manager.localized("ขยะชิ้นนี้คือ")
         let suffix = manager.localized("ถูกต้องหรือไม่?")
-        let categoryName = manager.localized(category) // category ควรเป็น key เช่น "plasticBottle"
         
+        let localizedName = manager.localized(category)
+
         var result = AttributedString("\(prefix) ")
-        
-        var highlight = AttributedString(categoryName)
+
+        var highlight = AttributedString(localizedName)
         highlight.foregroundColor = .black
         highlight.font = .noto(config.isIPad ? 32 : 25, weight: .bold)
-        
+
         result += highlight
         result += AttributedString("\n\(suffix)")
         return result
@@ -84,7 +84,6 @@ struct AiScanResultAlert: View {
                 }
             }
             .padding(config.paddingStandard)
-            // ใช้ maxWidth เพื่อให้ยืดหยุ่นตามเนื้อหาภาษาอังกฤษที่อาจยาวกว่าไทย
             .frame(width: config.isIPad ? 450 : 380)
             .background(Color.white)
             .cornerRadius(20)

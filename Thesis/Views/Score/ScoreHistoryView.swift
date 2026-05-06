@@ -167,7 +167,6 @@ struct ScoreSortMenu: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: config.fontCaption, height: config.fontCaption)
-                        // ✅ icon หมุน 180° เมื่อเปิด
                         .rotationEffect(.degrees(isDropdownOpen ? 180 : 0))
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDropdownOpen)
                 }
@@ -185,16 +184,46 @@ struct AnimatedScoreCard: View {
     let index: Int
     let config: ResponsiveConfig
     let isVisible: Bool
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
+    
+    private func mapToTranslationKey(_ title: String) -> String {
+        let normalizedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        
+        switch normalizedTitle {
+        case "plastic bottle", "plasticbottle": return "ขวดพลาสติก"
+        case "plastic cups", "plastic cup":     return "แก้วพลาสติก"
+        case "can", "cans":                     return "กระป๋อง"
+        case "cardboard box":                   return "กล่องกระดาษ"
+        case "general paper", "paper":          return "กระดาษทั่วไป"
+        case "plastic bag":                     return "ถุงพลาสติก"
+        case "food waste":                      return "เศษอาหาร"
+        case "fruit peel":                      return "เปลือกผลไม้"
+        case "crumbs":                          return "เศษขนม"
+        case "eggshell":                        return "เปลือกไข่"
+        case "leftover drinks":                 return "เครื่องดื่มเหลือ"
+        case "leftover ice":                    return "น้ำแข็งเหลือ"
+        case "snack bag":                       return "ซองขนม"
+        case "food container":                  return "ภาชนะใส่อาหาร"
+        case "straw":                           return "หลอด"
+        case "tissues", "tissue":               return "กระดาษทิชชู่"
+        case "wooden chopsticks":               return "ตะเกียบไม้"
+        case "plastic cutlery":                 return "ช้อน-ส้อม พลาสติก"
+        default: return title // ถ้าไม่เจอตรงๆ ก็คืนค่าเดิมไปก่อน
+        }
+    }
 
     var body: some View {
+        let translationKey = mapToTranslationKey(item.title)
+        
         ScoreCard(
-            title: item.title,
+            title: L(translationKey),
             date: item.date,
             points: item.points,
             backgroundColor: item.color,
             config: config
         )
-        // ✅ เลื่อนจากล่างขึ้น + fade + scale พร้อม stagger delay
         .opacity(isVisible ? 1 : 0)
         .scaleEffect(isVisible ? 1 : 0.94)
         .offset(y: isVisible ? 0 : 20)
@@ -205,7 +234,6 @@ struct AnimatedScoreCard: View {
         )
     }
 }
-
 // MARK: - PageView
 struct PageView: View {
     @State private var currentPage = 1
@@ -232,11 +260,9 @@ struct PageView: View {
     }
 
     private func applySortIfNeeded() {
-        // ✅ Step 1: fade + slide ออก
         withAnimation(.easeIn(duration: 0.18)) {
             isVisible = false
         }
-        // ✅ Step 2: sort ข้อมูลตอนมองไม่เห็น
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             switch selectedSort {
             case .newest:
@@ -255,7 +281,6 @@ struct PageView: View {
                 }
             }
             currentPage = 1
-            // ✅ Step 3: stagger fade + slide กลับเข้ามา
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 isVisible = true
             }
