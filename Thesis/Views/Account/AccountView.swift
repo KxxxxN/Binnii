@@ -43,7 +43,8 @@ struct AccountView: View {
                                     title: L("แก้ไขโปรไฟล์"),
                                     imageName: "IconUser",
                                     config: config,
-                                    action: { viewModel.navigate(to: .profile) }
+                                    action: { viewModel.navigate(to: .profile) },
+                                    showChevron: true
                                 )
                             }
 
@@ -53,7 +54,8 @@ struct AccountView: View {
                                         title: L("เปลี่ยนภาษา"),
                                         imageName: "IconTranslate",
                                         config: config,
-                                        action: { viewModel.navigate(to: .translate) }
+                                        action: { viewModel.navigate(to: .translate) },
+                                        showChevron: true
                                     )
                                     AccountToggleRow(
                                         title: L("การแจ้งเตือน"),
@@ -70,13 +72,15 @@ struct AccountView: View {
                                         title: L("ช่วยเหลือ"),
                                         imageName: "IconHelp",
                                         config: config,
-                                        action: { viewModel.navigate(to: .helpCenter) }
+                                        action: { viewModel.navigate(to: .helpCenter) },
+                                        showChevron: true
                                     )
                                     AccountMenuRow(
                                         title: L("ติดต่อเรา"),
                                         imageName: "IconSupport",
                                         config: config,
-                                        action: { viewModel.navigate(to: .contactUs) }
+                                        action: { viewModel.navigate(to: .contactUs) },
+                                        showChevron: true
                                     )
                                 }
                             }

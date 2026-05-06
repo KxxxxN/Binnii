@@ -26,7 +26,8 @@ struct OnboardingView: View {
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
 
             VStack(spacing: 0) {
-
+                ScrollView {
+                
                 // MARK: - Page Content
                 if currentPage == -1 {
                     Image("OnboardingStart")
@@ -51,7 +52,7 @@ struct OnboardingView: View {
                     .frame(height: config.isIPad ? 935 : 635)
                     .padding(.top, config.isIPad ? 60 : 40)
                 }
-
+                
                 // MARK: - Page Indicator
                 if currentPage >= 0 {
                     HStack(spacing: 8) {
@@ -67,7 +68,7 @@ struct OnboardingView: View {
                     Color.clear
                         .frame(height: config.isIPad ? 48 : 44)
                 }
-
+                
                 // MARK: - Buttons
                 if currentPage == -1 {
                     PrimaryButton(
@@ -90,7 +91,7 @@ struct OnboardingView: View {
                             Color.clear
                                 .frame(width: config.isIPad ? 180 : 160, height: config.isIPad ? 60 : 58)
                         }
-
+                        
                         if currentPage < pages.count - 1 {
                             PrimaryButton(
                                 title: "ต่อไป >",
@@ -109,8 +110,8 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, config.isIPad ? 5 : 22)
                 }
-
-
+                
+                
                 // MARK: - ข้ามทั้งหมด
                 if currentPage >= 0 && currentPage < pages.count - 1 {
                     HStack(spacing: config.isIPad ? 80 : 24) {
@@ -128,6 +129,7 @@ struct OnboardingView: View {
                     Color.clear
                         .frame(height: config.isIPad ? 50 : 40)
                 }
+            }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.backgroundColor.ignoresSafeArea())

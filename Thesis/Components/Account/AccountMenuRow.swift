@@ -7,24 +7,27 @@ struct AccountMenuRow<Destination: View>: View {
     let destination: Destination?
     let action: (() -> Void)?
     let config: ResponsiveConfig
+    let showChevron: Bool
     
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
 
-    init(title: String, imageName: String, config: ResponsiveConfig, destination: Destination) {
+    init(title: String, imageName: String, config: ResponsiveConfig, destination: Destination, showChevron: Bool = true) {
         self.title = title
         self.imageName = imageName
         self.config = config
         self.destination = destination
         self.action = nil
+        self.showChevron = showChevron
     }
 
-    init(title: String, imageName: String, config: ResponsiveConfig, action: @escaping () -> Void) where Destination == EmptyView {
+    init(title: String, imageName: String, config: ResponsiveConfig, action: @escaping () -> Void, showChevron: Bool = false) where Destination == EmptyView {
         self.title = title
         self.imageName = imageName
         self.config = config
         self.action = action
         self.destination = nil
+        self.showChevron = showChevron
     }
 
     var rowContent: some View {
@@ -40,7 +43,7 @@ struct AccountMenuRow<Destination: View>: View {
 
             Spacer()
 
-            if destination != nil || title == "แก้ไขโปรไฟล์" || title == "เปลี่ยนภาษา" || title == "ช่วยเหลือ" || title == "ติดต่อเรา" {
+            if destination != nil || showChevron {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.black)
                     .font(.system(size: config.accountRowChevronSize, weight: .bold))
@@ -178,3 +181,8 @@ struct AccountToggleRow: View {
         UIApplication.shared.open(url)
     }
 }
+
+#Preview{
+    AccountView()
+}
+
