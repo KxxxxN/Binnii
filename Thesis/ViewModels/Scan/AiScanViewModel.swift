@@ -10,7 +10,7 @@ import SwiftUI
 import PhotosUI
 import CoreML
 import Vision
-import Combine // เพิ่ม Combine
+import Combine
 
 @MainActor
 final class AiScanViewModel: ObservableObject {
@@ -146,7 +146,7 @@ final class AiScanViewModel: ObservableObject {
         isAnalyzing = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let model = try? MyWasteClassifier(configuration: MLModelConfiguration()),
+            guard let model = try? BinniiAI(configuration: MLModelConfiguration()),
                   let vnModel = try? VNCoreMLModel(for: model.model) else {
                 DispatchQueue.main.async { self.isAnalyzing = false }
                 return
@@ -162,7 +162,6 @@ final class AiScanViewModel: ObservableObject {
                         print("🏷️ \($0.identifier) - \(String(format: "%.1f", $0.confidence * 100))%")
                     }
 
-                    // เก็บค่า identifier ดิบไว้เพื่อนำไปใช้หาคำแปลในภายหลัง
                     self.aiResult = top.identifier
                     self.showResultAlert = true
                 }
@@ -177,14 +176,13 @@ final class AiScanViewModel: ObservableObject {
 
     // MARK: - Label Mapping (คืนค่าเป็น Key สำหรับแปลภาษา)
     private func labelToThai(_ label: String) -> String {
-        // แนะนำให้คืนค่าเป็น Key กลาง แล้วไปกำหนดคำแปลใน Localizable.strings
         switch label {
-        case "Plastic Bottle": return "ขวดพลาสติก"
-        case "Cans":           return "กระป๋อง"
+        case "plasticBottle": return "ขวดพลาสติก"
+        case "can": return "กระป๋อง"
         case "General Paper": return "กระดาษ"
         case "Tissues": return "กระดาษทิชชู่"
         case "Cardboard Box": return "กล่องกระดาษ"
-        case "Plastic Cutlery": return "ช้อน-ส้อม พลาสติก"
+        case "Plastic cutlery": return "ช้อน-ส้อม พลาสติก"
         case "Snack Bag": return "ซองขนม"
         case "Wooden Chopsticks": return "ตะเกียบไม้"
         case "Plastic Bag": return "ถุงพลาสติก"
@@ -195,7 +193,7 @@ final class AiScanViewModel: ObservableObject {
         case "Fruit Peel": return "เปลือกผลไม้"
         case "Eggshell": return "เปลือกไข่"
         case "Crumbs": return "เศษขนม"
-        case "Food Waste": return "เศษอาหาร"
+        case "Food waste": return "เศษอาหาร"
         case "Plastic Cups": return "แก้วพลาสติก"
         default:              return "ไม่พบขยะชิ้นนี้"
         }
