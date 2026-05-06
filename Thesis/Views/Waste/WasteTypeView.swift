@@ -27,68 +27,70 @@ struct WasteTypeView: View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
 
-            VStack(spacing: 0) {
-
-                WasteHeaderView(title: L("ขยะแต่ละประเภท"), config: config)
-
-                if vm.isLoading {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-
-                } else if vm.items.isEmpty {
-
-                    // MARK: - Empty State
-                    ScrollView {
-                        VStack(spacing: config.spacingMedium) {
-                            Image("ListEmpty")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: config.emptyStateImageSize,
-                                       height: config.emptyStateImageSize)
-
-                            Text(L("ไม่มีประวัติการแยกขยะ"))
-                                .font(.noto(config.titleFontSize, weight: .bold))
-                                .foregroundColor(.textFieldColor)
-                        }
-                        .frame(maxWidth: .infinity,
-                               minHeight: geo.size.height - config.searchHeaderHeight)
-                    }
-
-                } else {
-
-                    // MARK: - Content
-                    ScrollView {
-                        VStack(spacing: 11) {
-                            ForEach(pagedItems) { item in
-                                NavigationLink(destination: HistoryWasteDetailView(
-                                    hideTabBar: $hideTabBar,
-                                    item: item
-                                )) {
-                                    WasteItemCard(
-                                        title: item.title,
-                                        date: item.dateOnly,
-                                        imageUrl: item.imageUrl,
-                                        config: config
-                                    )
-                                }
-                                .buttonStyle(.plain)
+            ZStack {
+                VStack(spacing: 0) {
+                    
+                    WasteHeaderView(title: L("ขยะแต่ละประเภท"), config: config)
+                    
+                    if vm.isLoading {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                        
+                    } else if vm.items.isEmpty {
+                        
+                        // MARK: - Empty State
+                        ScrollView {
+                            VStack(spacing: config.spacingMedium) {
+                                Image("ListEmpty")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: config.emptyStateImageSize,
+                                           height: config.emptyStateImageSize)
+                                
+                                Text(L("ไม่มีประวัติการแยกขยะ"))
+                                    .font(.noto(config.titleFontSize, weight: .bold))
+                                    .foregroundColor(.textFieldColor)
                             }
+                            .frame(maxWidth: .infinity,
+                                   minHeight: geo.size.height - config.searchHeaderHeight)
                         }
-                        .padding(.horizontal, config.paddingMedium)
-                        .padding(.top, config.wasteGridTopPadding)
-                        .padding(.bottom, config.paddingMedium)
+                        
+                    } else {
+                        
+                        // MARK: - Content
+                        ScrollView {
+                            VStack(spacing: 11) {
+                                ForEach(pagedItems) { item in
+                                    NavigationLink(destination: HistoryWasteDetailView(
+                                        hideTabBar: $hideTabBar,
+                                        item: item
+                                    )) {
+                                        WasteItemCard(
+                                            title: item.title,
+                                            date: item.dateOnly,
+                                            imageUrl: item.imageUrl,
+                                            config: config
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, config.paddingMedium)
+                            .padding(.top, config.wasteGridTopPadding)
+                            .padding(.bottom, config.paddingMedium)
+                        }
+                        
+                        PaginationSection(
+                            config: config,
+                            currentPage: $currentPage,
+                            totalPages: totalPages
+                        )
                     }
-
-                    PaginationSection(
-                        config: config,
-                        currentPage: $currentPage,
-                        totalPages: totalPages
-                    )
                 }
+                .edgesIgnoringSafeArea(.top)
+                
             }
-            .edgesIgnoringSafeArea(.top)
-            .ignoresSafeArea()
             .background(Color.backgroundColor)
             .onAppear { hideTabBar = true }
             .onDisappear { hideTabBar = false }
