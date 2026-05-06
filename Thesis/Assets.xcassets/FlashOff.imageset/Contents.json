@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "FlashOff.png",
+      "filename" : "typcn_flash-outline.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "FlashOff 1.png",
+      "filename" : "typcn_flash-outline 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "FlashOff 2.png",
+      "filename" : "typcn_flash-outline 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

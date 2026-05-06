@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "support.png",
+      "filename" : "bx_support.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "support 2.png",
+      "filename" : "bx_support 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "support 1.png",
+      "filename" : "bx_support 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

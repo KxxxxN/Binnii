@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "thai.png",
+      "filename" : "emojione_flag-for-thailand.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "thai 1.png",
+      "filename" : "emojione_flag-for-thailand 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "thai 2.png",
+      "filename" : "emojione_flag-for-thailand 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

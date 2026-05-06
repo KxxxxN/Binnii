@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "IconSort.png",
+      "filename" : "icon-park-outline_sort.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "IconSort 1.png",
+      "filename" : "icon-park-outline_sort 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "IconSort 2.png",
+      "filename" : "icon-park-outline_sort 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
