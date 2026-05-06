@@ -21,7 +21,7 @@ struct ScoreHistoryView: View {
     @StateObject private var historyVM = ScoreHistoryViewModel()
     @StateObject private var profileVM = UserProfileViewModel()
     @AppStorage("isLoggedIn") var isLoggedIn = false
-    
+
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
 
@@ -37,7 +37,6 @@ struct ScoreHistoryView: View {
                         Text(L("ประวัติคะแนน"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .foregroundColor(.white)
-
                         HStack {
                             BackButtonWhite()
                             Spacer()
@@ -57,8 +56,7 @@ struct ScoreHistoryView: View {
                                     .aspectRatio(contentMode: .fill)
                             }
                         }
-                        .frame(width: config.mainProfileSize,
-                               height: config.mainProfileSize)
+                        .frame(width: config.mainProfileSize, height: config.mainProfileSize)
                         .clipShape(Circle())
                         .shadow(radius: 4)
 
@@ -66,9 +64,7 @@ struct ScoreHistoryView: View {
                             Text(profileVM.fullName)
                                 .font(.noto(config.fontHeader, weight: .bold))
                                 .foregroundColor(.white)
-
                             Spacer()
-
                             VStack(alignment: .trailing) {
                                 Text("\(profileVM.totalPoints)")
                                     .font(.system(size: config.mainPointsFontSize, weight: .bold))
@@ -126,11 +122,6 @@ struct ScoreHistoryView: View {
                 }
                 await historyVM.fetchHistory()
             }
-//            .onChange(of: isLoggedIn) {
-//                if !isLoggedIn {
-//                    profileVM.clearProfile()
-//                }
-//            }
         }
     }
 }
@@ -144,8 +135,8 @@ enum SortType: String, CaseIterable {
 
     func title(_ L: (String) -> String) -> String {
         switch self {
-        case .newest: return L("ใหม่ที่สุด")
-        case .oldest: return L("เก่าที่สุด")
+        case .newest:    return L("ใหม่ที่สุด")
+        case .oldest:    return L("เก่าที่สุด")
         case .highToLow: return L("คะแนนมาก → น้อย")
         case .lowToHigh: return L("คะแนนน้อย → มาก")
         }
@@ -154,11 +145,8 @@ enum SortType: String, CaseIterable {
 
 // MARK: - ScoreSortMenu
 struct ScoreSortMenu: View {
-    @Binding var items: [ScoreItem]
     @Binding var selectedSort: SortType
     @Binding var isDropdownOpen: Bool
-    @Binding var currentPage: Int
-
     let config: ResponsiveConfig
 
     @ObservedObject private var lm = LanguageManager.shared
@@ -167,7 +155,7 @@ struct ScoreSortMenu: View {
     var body: some View {
         HStack(spacing: 0) {
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     isDropdownOpen.toggle()
                 }
             } label: {
@@ -175,12 +163,13 @@ struct ScoreSortMenu: View {
                     Text(L("เรียงจาก"))
                         .font(.noto(config.fontCaption, weight: .medium))
                         .foregroundColor(.mainColor)
-
                     Image(isDropdownOpen ? "IconSort2" : "IconSort")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: config.fontCaption,
-                               height: config.fontCaption)
+                        .frame(width: config.fontCaption, height: config.fontCaption)
+                        // ✅ icon หมุน 180° เมื่อเปิด
+                        .rotationEffect(.degrees(isDropdownOpen ? 180 : 0))
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDropdownOpen)
                 }
             }
             .buttonStyle(.plain)
@@ -190,15 +179,45 @@ struct ScoreSortMenu: View {
     }
 }
 
+// MARK: - AnimatedScoreCard — wrapper สำหรับ stagger animation
+struct AnimatedScoreCard: View {
+    let item: ScoreItem
+    let index: Int
+    let config: ResponsiveConfig
+    let isVisible: Bool
+
+    var body: some View {
+        ScoreCard(
+            title: item.title,
+            date: item.date,
+            points: item.points,
+            backgroundColor: item.color,
+            config: config
+        )
+        // ✅ เลื่อนจากล่างขึ้น + fade + scale พร้อม stagger delay
+        .opacity(isVisible ? 1 : 0)
+        .scaleEffect(isVisible ? 1 : 0.94)
+        .offset(y: isVisible ? 0 : 20)
+        .animation(
+            .spring(response: 0.45, dampingFraction: 0.75)
+            .delay(isVisible ? Double(index) * 0.055 : 0),
+            value: isVisible
+        )
+    }
+}
+
+// MARK: - PageView
 struct PageView: View {
-    @State private var currentPage = 0
+    @State private var currentPage = 1
     @State private var items: [ScoreItem]
     @State private var originalItems: [ScoreItem]
     @State private var isDropdownOpen = false
     @State private var selectedSort: SortType = .newest
+    @State private var isVisible = false   // ✅ ควบคุม stagger animation
+
     let config: ResponsiveConfig
     let availableHeight: CGFloat
-    
+
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
 
@@ -213,33 +232,52 @@ struct PageView: View {
     }
 
     private func applySortIfNeeded() {
-        switch selectedSort {
-        case .newest:
-            items = originalItems.sorted { dateFrom($0.date) > dateFrom($1.date) }
-        case .oldest:
-            items = originalItems.sorted { dateFrom($0.date) < dateFrom($1.date) }
-        case .highToLow:
-            items = originalItems.sorted { cleanPoints($0.points) > cleanPoints($1.points) }
-        case .lowToHigh:
-            items = originalItems.sorted { cleanPoints($0.points) < cleanPoints($1.points) }
+        // ✅ Step 1: fade + slide ออก
+        withAnimation(.easeIn(duration: 0.18)) {
+            isVisible = false
         }
-        currentPage = 1
-    }
-
-    private func dateFrom(_ str: String) -> Date {
-        let f = DateFormatter()
-        f.dateFormat = "d/M/yyyy"
-        f.locale = Locale(identifier: "en_US_POSIX")
-        return f.date(from: str) ?? Date.distantPast
+        // ✅ Step 2: sort ข้อมูลตอนมองไม่เห็น
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            switch selectedSort {
+            case .newest:
+                items = originalItems.sorted { dateFrom($0.date) > dateFrom($1.date) }
+            case .oldest:
+                items = originalItems.sorted { dateFrom($0.date) < dateFrom($1.date) }
+            case .highToLow:
+                items = originalItems.sorted {
+                    let p0 = cleanPoints($0.points), p1 = cleanPoints($1.points)
+                    return p0 != p1 ? p0 > p1 : dateFrom($0.date) > dateFrom($1.date)
+                }
+            case .lowToHigh:
+                items = originalItems.sorted {
+                    let p0 = cleanPoints($0.points), p1 = cleanPoints($1.points)
+                    return p0 != p1 ? p0 < p1 : dateFrom($0.date) > dateFrom($1.date)
+                }
+            }
+            currentPage = 1
+            // ✅ Step 3: stagger fade + slide กลับเข้ามา
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                isVisible = true
+            }
+        }
     }
 
     private func cleanPoints(_ points: String) -> Int {
-        let isNegative = points.hasPrefix("-")
-        let clean = points
+        let stripped = points
             .replacingOccurrences(of: "+", with: "")
-            .replacingOccurrences(of: "-", with: "")
-        let value = Int(clean) ?? 0
-        return isNegative ? -value : value
+            .trimmingCharacters(in: .whitespaces)
+        return Int(stripped) ?? 0
+    }
+
+    private func dateFrom(_ str: String) -> Date {
+        let formats = ["d/M/yyyy", "d/M/yyyy - HH:mm", "yyyy-MM-dd"]
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        for format in formats {
+            f.dateFormat = format
+            if let date = f.date(from: str) { return date }
+        }
+        return Date.distantPast
     }
 
     var body: some View {
@@ -247,8 +285,6 @@ struct PageView: View {
 
         VStack(spacing: 11) {
             if items.isEmpty {
-
-                // MARK: - Empty State
                 ScrollView {
                     VStack(spacing: config.spacingMedium) {
                         Image("ListEmpty")
@@ -256,11 +292,9 @@ struct PageView: View {
                             .scaledToFit()
                             .frame(width: config.emptyStateImageSize,
                                    height: config.emptyStateImageSize)
-
                         Text(L("ยังไม่มีคะแนน?"))
                             .font(.noto(config.titleFontSize, weight: .bold))
                             .foregroundColor(.textFieldColor)
-
                         Text(L("แยกขยะเพื่อเริ่มสะสมคะแนนได้เลย!"))
                             .font(.noto(config.fontSubHeader, weight: .bold))
                             .foregroundColor(.textFieldColor)
@@ -275,21 +309,18 @@ struct PageView: View {
                         VStack(spacing: 9) {
 
                             ScoreSortMenu(
-                                items: $items,
                                 selectedSort: $selectedSort,
                                 isDropdownOpen: $isDropdownOpen,
-                                currentPage: $currentPage,
                                 config: config
                             )
-//                            .padding(Edge.Set.horizontal, config.paddingMedium)
 
-                            ForEach(currentItems, id: \.id) { item in
-                                ScoreCard(
-                                    title: item.title,
-                                    date: item.date,
-                                    points: item.points,
-                                    backgroundColor: item.color,
-                                    config: config
+                            // ✅ ใช้ AnimatedScoreCard พร้อม stagger
+                            ForEach(Array(currentItems.enumerated()), id: \.element.id) { index, item in
+                                AnimatedScoreCard(
+                                    item: item,
+                                    index: index,
+                                    config: config,
+                                    isVisible: isVisible
                                 )
                             }
                             .frame(maxWidth: config.mainContentMaxWidth, alignment: .center)
@@ -299,25 +330,41 @@ struct PageView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         if isDropdownOpen {
-                            withAnimation { isDropdownOpen = false }
-                            applySortIfNeeded()
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isDropdownOpen = false
+                            }
                         }
                     }
 
                     if isDropdownOpen {
                         DropdownOverlay(
-                            items: $items,
                             currentPage: $currentPage,
                             isOpen: $isDropdownOpen,
                             selectedSort: $selectedSort
                         )
                         .padding(.trailing, config.paddingMedium)
                         .zIndex(999)
+                        // ✅ dropdown เด้งลงมา
+                        .transition(
+                            .asymmetric(
+                                insertion: .move(edge: .top).combined(with: .opacity),
+                                removal: .opacity
+                            )
+                        )
                     }
                 }
                 .background(Color.white)
                 .cornerRadius(config.bannerCornerRadius)
                 .padding(.horizontal, config.paddingMedium)
+                .onChange(of: selectedSort) { _, _ in
+                    applySortIfNeeded()
+                }
+                // ✅ แสดง card ครั้งแรกเมื่อ view ปรากฏ
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isVisible = true
+                    }
+                }
 
                 PaginationSection(
                     config: config,
@@ -339,4 +386,3 @@ struct PageView: View {
 #Preview {
     ScoreHistoryView(hideTabBar: .constant(true))
 }
-

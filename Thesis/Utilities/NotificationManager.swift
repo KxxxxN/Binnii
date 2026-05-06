@@ -16,21 +16,20 @@ class NotificationManager: ObservableObject {
     private let legacyIDs = ["daily_sort"]
     private let dailySchedule: [(hour: Int, minute: Int, id: String)] = [
         (hour: 12, minute: 0, id: "daily_noon"),
-        (hour: 16, minute: 0, id: "daily_4pm")
+        (hour: 15, minute: 0, id: "daily_4pm")
     ]
 
-    // MARK: - Permission (ไม่ขอ .badge แล้ว)
+    private var lang: String { LanguageManager.shared.selectedLanguage }
+
+    // MARK: - Permission
     func requestPermission(completion: ((Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound]) { granted, _ in
-                DispatchQueue.main.async {
-                    completion?(granted)
-                }
+                DispatchQueue.main.async { completion?(granted) }
             }
     }
 
     // MARK: - 🔔 Daily Reminders
-
     func scheduleDailyReminders() {
         let allIDs = legacyIDs + dailySchedule.map { $0.id }
         UNUserNotificationCenter.current()
@@ -38,13 +37,13 @@ class NotificationManager: ObservableObject {
 
         for schedule in dailySchedule {
             let content   = UNMutableNotificationContent()
-            content.title = "อย่าลืมแยกขยะวันนี้ 🗑️"
+            content.title = notificationTitle()
             content.body  = notificationBody(for: schedule.hour)
             content.sound = .default
 
-            var dateComponents      = DateComponents()
-            dateComponents.hour     = schedule.hour
-            dateComponents.minute   = schedule.minute
+            var dateComponents    = DateComponents()
+            dateComponents.hour   = schedule.hour
+            dateComponents.minute = schedule.minute
 
             let trigger = UNCalendarNotificationTrigger(
                 dateMatching: dateComponents,
@@ -61,7 +60,7 @@ class NotificationManager: ObservableObject {
                 if let error {
                     print("❌ schedule \(schedule.id): \(error)")
                 } else {
-                    print("✅ scheduled \(schedule.id) → \(schedule.hour):\(String(format: "%02d", schedule.minute)) local time")
+                    print("✅ scheduled \(schedule.id) → \(schedule.hour):\(String(format: "%02d", schedule.minute)) [\(self.lang)]")
                 }
             }
         }
@@ -76,25 +75,54 @@ class NotificationManager: ObservableObject {
         dailyReminderEnabled = false
     }
 
+    func cancelAllNotifications() {
+        let allIDs = legacyIDs + dailySchedule.map { $0.id }
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: allIDs)
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        dailyReminderEnabled = false
+    }
+
     func scheduleDailyReminder(hour: Int, minute: Int) { scheduleDailyReminders() }
     func cancelDailyReminder()                         { cancelDailyReminders()  }
 
+    // MARK: - Notification Text
+    private func notificationTitle() -> String {
+        lang == "en"
+            ? "Don't forget to sort your waste today 🗑️"
+            : "อย่าลืมแยกขยะวันนี้ 🗑️"
+    }
+
     private func notificationBody(for hour: Int) -> String {
-        switch hour {
-        case 12: return "ช่วงพักเที่ยง อย่าลืมแยกขยะก่อนทิ้งนะ 🍱"
-        case 16: return "ใกล้เลิกเรียนแล้ว แยกขยะวันนี้ยังไหม? ♻️"
-        default: return "แยกขยะถูกต้อง = โลกสะอาด + คะแนนจิตอาสา!"
+        switch lang {
+        case "en":
+            switch hour {
+            case 12: return "Lunch break! Remember to sort your waste before throwing it away 🍱"
+            case 15: return "Almost time to go! Did you sort your waste today? ♻️"
+            default: return "Sorting waste correctly = Clean world + Volunteer points!"
+            }
+        default:
+            switch hour {
+            case 12: return "ช่วงพักเที่ยง อย่าลืมแยกขยะก่อนทิ้งนะ 🍱"
+            case 15: return "ใกล้เลิกเรียนแล้ว แยกขยะวันนี้ยังทันไหม? ♻️"
+            default: return "แยกขยะถูกต้อง = โลกสะอาด + คะแนนจิตอาสา!"
+            }
         }
     }
 
     // MARK: - 🏆 Points Notification
     func sendPointsNotification(points: Int, totalPoints: Int) {
-        // ✅ ถ้า toggle ปิดอยู่ ไม่ส่งเลย
         guard dailyReminderEnabled else { return }
-        
-        let content   = UNMutableNotificationContent()
-        content.title = "ได้รับ \(points) คะแนน! 🏆"
-        content.body  = "คะแนนสะสมของคุณตอนนี้: \(totalPoints) คะแนน"
+
+        let content = UNMutableNotificationContent()
+        if lang == "en" {
+            content.title = "You earned \(points) points! 🏆"
+            content.body  = "Your total points: \(totalPoints) pts"
+        } else {
+            content.title = "ได้รับ \(points) คะแนน! 🏆"
+            content.body  = "คะแนนสะสมของคุณตอนนี้: \(totalPoints) คะแนน"
+        }
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
@@ -107,19 +135,5 @@ class NotificationManager: ObservableObject {
         UNUserNotificationCenter.current().add(request) { error in
             if let error { print("❌ sendPointsNotification: \(error)") }
         }
-    }
-    func cancelAllNotifications() {
-        // ยกเลิก daily reminders
-        let allIDs = legacyIDs + dailySchedule.map { $0.id }
-        UNUserNotificationCenter.current()
-            .removePendingNotificationRequests(withIdentifiers: allIDs)
-        
-        // ✅ ยกเลิก points notifications และทุกอย่างที่ pending อยู่
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
-        // ✅ ลบที่แสดงอยู่ใน notification center แล้วด้วย
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        
-        dailyReminderEnabled = false
     }
 }

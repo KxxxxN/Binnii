@@ -13,11 +13,16 @@ class LanguageManager: ObservableObject {
     @AppStorage("selectedLanguage") var selectedLanguage: String = "th" {
         didSet {
             objectWillChange.send()
+
+            
+            if NotificationManager.shared.dailyReminderEnabled {
+                NotificationManager.shared.scheduleDailyReminders()
+            }
         }
     }
 
     var locale: Locale { Locale(identifier: selectedLanguage) }
-    
+
     @_semantics("localization_key")
     func localized(_ key: String) -> String {
         guard let path = Bundle.main.path(forResource: selectedLanguage, ofType: "lproj"),
