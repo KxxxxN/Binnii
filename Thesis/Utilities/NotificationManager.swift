@@ -16,7 +16,7 @@ class NotificationManager: ObservableObject {
     private let legacyIDs = ["daily_sort"]
     private let dailySchedule: [(hour: Int, minute: Int, id: String)] = [
         (hour: 12, minute: 0, id: "daily_noon"),
-        (hour: 15, minute: 0, id: "daily_4pm")
+        (hour: 16, minute: 0, id: "daily_4pm")
     ]
 
     private var lang: String { LanguageManager.shared.selectedLanguage }
@@ -99,13 +99,13 @@ class NotificationManager: ObservableObject {
         case "en":
             switch hour {
             case 12: return "Lunch break! Remember to sort your waste before throwing it away 🍱"
-            case 15: return "Almost time to go! Did you sort your waste today? ♻️"
+            case 16: return "Almost time to go! Did you sort your waste today? ♻️"
             default: return "Sorting waste correctly = Clean world + Volunteer points!"
             }
         default:
             switch hour {
             case 12: return "ช่วงพักเที่ยง อย่าลืมแยกขยะก่อนทิ้งนะ 🍱"
-            case 15: return "ใกล้เลิกเรียนแล้ว แยกขยะวันนี้ยังทันไหม? ♻️"
+            case 16: return "ใกล้เลิกเรียนแล้ว แยกขยะวันนี้ยังทันไหม? ♻️"
             default: return "แยกขยะถูกต้อง = โลกสะอาด + คะแนนจิตอาสา!"
             }
         }
