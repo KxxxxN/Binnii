@@ -22,18 +22,19 @@ struct DetailSearchView: View {
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: horizontalSizeClass, geo: geo)
+            // ✅ ป้องกัน negative/zero frame เหมือน WasteDetailView
+            let imageWidth = geo.size.width > 40 ? geo.size.width - 40 : 0
 
             VStack(spacing: 0) {
 
                 DetailWasteHeader(title: L("ค้นหา"), config: config)
 
-                // MARK: - Content
                 ScrollView {
                     VStack(spacing: 0) {
                         Image(WasteImageMapper.image(for: category))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: geo.size.width - 40, height: 290)
+                            .frame(width: imageWidth, height: imageWidth > 0 ? 290 : 0)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
 
                         Spacer().frame(height: 23)
@@ -70,9 +71,7 @@ struct DetailSearchView: View {
                     onSaveSuccess: {
                         var transaction = Transaction()
                         transaction.disablesAnimations = true
-                        withTransaction(transaction) {
-                            dismiss()
-                        }
+                        withTransaction(transaction) { dismiss() }
                         onSaveSuccess?()
                     }
                 )
