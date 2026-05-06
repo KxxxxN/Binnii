@@ -28,7 +28,7 @@ struct DeleteAccountPopupView: View {
                     .frame(width: 110, height: 110)
                     .padding(.top, 30)
 
-                Text(L("ลบบัญชี?"))
+                Text(L("deleteAccount"))
                     .font(.noto(25, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 10)

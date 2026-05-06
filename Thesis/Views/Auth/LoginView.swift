@@ -78,7 +78,7 @@ struct LoginView: View {
                                 Spacer()
                                 
                                 NavigationLink(destination: EmailForgotPassword()){
-                                    Text(L("ลืมรหัสผ่าน?"))
+                                    Text(L("forGotPass"))
                                         .font(.noto(bodyFontSize, weight: .medium))
                                         .foregroundColor(.mainColor)
                                 }
