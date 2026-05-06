@@ -89,7 +89,6 @@ struct WasteTypeView: View {
                     }
                 }
                 .edgesIgnoringSafeArea(.top)
-                .ignoresSafeArea()
                 
             }
             .background(Color.backgroundColor)
