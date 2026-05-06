@@ -10,6 +10,9 @@ import SwiftUI
 struct BarcodeScanResultAlert: View {
     let onDismiss: () -> Void
     let config: ResponsiveConfig
+    
+    @ObservedObject private var lm = LanguageManager.shared
+    private func L(_ key: String) -> String { lm.localized(key) }
 
     var body: some View {
         ZStack {
@@ -19,18 +22,18 @@ struct BarcodeScanResultAlert: View {
                 .ignoresSafeArea()
 
             VStack(spacing: config.isIPad ? 24 : 16) {
-                Text("ไม่พบบาร์โค้ดนี้")
+                Text(L("noBarcodeTitle"))
                     .font(.noto(config.isIPad ? 32 : 25, weight: .bold))
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
 
-                Text("กรุณาสแกนใหม่ หรือเลือกใช้\nสแกนด้วย AI หรือค้นหา")
+                Text(L("noBarcodeDes"))
                     .font(.noto(config.fontBody, weight: .medium))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
 
                 PrimaryButton(
-                    title: "ตกลง",
+                    title: L("ตกลง"),
                     action: { onDismiss() },
                     width: config.isIPad ? 140 : 120,
                     height: config.isIPad ? 60 : 40

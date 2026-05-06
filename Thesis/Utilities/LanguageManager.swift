@@ -30,6 +30,7 @@ class LanguageManager: ObservableObject {
             return NSLocalizedString(key, comment: "")
         }
         return NSLocalizedString(key, bundle: bundle, comment: "")
+            .replacingOccurrences(of: "\\n", with: "\n")
     }
 
     func font(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
