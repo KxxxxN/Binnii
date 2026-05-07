@@ -142,31 +142,26 @@ struct ConditionsAndExchangeSection: View {
     let conditionsList: [String]
     let config: ResponsiveConfig
     let onConfirm: () -> Void
-
+    
     @ObservedObject private var lm = LanguageManager.shared
     private func L(_ key: String) -> String { lm.localized(key) }
-
+    
     var body: some View {
         VStack(spacing: 0) {
-
+            
             Text(L("แลกรับชั่วโมงจิตอาสา 5 ชั่วโมง"))
                 .font(.noto(config.fontHeader, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, config.conditionsTitlePaddingH)
                 .padding(.vertical, config.conditionsTitlePaddingV)
-
+            
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 5) {
-                    Text(L("รายละเอียด และเงื่อนไข"))
-                        .font(.noto(config.fontBody, weight: .bold))
-                        .foregroundColor(.black)
-                    Text(L("(จำลอง)"))
-                        .font(.noto(config.fontBody, weight: .bold))
-                        .foregroundColor(.placeholderColor)
-                }
-                .padding(.bottom, config.spacingMedium)
-
+                Text(L("รายละเอียด และเงื่อนไข"))
+                    .font(.noto(config.fontBody, weight: .bold))
+                    .foregroundColor(.black)
+                    .padding(.bottom, config.spacingMedium)
+                
                 VStack(alignment: .leading, spacing: config.rewardVStackSpacing) {
                     ForEach(conditionsList.indices, id: \.self) { index in
                         HStack(alignment: .top, spacing: config.isIPad ? 15 : 10) {
@@ -174,7 +169,7 @@ struct ConditionsAndExchangeSection: View {
                                 .font(.noto(config.fontBody, weight: .medium))
                                 .foregroundColor(.black)
                                 .frame(width: config.isIPad ? 40 : 25, alignment: .leading)
-
+                            
                             Text(conditionsList[index])
                                 .font(.noto(config.fontBody, weight: .medium))
                                 .foregroundColor(.black)
@@ -189,7 +184,7 @@ struct ConditionsAndExchangeSection: View {
             .background(Color.wasteCard)
             .cornerRadius(config.bannerCornerRadius)
             .frame(maxWidth: config.mainContentMaxWidth)
-
+            
             Button(action: { onConfirm() }) {
                 Text(L("ยืนยันแลกคะแนน"))
                     .font(.noto(config.fontSubHeader, weight: .bold))
@@ -205,4 +200,12 @@ struct ConditionsAndExchangeSection: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview {
+    RewardExchangeView(
+        hideTabBar: .constant(true),
+        totalPoints: 1000,
+        profileVM: UserProfileViewModel()
+    )
 }

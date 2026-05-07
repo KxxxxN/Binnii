@@ -90,7 +90,7 @@ class NotificationManager: ObservableObject {
     // MARK: - Notification Text
     private func notificationTitle() -> String {
         lang == "en"
-            ? "Don't forget to sort your waste today 🗑️"
+            ? "Remember to sort the waste 🗑️"
             : "อย่าลืมแยกขยะวันนี้ 🗑️"
     }
 

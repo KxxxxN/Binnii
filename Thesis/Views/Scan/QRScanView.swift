@@ -22,9 +22,9 @@ struct QRScanView: View {
     var body: some View {
         GeometryReader { geo in
             let config = ResponsiveConfig(horizontalSizeClass: sizeClass, geo: geo)
-
+            
             ZStack(alignment: .top) {
-
+                
                 // MARK: - Background
                 Image("QRBackground")
                     .resizable()
@@ -32,26 +32,26 @@ struct QRScanView: View {
                     .frame(width: geo.size.width, height: geo.size.height)
                     .clipped()
                     .ignoresSafeArea()
-
+                
                 // MARK: - Foreground
                 VStack(spacing: 0) {
-
+                    
                     headerView(config: config)
-
-                    Button {
-                        viewModel.navigateToAIScan(hideTabBar: &hideTabBar)
-                    } label: {
-                        Text(L("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน"))
-                            .font(.noto(config.fontHeader, weight: .medium))
-                            .foregroundColor(.black)
-                            .multilineTextAlignment(.center)
-                            .frame(width: config.qrContentMaxWidth,
-                                   height: config.isIPad ? 155 : 115)
-                            .background(Color.textFieldColor)
-                            .cornerRadius(config.bannerCornerRadius)
-                    }
-                    .padding(.top, config.qrBannerTopPadding)
-
+                    
+                    //                    Button {
+                    //                        viewModel.navigateToAIScan(hideTabBar: &hideTabBar)
+                    //                    } label: {
+                    Text(L("โปรดสแกนคิวอาร์โค้ด\nที่ติดอยู่บนถังขยะเพื่อเริ่มใช้งาน"))
+                        .font(.noto(config.fontHeader, weight: .medium))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.center)
+                        .frame(width: config.qrContentMaxWidth,
+                               height: config.isIPad ? 155 : 115)
+                        .background(Color.textFieldColor)
+                        .cornerRadius(config.bannerCornerRadius)
+                    //                    }
+                        .padding(.top, config.qrBannerTopPadding)
+                    
                     ZStack {
                         CameraPreview(
                             isScanning: $viewModel.isScanning,
@@ -64,20 +64,20 @@ struct QRScanView: View {
                         .id(viewModel.cameraID)
                         .frame(width: config.cameraSize, height: config.cameraSize)
                         .cornerRadius(config.bannerCornerRadius)
-
+                        
                         QRCornerLines(config: config)
                     }
                     .frame(width: config.cameraSize, height: config.cameraSize)
                     .padding(.top, config.qrCameraTopPadding)
-
+                    
                     Spacer()
                     Color.clear.frame(height: 50)
                 }
-
+                
                 if viewModel.showResultAlert {
                     resultAlertOverlay(config: config)
                 }
-
+                
                 if viewModel.showErrorAlert {
                     ErrorPopupView(title: L("สแกนไม่สำเร็จ")) {
                         viewModel.dismissError()
