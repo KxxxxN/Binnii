@@ -22,26 +22,26 @@
 		BB50BD5C2EB8968400A20141 /* NotoSansThai-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Regular.ttf"; sourceTree = "<group>"; };
 		BB50BD5D2EB8968400A20141 /* NotoSansThai-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-SemiBold.ttf"; sourceTree = "<group>"; };
 		BB50BD622EB8968E00A20141 /* NotoSansThai-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansThai-Bold.ttf"; sourceTree = "<group>"; };
-		BBAB21D52EA8CCDE006A0375 /* Thesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBAB21D52EA8CCDE006A0375 /* Binnii.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Binnii.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BB50BD652EB8994F00A20141 /* Exceptions for "Thesis" folder in "Thesis" target */ = {
+		BB50BD652EB8994F00A20141 /* Exceptions for "Binnii" folder in "Binnii" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = BBAB21D42EA8CCDE006A0375 /* Thesis */;
+			target = BBAB21D42EA8CCDE006A0375 /* Binnii */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BBAB21D72EA8CCDE006A0375 /* Thesis */ = {
+		BBAB21D72EA8CCDE006A0375 /* Binnii */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BB50BD652EB8994F00A20141 /* Exceptions for "Thesis" folder in "Thesis" target */,
+				BB50BD652EB8994F00A20141 /* Exceptions for "Binnii" folder in "Binnii" target */,
 			);
-			path = Thesis;
+			path = Binnii;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -79,7 +79,7 @@
 		BBAB21CC2EA8CCDE006A0375 = {
 			isa = PBXGroup;
 			children = (
-				BBAB21D72EA8CCDE006A0375 /* Thesis */,
+				BBAB21D72EA8CCDE006A0375 /* Binnii */,
 				BBAB21D62EA8CCDE006A0375 /* Products */,
 				BB50BD572EB8959300A20141 /* Fonts */,
 			);
@@ -88,7 +88,7 @@
 		BBAB21D62EA8CCDE006A0375 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBAB21D52EA8CCDE006A0375 /* Thesis.app */,
+				BBAB21D52EA8CCDE006A0375 /* Binnii.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,9 +96,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BBAB21D42EA8CCDE006A0375 /* Thesis */ = {
+		BBAB21D42EA8CCDE006A0375 /* Binnii */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BBAB21E02EA8CCE0006A0375 /* Build configuration list for PBXNativeTarget "Thesis" */;
+			buildConfigurationList = BBAB21E02EA8CCE0006A0375 /* Build configuration list for PBXNativeTarget "Binnii" */;
 			buildPhases = (
 				BBAB21D12EA8CCDE006A0375 /* Sources */,
 				BBAB21D22EA8CCDE006A0375 /* Frameworks */,
@@ -109,9 +109,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BBAB21D72EA8CCDE006A0375 /* Thesis */,
+				BBAB21D72EA8CCDE006A0375 /* Binnii */,
 			);
-			name = Thesis;
+			name = Binnii;
 			packageProductDependencies = (
 				486D0DF12F69517100D65319 /* Auth */,
 				486D0DF32F69517100D65319 /* Functions */,
@@ -121,7 +121,7 @@
 				486D0DFB2F69530400D65319 /* Supabase */,
 			);
 			productName = Theis;
-			productReference = BBAB21D52EA8CCDE006A0375 /* Thesis.app */;
+			productReference = BBAB21D52EA8CCDE006A0375 /* Binnii.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -139,7 +139,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BBAB21D02EA8CCDE006A0375 /* Build configuration list for PBXProject "Thesis" */;
+			buildConfigurationList = BBAB21D02EA8CCDE006A0375 /* Build configuration list for PBXProject "Binnii" */;
 			developmentRegion = th;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -157,7 +157,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BBAB21D42EA8CCDE006A0375 /* Thesis */,
+				BBAB21D42EA8CCDE006A0375 /* Binnii */,
 			);
 		};
 /* End PBXProject section */
@@ -387,7 +387,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BBAB21D02EA8CCDE006A0375 /* Build configuration list for PBXProject "Thesis" */ = {
+		BBAB21D02EA8CCDE006A0375 /* Build configuration list for PBXProject "Binnii" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BBAB21DE2EA8CCE0006A0375 /* Debug */,
@@ -396,7 +396,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BBAB21E02EA8CCE0006A0375 /* Build configuration list for PBXNativeTarget "Thesis" */ = {
+		BBAB21E02EA8CCE0006A0375 /* Build configuration list for PBXNativeTarget "Binnii" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BBAB21E12EA8CCE0006A0375 /* Debug */,

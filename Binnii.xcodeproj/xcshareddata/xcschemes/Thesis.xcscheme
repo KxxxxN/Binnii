@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BBAB21D42EA8CCDE006A0375"
-               BuildableName = "Thesis.app"
-               BlueprintName = "Thesis"
-               ReferencedContainer = "container:Thesis.xcodeproj">
+               BuildableName = "Binnii.app"
+               BlueprintName = "Binnii"
+               ReferencedContainer = "container:Binnii.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BBAB21D42EA8CCDE006A0375"
-            BuildableName = "Thesis.app"
-            BlueprintName = "Thesis"
-            ReferencedContainer = "container:Thesis.xcodeproj">
+            BuildableName = "Binnii.app"
+            BlueprintName = "Binnii"
+            ReferencedContainer = "container:Binnii.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -63,9 +63,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BBAB21D42EA8CCDE006A0375"
-            BuildableName = "Thesis.app"
-            BlueprintName = "Thesis"
-            ReferencedContainer = "container:Thesis.xcodeproj">
+            BuildableName = "Binnii.app"
+            BlueprintName = "Binnii"
+            ReferencedContainer = "container:Binnii.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
